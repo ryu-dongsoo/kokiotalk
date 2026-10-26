@@ -18,6 +18,10 @@ No Node.js or terminal setup required — download and install the standalone de
 | **🍎 macOS (Intel x64)** | `KokioTalk-macOS-x64.dmg` | [**📥 Download for macOS Intel (`.dmg`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest/download/KokioTalk-macOS-x64.dmg) |
 | **📱 Smartphone & Tablet (iOS / Android)** | **QR Code + 1-Click PWA App** | Scan `/qr` from your Desktop App → Tap **`📲 Install`** (or *Add to Home Screen*) |
 
+> **ℹ️ First-Launch OS Gatekeeper Note (Open-Source Unsigned Binary)**:
+> - **🪟 Windows SmartScreen**: If *"Windows protected your PC"* appears on first launch, click **`More info` (`추가 정보`)** → **`Run anyway` (`실행`)**.
+> - **🍎 macOS Gatekeeper**: On first launch, **Right-click (`Control + Click`)** `KokioTalk.app` → Click **`Open`**.
+
 ---
 
 ## ✨ Key Features
