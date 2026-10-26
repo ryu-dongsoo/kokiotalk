@@ -849,15 +849,30 @@ function ensureKokioTalkRunning() {
   });
   probe.on('error', () => {
     probe.destroy();
+    const entryMjs = path.join(KOKIO_DIR, 'server', 'dist', 'index.mjs');
     const entryTs = path.join(KOKIO_DIR, 'server', 'src', 'index.ts');
-    if (!fs.existsSync(entryTs)) return;
+    const hasMjs = fs.existsSync(entryMjs);
+    const hasTs = fs.existsSync(entryTs);
+    if (!hasMjs && !hasTs) return;
     isStartingKokio = true;
     try {
       const agyNode = path.join(HOME_DIR, '.gemini', 'antigravity', 'bin', 'node.exe');
-      const nodeBin = fs.existsSync(agyNode) ? agyNode : 'node';
-      console.log('[🐓 KokioTalk Auto-Start] 꼬끼오톡 서버(8082)를 자동 기동합니다...');
-      const child = spawn(nodeBin, ['--experimental-strip-types', '--no-warnings', 'server/src/index.ts'], {
+      const nodeBin = process.execPath && fs.existsSync(process.execPath)
+        ? process.execPath
+        : (fs.existsSync(agyNode) ? agyNode : 'node');
+      const args = hasMjs
+        ? ['--no-warnings', entryMjs]
+        : ['--experimental-strip-types', '--no-warnings', entryTs];
+      console.log(`[KokioTalk Auto-Start] Starting Core Server on port ${KOKIO_PORT}...`);
+      const child = spawn(nodeBin, args, {
         cwd: KOKIO_DIR,
+        env: {
+          ...process.env,
+          ELECTRON_RUN_AS_NODE: '1',
+          PORT: String(KOKIO_PORT),
+          KOKIO_PORT: String(KOKIO_PORT),
+          KOKIO_GATEWAY_PORT: String(PORT)
+        },
         detached: true,
         stdio: 'ignore',
         windowsHide: true
