@@ -181,6 +181,14 @@ function buildAppMenu() {
         },
         { type: 'separator' },
         {
+          label: '⚡ Check for Updates (GitHub Auto-Update)',
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.executeJavaScript('if (window.kokioCheckForUpdates) window.kokioCheckForUpdates();');
+            }
+          }
+        },
+        {
           label: '🌐 Open in Default Web Browser',
           click: () => { shell.openExternal(`http://localhost:${PORT_GATEWAY}/`); }
         },

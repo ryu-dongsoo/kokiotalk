@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🐓 KokioTalk (코끼오톡) Frontend Engine — 순수 자연어 방식 (명령어 및 중간 안내 문구 완전 제거)
  * - "AI야 ~해줘" (또는 Kokio AI 1:1 방에서 아무 말이나) 입력 시:
  *   중간 안내 말풍선 없이 지금 이 PC의 안티그래비티(Kokio AI)가 작성한 실제 최종 답변 글만 기다렸다가 띄움
@@ -2292,5 +2292,96 @@
       .replace(/'/g, '&#39;');
   }
 
+  function setupAutoUpdateChecker() {
+    const UPD_TEXT = {
+      en: {
+        msg: (v, note) => `🎉 New Update Available (v${v})${note ? ' — ' + note : ''}`,
+        btn: '⚡ Update Now',
+        updating: '⏳ Applying update...',
+        done: '✅ Updated! Reloading...',
+        upToDate: (v) => `✅ KokioTalk is up to date (v${v}).`
+      },
+      ko: {
+        msg: (v, note) => `🎉 새 버전(v${v}) 업데이트가 있습니다!${note ? ' — ' + note : ''}`,
+        btn: '⚡ 지금 자동 업데이트',
+        updating: '⏳ 최신 버전 패치 적용 중...',
+        done: '✅ 업데이트 완료! 새로고침합니다...',
+        upToDate: (v) => `✅ 현재 최신 버전(v${v})을 사용 중입니다.`
+      },
+      ja: {
+        msg: (v, note) => `🎉 新バージョン(v${v})が利用可能です！${note ? ' — ' + note : ''}`,
+        btn: '⚡ 今すぐ自動更新',
+        updating: '⏳ アップデート適用中...',
+        done: '✅ 更新完了！再読み込みします...',
+        upToDate: (v) => `✅ 最新バージョン(v${v})を使用中です。`
+      },
+      zh: {
+        msg: (v, note) => `🎉 发现新版本 (v${v}) 可供更新！${note ? ' — ' + note : ''}`,
+        btn: '⚡ 立即自动更新',
+        updating: '⏳ 正在应用更新...',
+        done: '✅ 更新完成！正在刷新...',
+        upToDate: (v) => `✅ 当前已是最新版本 (v${v})。`
+      }
+    };
+
+    function showUpdateBanner(latestVersion, releaseNote) {
+      let banner = document.getElementById('kokio-update-banner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'kokio-update-banner';
+        banner.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#1E293B,#0F172A);border:1.5px solid #FEE500;color:#F8FAFC;padding:10px 16px;border-radius:14px;box-shadow:0 14px 35px rgba(0,0,0,0.65);display:flex;align-items:center;gap:12px;font-size:13px;font-weight:700;max-width:92vw;';
+        document.body.appendChild(banner);
+      }
+      const lang = localStorage.getItem('kokio_ui_lang') || 'en';
+      const t = UPD_TEXT[lang] || UPD_TEXT.en;
+      banner.innerHTML = `
+        <span style="color:#FEE500;">${escapeHtml(t.msg(latestVersion, releaseNote))}</span>
+        <button id="btn-apply-hot-update" style="background:#FEE500;color:#111827;border:none;border-radius:8px;padding:6px 12px;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap;">${escapeHtml(t.btn)}</button>
+        <button id="btn-dismiss-update" style="background:transparent;color:#94A3B8;border:none;font-size:15px;cursor:pointer;padding:2px 6px;">✕</button>
+      `;
+      document.getElementById('btn-dismiss-update')?.addEventListener('click', () => {
+        banner.remove();
+      });
+      document.getElementById('btn-apply-hot-update')?.addEventListener('click', async (ev) => {
+        const btn = ev.currentTarget;
+        btn.disabled = true;
+        btn.textContent = t.updating;
+        try {
+          const r = await fetch('/api/system/apply-update', { method: 'POST' });
+          const d = await r.json();
+          if (d && d.ok) {
+            btn.textContent = t.done;
+            setTimeout(() => window.location.reload(), 900);
+          } else {
+            window.open('https://github.com/ryu-dongsoo/kokiotalk/releases/latest', '_blank');
+          }
+        } catch {
+          window.open('https://github.com/ryu-dongsoo/kokiotalk/releases/latest', '_blank');
+        }
+      });
+    }
+
+    async function checkVersion(manual = false) {
+      try {
+        const res = await fetch('/api/system/version?t=' + Date.now(), { cache: 'no-store' });
+        const data = await res.json();
+        if (data && data.ok) {
+          if (data.updateAvailable) {
+            showUpdateBanner(data.latestVersion, data.releaseNote || '');
+          } else if (manual) {
+            const lang = localStorage.getItem('kokio_ui_lang') || 'en';
+            const t = UPD_TEXT[lang] || UPD_TEXT.en;
+            alert(t.upToDate(data.currentVersion || '2.0.0'));
+          }
+        }
+      } catch {}
+    }
+
+    window.kokioCheckForUpdates = () => checkVersion(true);
+    setTimeout(() => checkVersion(false), 2500);
+    setInterval(() => checkVersion(false), 20 * 60 * 1000);
+  }
+
   initApp();
+  setupAutoUpdateChecker();
 })();

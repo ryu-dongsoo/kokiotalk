@@ -1476,6 +1476,124 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // 0.2 Auto-Update Checker & 1-Click Hot-Updater (/api/system/version & /api/system/apply-update)
+  if (url.pathname === '/api/system/version' && req.method === 'GET') {
+    let currentVersion = '2.0.0';
+    try {
+      const pkgPath = path.join(KOKIO_DIR, 'package.json');
+      if (fs.existsSync(pkgPath)) {
+        const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
+        if (pkg.version) currentVersion = String(pkg.version).trim();
+      }
+    } catch {}
+
+    const fetchJson = (targetUrl) => new Promise((resolve) => {
+      const reqHttps = https.get(targetUrl, {
+        headers: { 'User-Agent': 'KokioTalk-Updater', 'Cache-Control': 'no-cache' },
+        timeout: 4500
+      }, (resp) => {
+        if (resp.statusCode !== 200) { resolve(null); return; }
+        let raw = '';
+        resp.on('data', c => { raw += c; });
+        resp.on('end', () => {
+          try { resolve(JSON.parse(raw)); } catch { resolve(null); }
+        });
+      });
+      reqHttps.on('error', () => resolve(null));
+      reqHttps.on('timeout', () => { reqHttps.destroy(); resolve(null); });
+    });
+
+    const compareVersions = (v1, v2) => {
+      const a = String(v1 || '0.0.0').replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+      const b = String(v2 || '0.0.0').replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+      for (let i = 0; i < 3; i++) {
+        if ((a[i] || 0) > (b[i] || 0)) return 1;
+        if ((a[i] || 0) < (b[i] || 0)) return -1;
+      }
+      return 0;
+    };
+
+    const remotePkg = await fetchJson('https://raw.githubusercontent.com/ryu-dongsoo/kokiotalk/main/package.json?t=' + Date.now());
+    const latestCommit = await fetchJson('https://api.github.com/repos/ryu-dongsoo/kokiotalk/commits/main');
+    const latestVersion = remotePkg?.version ? String(remotePkg.version).trim() : currentVersion;
+    const updateAvailable = compareVersions(latestVersion, currentVersion) > 0;
+    const releaseNote = latestCommit?.commit?.message
+      ? String(latestCommit.commit.message).split('\n')[0]
+      : '';
+
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(JSON.stringify({
+      ok: true,
+      currentVersion,
+      latestVersion,
+      updateAvailable,
+      releaseNote,
+      releaseUrl: 'https://github.com/ryu-dongsoo/kokiotalk/releases/latest'
+    }));
+    return;
+  }
+
+  if (url.pathname === '/api/system/apply-update' && req.method === 'POST') {
+    const authForUpd = getAuthStatus(req);
+    if (!authForUpd.authenticated) {
+      res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ ok: false, error: 'Unauthorized' }));
+      return;
+    }
+
+    const fetchText = (targetUrl) => new Promise((resolve, reject) => {
+      https.get(targetUrl, {
+        headers: { 'User-Agent': 'KokioTalk-Updater', 'Cache-Control': 'no-cache' },
+        timeout: 10000
+      }, (resp) => {
+        if (resp.statusCode !== 200) { reject(new Error('HTTP ' + resp.statusCode)); return; }
+        let raw = '';
+        resp.on('data', c => { raw += c; });
+        resp.on('end', () => resolve(raw));
+      }).on('error', reject);
+    });
+
+    try {
+      const filesToSync = [
+        'package.json',
+        'client/public/index.html',
+        'client/public/styles.css',
+        'client/public/app.js',
+        'server/dist/index.mjs',
+        'server/dist/db/database.mjs',
+        'server/dist/ai/agentRouter.mjs',
+        'server/dist/ai/antigravityBridge.mjs',
+        'server/dist/ws/realtime.mjs',
+        'server/dist/mcp/mcpHandler.mjs'
+      ];
+      let updatedCount = 0;
+      for (const relPath of filesToSync) {
+        try {
+          const content = await fetchText('https://raw.githubusercontent.com/ryu-dongsoo/kokiotalk/main/' + relPath + '?t=' + Date.now());
+          if (content && content.length > 20) {
+            const destPath = path.join(KOKIO_DIR, ...relPath.split('/'));
+            fs.mkdirSync(path.dirname(destPath), { recursive: true });
+            fs.writeFileSync(destPath, content, 'utf-8');
+            updatedCount++;
+          }
+        } catch {}
+      }
+      const newPkgRaw = fs.existsSync(path.join(KOKIO_DIR, 'package.json'))
+        ? JSON.parse(fs.readFileSync(path.join(KOKIO_DIR, 'package.json'), 'utf-8'))
+        : {};
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({
+        ok: true,
+        updatedFiles: updatedCount,
+        version: newPkgRaw.version || '2.0.0'
+      }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ ok: false, error: err.message }));
+    }
+    return;
+  }
+
   // 0.5 내 폰 연결용 QR코드 & 외부 접속 주소 안내 대시보드 (로컬 PC에서 실행 시 즉시 확인 가능)
   if (req.method === 'GET' && url.pathname === '/qr') {
     const authForQr = getAuthStatus(req);
