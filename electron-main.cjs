@@ -215,6 +215,15 @@ function buildAppMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+function checkUrlExists(targetUrl) {
+  return new Promise((resolve) => {
+    http.get(targetUrl, (res) => {
+      res.resume();
+      resolve(res.statusCode === 200);
+    }).on('error', () => resolve(false));
+  });
+}
+
 async function createWindow() {
   buildAppMenu();
 
@@ -234,7 +243,11 @@ async function createWindow() {
 
   await ensureLocalServers();
 
-  const startPath = isFirstRunSetupNeeded() ? '/setup' : '/';
+  let startPath = '/';
+  if (isFirstRunSetupNeeded()) {
+    const hasSetupRoute = await checkUrlExists(`http://localhost:${PORT_GATEWAY}/setup`);
+    if (hasSetupRoute) startPath = '/setup';
+  }
   mainWindow.loadURL(`http://localhost:${PORT_GATEWAY}${startPath}`);
 
   mainWindow.on('closed', () => {
