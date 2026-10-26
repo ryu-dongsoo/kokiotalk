@@ -13,8 +13,9 @@ No Node.js or terminal setup required — download and install the standalone de
 
 | Platform | Installer Package | Direct Download Link |
 | :--- | :--- | :--- |
-| **🪟 Windows (10 / 11 x64)** | `KokioTalk-Setup-Windows-x64.exe` | [**📥 Download for Windows (`.exe`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest) |
-| **🍎 macOS (Apple Silicon & Intel)** | `KokioTalk-macOS-arm64.dmg` / `x64.dmg` | [**📥 Download for macOS (`.dmg`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest) |
+| **🪟 Windows (10 / 11 x64)** | `KokioTalk-Setup-Windows-x64.exe` | [**📥 Download for Windows (`.exe`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest/download/KokioTalk-Setup-Windows-x64.exe) |
+| **🍎 macOS (Apple Silicon M1–M4)** | `KokioTalk-macOS-arm64.dmg` | [**📥 Download for macOS Apple Silicon (`.dmg`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest/download/KokioTalk-macOS-arm64.dmg) |
+| **🍎 macOS (Intel x64)** | `KokioTalk-macOS-x64.dmg` | [**📥 Download for macOS Intel (`.dmg`)**](https://github.com/ryu-dongsoo/kokiotalk/releases/latest/download/KokioTalk-macOS-x64.dmg) |
 | **📱 Smartphone & Tablet (iOS / Android)** | **QR Code + 1-Click PWA App** | Scan `/qr` from your Desktop App → Tap **`📲 Install`** (or *Add to Home Screen*) |
 
 ---
