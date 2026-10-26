@@ -1,5 +1,5 @@
 /**
- * 🐓 KokioTalk (코끼오톡) Frontend Engine — 순수 자연어 방식 (명령어 및 중간 안내 문구 완전 제거)
+ * 🐓 KokioTalk (꼬끼오톡) Frontend Engine — 순수 자연어 방식 (명령어 및 중간 안내 문구 완전 제거)
  * - "AI야 ~해줘" (또는 Kokio AI 1:1 방에서 아무 말이나) 입력 시:
  *   중간 안내 말풍선 없이 지금 이 PC의 안티그래비티(Kokio AI)가 작성한 실제 최종 답변 글만 기다렸다가 띄움
  */
@@ -41,7 +41,7 @@
       pane_friends: '친구',
       pane_chats: '채팅',
       pane_aihub: 'AI · 외부 접속 허브',
-      pane_drawer: '코끼오 무제한 톡서랍',
+      pane_drawer: '꼬끼오 무제한 톡서랍',
       search_global: 'Kokio AI 작업방, 단톡방, 대화내용 검색...',
       search_room: '이 대화방에서 메시지나 도구 실행 내역 검색...',
       btn_close: '닫기',
@@ -739,7 +739,7 @@
     const links = state.drawer.links || [];
     let html = `
       <div class="hub-card" style="background:#ECFDF5;border-color:#A7F3D0;">
-        <h3 style="color:#065F46;">🗄️ 코끼오 무제한 톡서랍 (유효기간 만료 없음)</h3>
+        <h3 style="color:#065F46;">🗄️ 꼬끼오 무제한 톡서랍 (유효기간 만료 없음)</h3>
         <p style="color:#047857;margin:0;">모든 첨부파일은 <code>storage/uploads</code>에 영구 보존됩니다.</p>
       </div>
       <div class="section-group-header"><span>📎 영구 보관 파일 (${files.length})</span></div>

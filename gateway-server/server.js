@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Kokio AI (🤖) 모바일 웹앱 & 중개 서버 (Relay Server) + 실시간 PC 원격 제어 (멀티 PC 무결점 호환 버전)
  * - 어느 PC(메인 PC / 연구실 PC)에서 실행하든 사용자 폴더(os.homedir())와 KokioVault 프로젝트 ID를 자동으로 찾아 연결함
  * - 안티그래비티를 꺼도 독립 프로세스로 항상 살아있으며, 대화 전송 시 안티그래비티를 자동으로 깨움 (Auto-Wakeup)
@@ -847,7 +847,7 @@ function ensureKokioTalkRunning() {
     try {
       const agyNode = path.join(HOME_DIR, '.gemini', 'antigravity', 'bin', 'node.exe');
       const nodeBin = fs.existsSync(agyNode) ? agyNode : 'node';
-      console.log('[🐓 KokioTalk Auto-Start] 코끼오톡 서버(8082)를 자동 기동합니다...');
+      console.log('[🐓 KokioTalk Auto-Start] 꼬끼오톡 서버(8082)를 자동 기동합니다...');
       const child = spawn(nodeBin, ['--experimental-strip-types', '--no-warnings', 'server/src/index.ts'], {
         cwd: KOKIO_DIR,
         detached: true,
@@ -885,7 +885,7 @@ function proxyToKokioTalk(req, res, targetPath) {
     ensureKokioTalkRunning();
     if (!res.headersSent) {
       res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify({ ok: false, error: '코끼오톡(8082) 서버 연결 준비 중입니다: ' + err.message }));
+      res.end(JSON.stringify({ ok: false, error: '꼬끼오톡(8082) 서버 연결 준비 중입니다: ' + err.message }));
     }
   });
   req.pipe(proxyReq);

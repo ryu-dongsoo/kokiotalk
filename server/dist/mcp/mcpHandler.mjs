@@ -64,7 +64,7 @@ export const KOKIO_MCP_TOOLS = [
   },
   {
     name: 'kokio_list_drawer_files',
-    description: '코끼오 무제한 톡서랍(Kokio Drawer)에 보관된 첨부파일 및 링크 목록을 조회합니다.',
+    description: '꼬끼오 무제한 톡서랍(Kokio Drawer)에 보관된 첨부파일 및 링크 목록을 조회합니다.',
     inputSchema: {
       type: 'object',
       properties: {

@@ -1,5 +1,5 @@
 /**
- * 🐓 KokioTalk (코끼오톡) Core Server — 순수 자연어 Kokio AI(KokioAI 🥛) & Peer AI(Ea 🤖) 카카오톡
+ * 🐓 KokioTalk (꼬끼오톡) Core Server — 순수 자연어 Kokio AI(KokioAI 🥛) & Peer AI(Ea 🤖) 카카오톡
  */
 
 import http from 'node:http';
@@ -447,7 +447,7 @@ const server = http.createServer(async (req     , res     ) => {
     // 메시지 전송 API:
     // 1) 사용자의 말풍선만 먼저 저장 및 브로드캐스트 ("AI 에이전트에게 전달했습니다" 같은 가짜 문구 일절 없음)
     // 2) 백그라운드에서 "AI야 ~" / Kokio AI 1:1방이면 지금 이 PC의 안티그래비티(Kokio AI)로 전달하고,
-    //    AI 에이전트의 진짜 답변 글이 나올 때까지 기다렸다가 그 글만 코끼오톡에 띄움!
+    //    AI 에이전트의 진짜 답변 글이 나올 때까지 기다렸다가 그 글만 꼬끼오톡에 띄움!
     if (req.method === 'POST' && pathname === '/api/messages') {
       const body = await readJsonBody(req);
       const roomId = String(body.roomId || 'room-kokio');
@@ -642,7 +642,7 @@ attachWebSocketUpgrade(server);
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`==================================================================`);
-  console.log(`🐓 KokioTalk (코끼오톡) Natural-Language Server Started on ${PORT}`);
+  console.log(`🐓 KokioTalk (꼬끼오톡) Natural-Language Server Started on ${PORT}`);
   console.log(`👉 Local Web UI     : http://localhost:${PORT}`);
   console.log(`👉 Ngrok Public URL : https:///`);
   console.log(`==================================================================`);

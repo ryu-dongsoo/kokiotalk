@@ -295,7 +295,7 @@ function seedInitialData()       {
     VALUES (?, ?, ?, ?)
   `);
 
-  // (1) 나와의 채팅 (코끼오 무제한 메모 & 파일 서랍)
+  // (1) 나와의 채팅 (꼬끼오 무제한 메모 & 파일 서랍)
   insertRoom.run(
     'room-self',
     `${ownerName} (나와의 채팅)`,
