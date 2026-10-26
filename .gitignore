@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 storage/*.db
 storage/*.db-shm
 storage/*.db-wal
@@ -12,6 +12,6 @@ gateway-server/alarms.json
 gateway-server/tunnel_url.txt
 gateway-server/tailscale_url.txt
 gateway-server/ngrok_domain.txt
-gateway-server/cloudflared-ooyoo.exe
+gateway-server/cloudflared.exe
 gateway-server/ngrok*.exe
 *.log

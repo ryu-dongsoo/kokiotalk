@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 DotDay <-> KokioTalk 실시간 캘린더 브릿지 (dotday_calendar.py)
-- PC의 DotDay 바탕화면 달력과 동일한 구글 캘린더(ryudongsoo@gmail.com, 가족 캘린더) 및 대한민국 공휴일(holiday_cache.json)을
+- PC의 DotDay 바탕화면 달력과 동일한 구글 캘린더(primary, 가족 캘린더) 및 대한민국 공휴일(holiday_cache.json)을
   실시간 조회(list), 추가(create), 수정(update), 삭제(delete)합니다.
 """
 
@@ -14,7 +14,7 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-VAULT_ROOT = Path.home() / "OneDrive" / "RyuVault"
+VAULT_ROOT = Path.home()
 KEY_PATH = VAULT_ROOT / "1. Projects" / "Agents" / "my_researcher" / "service_account.json"
 TOKEN_PATH = VAULT_ROOT / "1. Projects" / "GoogleAPI_Integration" / "token.json"
 DOTDAY_DIR = Path.home() / "AppData" / "Local" / "Packages" / "dragonsummer.dotday_z7nzhxe4n3a5m" / "LocalCache" / "Local" / "DotDay"
@@ -24,8 +24,8 @@ KST = timezone(timedelta(hours=9))
 
 CALENDARS = [
     {
-        "id": "ryudongsoo@gmail.com",
-        "name": "구글일정 (유동수 박사님)",
+        "id": "primary",
+        "name": "Google Calendar (Primary)",
         "color": "#FB8C00",
         "writable": True
     },
@@ -193,7 +193,7 @@ def list_events(year: int, month: int) -> dict:
 
 def create_event(payload: dict) -> dict:
     service = get_calendar_service()
-    cal_id = payload.get("calendarId") or "ryudongsoo@gmail.com"
+    cal_id = payload.get("calendarId") or "primary"
     title = (payload.get("title") or "").strip()
     if not title:
         return {"ok": False, "error": "일정 제목을 입력해 주세요."}
@@ -239,7 +239,7 @@ def create_event(payload: dict) -> dict:
 
 def delete_event(payload: dict) -> dict:
     service = get_calendar_service()
-    cal_id = payload.get("calendarId") or "ryudongsoo@gmail.com"
+    cal_id = payload.get("calendarId") or "primary"
     event_id = payload.get("eventId")
     if not event_id:
         return {"ok": False, "error": "삭제할 eventId가 필요합니다."}

@@ -1011,16 +1011,16 @@ function renderLockScreenHtml() {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#1B1F27" />
-  <title>🔒 KokioTalk · Security Lock</title>
+  <meta name="theme-color" content="#0D1117" />
+  <title>KokioTalk · Security Lock</title>
   <link rel="icon" href="/icon-180.png" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       min-height: 100vh;
-      background: radial-gradient(circle at 50% 18%, #283040 0%, #161920 75%);
-      color: #F8FAFC;
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Pretendard", "Segoe UI", sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1028,12 +1028,12 @@ function renderLockScreenHtml() {
     }
     .lock-card {
       width: 100%;
-      max-width: 410px;
-      background: rgba(30, 35, 45, 0.96);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
+      max-width: 400px;
+      background: #161B22;
+      border: 1px solid #30363D;
+      border-radius: 14px;
       padding: 22px 22px 24px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
       text-align: center;
       position: relative;
     }
@@ -1041,99 +1041,88 @@ function renderLockScreenHtml() {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .brand-badges {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(254, 229, 0, 0.12);
-      border: 1px solid rgba(254, 229, 0, 0.35);
-      padding: 6px 13px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 700;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.14);
+      color: #58A6FF;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
     }
     .lang-select {
-      background: #13161C;
-      color: #E2E8F0;
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 8px;
+      background: #0D1117;
+      color: #E6EDF3;
+      border: 1px solid #30363D;
+      border-radius: 6px;
       padding: 5px 8px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
     h1 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #FEE500;
+      font-size: 18px;
+      font-weight: 700;
+      color: #E6EDF3;
       margin-bottom: 6px;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.2px;
     }
     .subtitle {
       font-size: 12.5px;
-      color: #94A3B8;
+      color: #8B949E;
       line-height: 1.45;
       margin-bottom: 16px;
     }
     .mode-selector {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 14px;
-      background: #13161C;
-      padding: 5px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.07);
+      gap: 6px;
+      margin-bottom: 12px;
+      background: #0D1117;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid #21262D;
     }
     .mode-option {
       border: none;
       background: transparent;
-      color: #94A3B8;
-      padding: 10px 8px;
-      border-radius: 10px;
+      color: #8B949E;
+      padding: 9px 8px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
       transition: all 0.15s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
+      gap: 2px;
     }
     .mode-option .mode-sub {
       font-size: 10.5px;
-      font-weight: 500;
+      font-weight: 400;
       opacity: 0.85;
     }
-    .mode-option.active.temp-mode {
-      background: linear-gradient(135deg, #F59E0B, #D97706);
-      color: #111827;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-    }
+    .mode-option.active.temp-mode,
     .mode-option.active.persist-mode {
-      background: linear-gradient(135deg, #38BDF8, #0284C7);
-      color: #0F172A;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+      background: #2563EB;
+      color: #FFFFFF;
     }
     .mode-desc-banner {
       font-size: 11.5px;
       padding: 8px 11px;
-      border-radius: 10px;
+      border-radius: 6px;
       margin-bottom: 14px;
       line-height: 1.4;
-      font-weight: 600;
-    }
-    .mode-desc-banner.temp {
-      background: rgba(245, 158, 11, 0.14);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #FCD34D;
-    }
-    .mode-desc-banner.persist {
-      background: rgba(56, 189, 248, 0.13);
-      border: 1px solid rgba(56, 189, 248, 0.38);
-      color: #7DD3FC;
+      font-weight: 500;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: #93C5FD;
     }
     .pin-dots {
       display: flex;
@@ -1142,18 +1131,17 @@ function renderLockScreenHtml() {
       margin: 10px 0 16px;
     }
     .pin-dot {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
-      border: 2px solid #475569;
+      border: 1.5px solid #30363D;
       background: transparent;
       transition: all 0.12s ease;
     }
     .pin-dot.filled {
-      background: #FEE500;
-      border-color: #FEE500;
-      transform: scale(1.12);
-      box-shadow: 0 0 10px rgba(254, 229, 0, 0.6);
+      background: #3B82F6;
+      border-color: #3B82F6;
+      transform: scale(1.1);
     }
     .pin-dot.error {
       background: #EF4444;
@@ -1163,53 +1151,51 @@ function renderLockScreenHtml() {
       min-height: 18px;
       font-size: 12px;
       color: #F87171;
-      font-weight: 700;
+      font-weight: 600;
       margin-bottom: 10px;
     }
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
       margin-top: 4px;
     }
     .key-btn {
-      height: 54px;
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.09);
-      background: rgba(255, 255, 255, 0.05);
-      color: #F8FAFC;
-      font-size: 21px;
-      font-weight: 700;
+      height: 50px;
+      border-radius: 8px;
+      border: 1px solid #30363D;
+      background: #0D1117;
+      color: #E6EDF3;
+      font-size: 19px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.1s, transform 0.08s;
+      transition: background 0.1s;
       user-select: none;
     }
     .key-btn:active {
-      background: rgba(254, 229, 0, 0.25);
-      border-color: #FEE500;
-      transform: scale(0.96);
+      background: rgba(59, 130, 246, 0.22);
+      border-color: #3B82F6;
     }
     .key-btn.util {
-      font-size: 13px;
-      color: #CBD5E1;
-      background: rgba(255, 255, 255, 0.03);
+      font-size: 12.5px;
+      color: #8B949E;
     }
     .footer-note {
-      margin-top: 16px;
+      margin-top: 14px;
       font-size: 11px;
-      color: #64748B;
+      color: #6E7681;
     }
   </style>
 </head>
 <body>
   <div class="lock-card">
     <div class="top-bar">
-      <div class="brand-badges">🐓 KokioTalk · ${ASSISTANT_AVATAR}</div>
+      <div class="brand-badges">KokioTalk · Security</div>
       <select id="lock-lang-select" class="lang-select" aria-label="Language">
-        <option value="en">🌐 English</option>
-        <option value="ko">🇰🇷 한국어</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="zh">🇨🇳 中文</option>
+        <option value="en">EN · English</option>
+        <option value="ko">KO · 한국어</option>
+        <option value="ja">JA · 日本語</option>
+        <option value="zh">ZH · 中文</option>
       </select>
     </div>
 
@@ -1218,11 +1204,11 @@ function renderLockScreenHtml() {
 
     <div class="mode-selector" role="tablist">
       <button type="button" id="btn-mode-temp" class="mode-option temp-mode">
-        <span id="lbl-temp-title">💻 Temp PC Access</span>
+        <span id="lbl-temp-title">Temp PC Access</span>
         <span id="lbl-temp-sub" class="mode-sub">Auto-wipe when tab closes</span>
       </button>
       <button type="button" id="btn-mode-persist" class="mode-option persist-mode">
-        <span id="lbl-persist-title">📱 My Device</span>
+        <span id="lbl-persist-title">My Device</span>
         <span id="lbl-persist-sub" class="mode-sub">Remember on this device</span>
       </button>
     </div>
@@ -1264,12 +1250,12 @@ function renderLockScreenHtml() {
         en: {
           title: 'Security PIN Lock',
           subtitle: 'External access protection is active.<br/>Please enter your 6-digit security PIN.',
-          tempTitle: '💻 Temp PC Access',
+          tempTitle: 'Temp PC Access',
           tempSub: 'Auto-wipe when tab closes',
-          persistTitle: '📱 My Device',
+          persistTitle: 'My Device',
           persistSub: 'Remember on this device',
-          tempBanner: '🛡️ <strong>Temporary Access Mode:</strong> Blocks browser password-save prompts and automatically wipes your session the moment you close the tab or window.',
-          persistBanner: '📱 <strong>Remember Device Mode:</strong> Securely remembers authentication on your personal phone or PC.',
+          tempBanner: '<strong>Temporary Access Mode:</strong> Automatically wipes your session the moment you close the tab or window.',
+          persistBanner: '<strong>Remember Device Mode:</strong> Securely remembers authentication on your personal phone or PC.',
           clearBtn: 'Clear',
           footer: 'You can also type digits (0–9) directly on your keyboard.',
           verifying: 'Verifying security PIN...',
@@ -1277,14 +1263,14 @@ function renderLockScreenHtml() {
           netErr: 'Network error. Please try again.'
         },
         ko: {
-          title: '사용자님 전용 보안 잠금',
+          title: '보안 PIN 잠금',
           subtitle: '외부 접속 보안이 활성화되어 있습니다.<br/>6자리 보안 암호를 입력해 주세요.',
-          tempTitle: '💻 임시 컴퓨터 접속',
+          tempTitle: '임시 컴퓨터 접속',
           tempSub: '창 닫으면 암호 즉시 소멸',
-          persistTitle: '📱 내 폰 · 내 기기',
+          persistTitle: '내 폰 · 내 기기',
           persistSub: '이 기기에서 암호 기억',
-          tempBanner: '🛡️ <strong>임시 접속 모드:</strong> 브라우저에 암호를 절대 저장하지 않으며, 창이나 탭을 닫는 즉시 인증이 자동 해제됩니다.',
-          persistBanner: '📱 <strong>내 기기 기억 모드:</strong> 스마트폰·전용 PC에서 매번 암호를 묻지 않도록 안전하게 기억합니다.',
+          tempBanner: '<strong>임시 접속 모드:</strong> 브라우저에 암호를 저장하지 않으며, 창이나 탭을 닫는 즉시 인증이 자동 해제됩니다.',
+          persistBanner: '<strong>내 기기 기억 모드:</strong> 스마트폰·전용 PC에서 매번 암호를 묻지 않도록 안전하게 기억합니다.',
           clearBtn: '전체지움',
           footer: '키보드 숫자키(0~9)로 바로 입력하셔도 됩니다.',
           verifying: '보안 인증 확인 중...',
@@ -1294,12 +1280,12 @@ function renderLockScreenHtml() {
         ja: {
           title: 'セキュリティPINロック',
           subtitle: '外部アクセス保護が有効です。<br/>6桁のPINコードを入力してください。',
-          tempTitle: '💻 一時PCアクセス',
+          tempTitle: '一時PCアクセス',
           tempSub: 'タブを閉じると自動消去',
-          persistTitle: '📱 マイデバイス',
+          persistTitle: 'マイデバイス',
           persistSub: 'この端末で記憶する',
-          tempBanner: '🛡️ <strong>一時アクセスモード:</strong> パスワード保存ポップアップを遮断し、ウィンドウを閉じると認証が即座に消去されます。',
-          persistBanner: '📱 <strong>デバイス記憶モード:</strong> 個人のスマートフォンやPCで認証を安全に記憶します。',
+          tempBanner: '<strong>一時アクセスモード:</strong> ウィンドウを閉じると認証が即座に消去されます。',
+          persistBanner: '<strong>デバイス記憶モード:</strong> 個人のスマートフォンやPCで認証を安全に記憶します。',
           clearBtn: 'クリア',
           footer: 'キーボードの数字キー(0〜9)でも直接入力できます。',
           verifying: '認証を確認中...',
@@ -1309,12 +1295,12 @@ function renderLockScreenHtml() {
         zh: {
           title: '安全 PIN 锁定',
           subtitle: '外部访问保护已启用。<br/>请输入6位安全 PIN 码。',
-          tempTitle: '💻 临时电脑访问',
+          tempTitle: '临时电脑访问',
           tempSub: '关闭窗口即刻自动清除',
-          persistTitle: '📱 我的设备',
+          persistTitle: '我的设备',
           persistSub: '在此设备上记住密码',
-          tempBanner: '🛡️ <strong>临时访问模式:</strong> 阻止浏览器保存密码弹窗，关闭标签页或窗口后立即销毁会话。',
-          persistBanner: '📱 <strong>记住设备模式:</strong> 在您的个人手机或专属电脑上安全记住登录状态。',
+          tempBanner: '<strong>临时访问模式:</strong> 关闭标签页或窗口后立即销毁会话。',
+          persistBanner: '<strong>记住设备模式:</strong> 在您的个人手机或专属电脑上安全记住登录状态。',
           clearBtn: '清空',
           footer: '您也可以直接使用键盘数字键(0~9)输入。',
           verifying: '正在验证安全 PIN...',
@@ -1624,168 +1610,168 @@ const server = http.createServer(async (req, res) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📱 KokioTalk · Mobile QR Connection Guide</title>
+  <title>KokioTalk · Mobile QR Connection Guide</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       min-height: 100vh;
-      background: #181B22;
-      color: #F8FAFC;
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Pretendard", "Segoe UI", sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
     .card {
-      max-width: 520px;
+      max-width: 500px;
       width: 100%;
-      background: #222731;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
+      background: #161B22;
+      border: 1px solid #30363D;
+      border-radius: 14px;
       padding: 24px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
       text-align: center;
     }
     .top-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
     .lang-select {
-      background: #15181F;
-      color: #E2E8F0;
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 8px;
+      background: #0D1117;
+      color: #E6EDF3;
+      border: 1px solid #30363D;
+      border-radius: 6px;
       padding: 5px 8px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
     }
-    h1 { color: #FEE500; font-size: 20px; margin-bottom: 8px; }
-    .sub { color: #94A3B8; font-size: 13px; margin-bottom: 18px; line-height: 1.5; }
+    h1 { color: #E6EDF3; font-size: 18px; margin-bottom: 6px; }
+    .sub { color: #8B949E; font-size: 12.5px; margin-bottom: 18px; line-height: 1.5; }
     .qr-box {
       background: #FFFFFF;
-      padding: 14px;
-      border-radius: 18px;
+      padding: 12px;
+      border-radius: 12px;
       display: inline-block;
       margin-bottom: 16px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.35);
     }
-    .qr-box img { width: 220px; height: 220px; display: block; }
+    .qr-box img { width: 200px; height: 200px; display: block; }
     .info-row {
-      background: #15181F;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 10px;
+      background: #0D1117;
+      border: 1px solid #21262D;
+      border-radius: 8px;
+      padding: 11px 13px;
+      margin-bottom: 8px;
       text-align: left;
-      font-size: 13px;
+      font-size: 12.5px;
     }
-    .info-label { color: #94A3B8; font-size: 11.5px; margin-bottom: 4px; }
-    .info-val { color: #38BDF8; font-weight: 700; word-break: break-all; font-size: 14px; }
+    .info-label { color: #8B949E; font-size: 11px; margin-bottom: 3px; }
+    .info-val { color: #58A6FF; font-weight: 600; word-break: break-all; font-size: 13px; }
     .pin-badge {
       display: inline-block;
-      background: rgba(254, 229, 0, 0.16);
-      color: #FEE500;
-      border: 1px solid rgba(254, 229, 0, 0.4);
+      background: rgba(59, 130, 246, 0.14);
+      color: #58A6FF;
+      border: 1px solid rgba(59, 130, 246, 0.35);
       padding: 3px 10px;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 800;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 700;
       letter-spacing: 2px;
     }
-    .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 16px; }
     .btn {
       flex: 1;
-      padding: 12px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 700;
-      font-size: 13.5px;
+      padding: 11px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      font-size: 13px;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
-    .btn-primary { background: #FEE500; color: #191919; }
-    .btn-secondary { background: #334155; color: #F8FAFC; }
+    .btn-primary { background: #2563EB; color: #FFFFFF; }
+    .btn-secondary { background: #21262D; color: #E6EDF3; border-color: #30363D; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top-bar">
       <select id="qr-lang-select" class="lang-select">
-        <option value="en">🌐 English</option>
-        <option value="ko">🇰🇷 한국어</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="zh">🇨🇳 中文</option>
+        <option value="en">EN · English</option>
+        <option value="ko">KO · 한국어</option>
+        <option value="ja">JA · 日本語</option>
+        <option value="zh">ZH · 中文</option>
       </select>
     </div>
-    <h1 id="qr-title">🐓 KokioTalk · ${ASSISTANT_AVATAR} Mobile Connection</h1>
-    <p id="qr-sub" class="sub">Scan this QR code with your smartphone camera to connect from anywhere!</p>
+    <h1 id="qr-title">KokioTalk · Mobile Connection</h1>
+    <p id="qr-sub" class="sub">Scan this QR code with your smartphone camera to connect from anywhere.</p>
     <div class="qr-box">
       <img src="${qrApiUrl}" alt="Mobile Connection QR Code" />
     </div>
     <div class="info-row">
-      <div id="lbl-primary" class="info-label">🌐 Primary External Access URL (Click to copy)</div>
+      <div id="lbl-primary" class="info-label">Primary External Access URL (Click to copy)</div>
       <div class="info-val" style="cursor:pointer;" onclick="navigator.clipboard.writeText('${primaryUrl}');alert('Copied!');">${primaryUrl}</div>
     </div>
     <div class="info-row">
-      <div id="lbl-tunnel" class="info-label">⚡ Live Direct Tunnel URL</div>
-      <div class="info-val" style="color:#A7F3D0;">${liveTunnel}</div>
+      <div id="lbl-tunnel" class="info-label">Live Direct Tunnel URL</div>
+      <div class="info-val" style="color:#34D399;">${liveTunnel}</div>
     </div>
     <div class="info-row" style="display:flex;align-items:center;justify-content:space-between;">
       <div>
-        <div id="lbl-pin" class="info-label">🔒 6-Digit External Security PIN</div>
-        <div id="lbl-pin-sub" style="font-size:12px;color:#CBD5E1;">Choose <b>[📱 My Device]</b> on your phone, or <b>[💻 Temp PC Access]</b> on shared PCs</div>
+        <div id="lbl-pin" class="info-label">6-Digit External Security PIN</div>
+        <div id="lbl-pin-sub" style="font-size:11.5px;color:#8B949E;">Choose <b>[My Device]</b> on your phone, or <b>[Temp PC Access]</b> on shared PCs</div>
       </div>
       <span class="pin-badge">${pinDisplay}</span>
     </div>
     <div class="btn-row">
-      <button id="btn-copy-url" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${primaryUrl}');alert('Copied!');">📋 Copy URL</button>
-      <a id="btn-open-app" href="/" class="btn btn-primary">🐓 Open KokioTalk</a>
+      <button id="btn-copy-url" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${primaryUrl}');alert('Copied!');">Copy URL</button>
+      <a id="btn-open-app" href="/" class="btn btn-primary">Open KokioTalk</a>
     </div>
   </div>
   <script>
     (function() {
       const T = {
         en: {
-          title: '🐓 KokioTalk · ${ASSISTANT_AVATAR} Mobile Connection',
-          sub: 'Scan this QR code with your smartphone camera to connect from anywhere!',
-          primary: '🌐 Primary External Access URL (Click to copy)',
-          tunnel: '⚡ Live Direct Tunnel URL',
-          pin: '🔒 6-Digit External Security PIN',
-          pinSub: 'Choose <b>[📱 My Device]</b> on your phone, or <b>[💻 Temp PC Access]</b> on shared PCs',
-          copy: '📋 Copy URL',
-          open: '🐓 Open KokioTalk'
+          title: 'KokioTalk · Mobile Connection',
+          sub: 'Scan this QR code with your smartphone camera to connect from anywhere.',
+          primary: 'Primary External Access URL (Click to copy)',
+          tunnel: 'Live Direct Tunnel URL',
+          pin: '6-Digit External Security PIN',
+          pinSub: 'Choose <b>[My Device]</b> on your phone, or <b>[Temp PC Access]</b> on shared PCs',
+          copy: 'Copy URL',
+          open: 'Open KokioTalk'
         },
         ko: {
-          title: '🐓 꼬끼오톡 · ${ASSISTANT_AVATAR} ${ASSISTANT_SHORT_NAME} 모바일 연결',
-          sub: '스마트폰 카메라로 아래 QR코드를 비추면 어디서든 바로 접속됩니다!',
-          primary: '🌐 대표 외부 접속 주소 (클릭 시 복사)',
-          tunnel: '⚡ 실시간 직통 터널 주소',
-          pin: '🔒 외부 접속 6자리 보안 PIN 암호',
-          pinSub: '내 폰에서는 <b>[📱 내 폰 · 내 기기]</b>, 남의 PC에서는 <b>[💻 임시 컴퓨터 접속]</b> 선택',
-          copy: '📋 주소 복사하기',
-          open: '🐓 꼬끼오톡 열기'
+          title: '꼬끼오톡 · 모바일 QR 연결',
+          sub: '스마트폰 카메라로 아래 QR코드를 스캔하면 어디서든 바로 접속됩니다.',
+          primary: '대표 외부 접속 주소 (클릭 시 복사)',
+          tunnel: '실시간 직통 터널 주소',
+          pin: '외부 접속 6자리 보안 PIN 암호',
+          pinSub: '내 폰에서는 <b>[내 폰 · 내 기기]</b>, 공용 PC에서는 <b>[임시 컴퓨터 접속]</b> 선택',
+          copy: '주소 복사하기',
+          open: '꼬끼오톡 열기'
         },
         ja: {
-          title: '🐓 KokioTalk · ${ASSISTANT_AVATAR} モバイル接続QR',
-          sub: 'スマートフォンのカメラでQRコードを読み取るとどこからでも接続できます！',
-          primary: '🌐 代表外部アクセスURL (クリックでコピー)',
-          tunnel: '⚡ リアルタイム直通トンネルURL',
-          pin: '🔒 外部アクセス用 6桁セキュリティPIN',
-          pinSub: '自分のスマホでは<b>[📱 マイデバイス]</b>、共有PCでは<b>[💻 一時PCアクセス]</b>を選択',
-          copy: '📋 URLをコピー',
-          open: '🐓 KokioTalkを開く'
+          title: 'KokioTalk · モバイル接続QR',
+          sub: 'スマートフォンのカメラでQRコードを読み取るとどこからでも接続できます。',
+          primary: '代表外部アクセスURL (クリックでコピー)',
+          tunnel: 'リアルタイム直通トンネルURL',
+          pin: '外部アクセス用 6桁セキュリティPIN',
+          pinSub: '自分のスマホでは<b>[マイデバイス]</b>、共有PCでは<b>[一時PCアクセス]</b>を選択',
+          copy: 'URLをコピー',
+          open: 'KokioTalkを開く'
         },
         zh: {
-          title: '🐓 KokioTalk · ${ASSISTANT_AVATAR} 手机扫码连接',
-          sub: '使用手机相机扫描下方二维码，即可随时随地连接！',
-          primary: '🌐 外部访问主地址 (点击复制)',
-          tunnel: '⚡ 实时直连隧道地址',
-          pin: '🔒 外部访问 6位安全 PIN 码',
-          pinSub: '个人手机请选择<b>[📱 我的设备]</b>，公共电脑请选择<b>[💻 临时电脑访问]</b>',
-          copy: '📋 复制地址',
-          open: '🐓 打开 KokioTalk'
+          title: 'KokioTalk · 手机扫码连接',
+          sub: '使用手机相机扫描下方二维码，即可随时随地连接。',
+          primary: '外部访问主地址 (点击复制)',
+          tunnel: '实时直连隧道地址',
+          pin: '外部访问 6位安全 PIN 码',
+          pinSub: '个人手机请选择<b>[我的设备]</b>，公共电脑请选择<b>[临时电脑访问]</b>',
+          copy: '复制地址',
+          open: '打开 KokioTalk'
         }
       };
       const sel = document.getElementById('qr-lang-select');
@@ -1827,7 +1813,7 @@ const server = http.createServer(async (req, res) => {
     const curName = cfg?.owner?.name || 'Alex';
     const curHonorific = cfg?.owner?.honorific || 'Alex';
     const curAgent = cfg?.assistant?.shortName || 'Kokio AI';
-    const curAvatar = cfg?.assistant?.avatar || '🤖';
+    const curAvatar = cfg?.assistant?.avatar || 'AI';
     const curPin = cfg?.security?.accessPin || '123456';
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(`<!DOCTYPE html>
@@ -1835,67 +1821,69 @@ const server = http.createServer(async (req, res) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⚙️ KokioTalk · Setup Wizard</title>
+  <title>KokioTalk · Setup Wizard</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       min-height: 100vh;
-      background: radial-gradient(circle at 50% 15%, #262E3D 0%, #14171F 80%);
-      color: #F8FAFC;
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+      background: #0D1117;
+      color: #E6EDF3;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Pretendard", "Segoe UI", sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
     .card {
-      max-width: 540px;
+      max-width: 520px;
       width: 100%;
-      background: #1E232E;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
-      padding: 26px 28px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+      background: #161B22;
+      border: 1px solid #30363D;
+      border-radius: 14px;
+      padding: 24px 26px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
     }
     .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .badge { background: rgba(254,229,0,0.14); color: #FEE500; border: 1px solid rgba(254,229,0,0.35); padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+    .badge { background: rgba(59, 130, 246, 0.14); color: #58A6FF; border: 1px solid rgba(59, 130, 246, 0.35); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
     select, input {
       width: 100%;
-      background: #131720;
-      color: #F8FAFC;
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      padding: 11px 13px;
-      font-size: 14px;
+      background: #0D1117;
+      color: #E6EDF3;
+      border: 1px solid #30363D;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13.5px;
       margin-top: 5px;
+      outline: none;
     }
-    .lang-sel { width: auto; padding: 6px 10px; font-size: 12.5px; margin-top: 0; }
-    h1 { color: #FEE500; font-size: 21px; margin-bottom: 6px; }
-    .sub { color: #94A3B8; font-size: 13px; margin-bottom: 18px; line-height: 1.45; }
-    .field { margin-bottom: 14px; }
-    label { display: block; font-size: 12.5px; font-weight: 700; color: #CBD5E1; }
+    input:focus, select:focus { border-color: #3B82F6; }
+    .lang-sel { width: auto; padding: 5px 9px; font-size: 12px; margin-top: 0; }
+    h1 { color: #E6EDF3; font-size: 19px; margin-bottom: 6px; font-weight: 700; }
+    .sub { color: #8B949E; font-size: 12.5px; margin-bottom: 18px; line-height: 1.45; }
+    .field { margin-bottom: 13px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #C9D1D9; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-row { display: flex; gap: 8px; margin-top: 18px; }
     .btn {
-      flex: 1; padding: 13px; border-radius: 12px; border: none; font-weight: 800; font-size: 14px; cursor: pointer;
+      flex: 1; padding: 11px; border-radius: 8px; border: 1px solid transparent; font-weight: 600; font-size: 13px; cursor: pointer;
     }
-    .btn-primary { background: #FEE500; color: #191919; }
-    .btn-secondary { background: #334155; color: #F8FAFC; text-decoration: none; text-align: center; }
-    .msg { margin-top: 12px; font-size: 13px; font-weight: 700; color: #34D399; text-align: center; min-height: 18px; }
+    .btn-primary { background: #2563EB; color: #FFFFFF; }
+    .btn-secondary { background: #21262D; color: #E6EDF3; border-color: #30363D; text-decoration: none; text-align: center; }
+    .msg { margin-top: 12px; font-size: 12.5px; font-weight: 600; color: #34D399; text-align: center; min-height: 18px; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="top-bar">
-      <span class="badge">🐓 KokioTalk · Antigravity 2.0+</span>
+      <span class="badge">KokioTalk · Antigravity 2.0</span>
       <select id="wiz-lang" class="lang-sel">
-        <option value="en">🌐 English</option>
-        <option value="ko">🇰🇷 한국어</option>
-        <option value="ja">🇯🇵 日本語</option>
-        <option value="zh">🇨🇳 中文</option>
+        <option value="en">EN · English</option>
+        <option value="ko">KO · 한국어</option>
+        <option value="ja">JA · 日本語</option>
+        <option value="zh">ZH · 中文</option>
       </select>
     </div>
-    <h1 id="t-title">⚙️ Personal AI Agent Setup Wizard</h1>
+    <h1 id="t-title">Personal AI Agent Setup Wizard</h1>
     <p id="t-sub" class="sub">Configure your AI agent profile and 6-digit external security PIN in one click.</p>
     <form id="wiz-form">
       <div class="grid2">
@@ -1914,17 +1902,17 @@ const server = http.createServer(async (req, res) => {
           <input type="text" id="f-agent" value="${curAgent}" required />
         </div>
         <div class="field">
-          <label id="l-avatar">AI Emoji Avatar</label>
-          <input type="text" id="f-avatar" value="${curAvatar}" required />
+          <label id="l-avatar">AI Badge Label</label>
+          <input type="text" id="f-avatar" value="AI" required />
         </div>
       </div>
       <div class="field">
-        <label id="l-pin">🔒 6-Digit External Security PIN (Digits 0-9)</label>
+        <label id="l-pin">6-Digit External Security PIN (Digits 0-9)</label>
         <input type="text" id="f-pin" pattern="\\d{6}" maxlength="6" value="${curPin}" required />
       </div>
       <div class="btn-row">
-        <a href="/" id="b-skip" class="btn btn-secondary">🐓 Open Messenger</a>
-        <button type="submit" id="b-save" class="btn btn-primary">💾 Save & Connect Mobile QR</button>
+        <a href="/" id="b-skip" class="btn btn-secondary">Open Messenger</a>
+        <button type="submit" id="b-save" class="btn btn-primary">Save & Connect Mobile QR</button>
       </div>
       <div id="wiz-msg" class="msg"></div>
     </form>
@@ -1933,40 +1921,40 @@ const server = http.createServer(async (req, res) => {
     (function() {
       const L = {
         en: {
-          title: '⚙️ Personal AI Agent Setup Wizard',
+          title: 'Personal AI Agent Setup Wizard',
           sub: 'Configure your AI agent profile and 6-digit external security PIN in one click.',
           name: 'Your Name', hon: 'Preferred Title / Honorific',
-          agent: 'AI Agent Name', avatar: 'AI Emoji Avatar',
-          pin: '🔒 6-Digit External Security PIN (Digits 0-9)',
-          skip: '🐓 Open Messenger', save: '💾 Save & Connect Mobile QR',
-          saved: '✅ Saved! Redirecting to Mobile QR Connection...'
+          agent: 'AI Agent Name', avatar: 'AI Badge Label',
+          pin: '6-Digit External Security PIN (Digits 0-9)',
+          skip: 'Open Messenger', save: 'Save & Connect Mobile QR',
+          saved: 'Saved! Redirecting to Mobile QR Connection...'
         },
         ko: {
-          title: '⚙️ 나만의 AI 에이전트 초기 설정 마법사',
+          title: 'AI 에이전트 초기 설정 마법사',
           sub: 'AI 에이전트 프로필과 외부 접속 6자리 보안 PIN 암호를 한 번에 설정합니다.',
-          name: '사용자 이름', hon: '선호하는 호칭 (예: 대표님 / 님)',
-          agent: 'AI 에이전트 이름', avatar: 'AI 이모지 아이콘',
-          pin: '🔒 외부 접속 6자리 보안 PIN 암호 (숫자 6자리)',
-          skip: '🐓 메신저 바로 열기', save: '💾 저장 후 모바일 QR 연결하기',
-          saved: '✅ 저장 완료! 모바일 QR 연결 화면으로 이동합니다...'
+          name: '사용자 이름', hon: '선호하는 호칭',
+          agent: 'AI 에이전트 이름', avatar: 'AI 배지 약칭',
+          pin: '외부 접속 6자리 보안 PIN 암호 (숫자 6자리)',
+          skip: '메신저 바로 열기', save: '저장 후 모바일 QR 연결하기',
+          saved: '저장 완료! 모바일 QR 연결 화면으로 이동합니다...'
         },
         ja: {
-          title: '⚙️ パーソナルAIエージェント 初期設定ウィザード',
+          title: 'パーソナルAIエージェント 初期設定',
           sub: 'AIエージェントのプロフィールと外部接続用6桁セキュリティPINを設定します。',
-          name: 'あなたの名前', hon: '敬称 (例: さん)',
-          agent: 'AIエージェント名', avatar: 'AI絵文字アイコン',
-          pin: '🔒 外部アクセス用 6桁セキュリティPIN (数字6桁)',
-          skip: '🐓 メッセンジャーを開く', save: '💾 保存してモバイルQRへ',
-          saved: '✅ 保存しました！モバイルQR画面へ移動します...'
+          name: 'あなたの名前', hon: '敬称',
+          agent: 'AIエージェント名', avatar: 'AIバッジ名',
+          pin: '外部アクセス用 6桁セキュリティPIN (数字6桁)',
+          skip: 'メッセンジャーを開く', save: '保存してモバイルQRへ',
+          saved: '保存しました！モバイルQR画面へ移動します...'
         },
         zh: {
-          title: '⚙️ 个人 AI 代理 初始设置向导',
+          title: '个人 AI 代理 初始设置向导',
           sub: '一键配置您的 AI 代理资料与 6 位外部访问安全 PIN 码。',
           name: '您的姓名', hon: '称呼',
-          agent: 'AI 代理名称', avatar: 'AI 表情图标',
-          pin: '🔒 外部访问 6 位安全 PIN 码 (6位数字)',
-          skip: '🐓 打开聊天窗口', save: '💾 保存并打开手机扫码连接',
-          saved: '✅ 保存成功！正在跳转至手机二维码连接页面...'
+          agent: 'AI 代理名称', avatar: 'AI 徽章简称',
+          pin: '外部访问 6 位安全 PIN 码 (6位数字)',
+          skip: '打开聊天窗口', save: '保存并打开手机扫码连接',
+          saved: '保存成功！正在跳转至手机二维码连接页面...'
         }
       };
       const sel = document.getElementById('wiz-lang');
@@ -1999,7 +1987,7 @@ const server = http.createServer(async (req, res) => {
           ownerName: document.getElementById('f-name').value.trim(),
           honorific: document.getElementById('f-hon').value.trim(),
           agentName: document.getElementById('f-agent').value.trim(),
-          avatar: document.getElementById('f-avatar').value.trim() || '🤖',
+          avatar: document.getElementById('f-avatar').value.trim() || 'AI',
           accessPin: pin
         };
         const res = await fetch('/api/setup', {
@@ -2042,9 +2030,9 @@ const server = http.createServer(async (req, res) => {
         };
         cfg.assistant = {
           id: 'ai-assistant',
-          name: `${d.agentName || 'Kokio AI'} (${d.avatar || '🤖'} AI Agent)`,
+          name: `${d.agentName || 'Kokio AI'}`,
           shortName: d.agentName || 'Kokio AI',
-          avatar: d.avatar || '🤖',
+          avatar: d.avatar || 'AI',
           statusMessage: `${d.honorific || 'User'}'s Personal AI Agent · Antigravity 2.0+`
         };
         cfg.security = {
