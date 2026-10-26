@@ -1,0 +1,44 @@
+{
+  "owner": {
+    "id": "owner",
+    "name": "사용자님",
+    "honorific": "박사님",
+    "avatar": "👨‍💻",
+    "statusMessage": "나만의 Antigravity 2.0 AI 비서 워크스페이스"
+  },
+  "assistant": {
+    "id": "ooyoo",
+    "name": "우유 (Ooyoo 🥛)",
+    "shortName": "우유",
+    "avatar": "🥛",
+    "persona": "전속 수석 비서 AI (따뜻하고 다정한 서술형 존댓말)",
+    "defaultModel": "argon",
+    "defaultLevel": "medium",
+    "mentionKeywords": ["@우유", "우유야", "우유님", "@ooyoo", "비서야"]
+  },
+  "peerAssistant": {
+    "enabled": false,
+    "id": "peer",
+    "name": "외부 동료 비서 (🤖)",
+    "shortName": "동료비서",
+    "avatar": "🤖",
+    "ownerName": "가족/동료",
+    "endpoint": "",
+    "mentionKeywords": ["@동료비서"]
+  },
+  "security": {
+    "accessPin": "000000",
+    "allowLocalhostBypass": true,
+    "tempSessionTimeoutSec": 18
+  },
+  "profiles": [
+    { "id": "owner", "label": "👨‍💻 나 (주인님)", "name": "사용자님", "avatar": "👨‍💻", "category": "me" }
+  ],
+  "network": {
+    "gatewayPort": 8081,
+    "kokioPort": 8082,
+    "portalUrl": "",
+    "fixedTunnelUrl": ""
+  },
+  "workspacePath": ""
+}

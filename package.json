@@ -1,0 +1,16 @@
+{
+  "name": "kokiotalk",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "KokioTalk (코끼오톡) - 카카오톡 동일 UX 기반 개방형 API · AI 네이티브(우유/에아) · PC 협업 오픈소스 메신저",
+  "author": "Dongsoo Ryu <ryudongsoo@jbnu.ac.kr>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings server/src/index.ts",
+    "dev": "node --experimental-strip-types --no-warnings --watch server/src/index.ts",
+    "mcp": "node --experimental-strip-types --no-warnings server/src/mcp/stdio.ts"
+  },
+  "engines": {
+    "node": ">=22.6.0"
+  }
+}

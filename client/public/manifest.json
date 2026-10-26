@@ -1,0 +1,38 @@
+{
+  "id": "/kokio/",
+  "name": "꼬끼오톡 (KokioTalk)",
+  "short_name": "꼬끼오톡",
+  "description": "우유(Ooyoo) & 에아(Ea) 실시간 연동 카카오톡",
+  "start_url": "/kokio/?source=pwa",
+  "scope": "/kokio/",
+  "display": "standalone",
+  "background_color": "#282C37",
+  "theme_color": "#282C37",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

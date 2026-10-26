@@ -1,0 +1,2889 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="우유" />
+  <meta name="application-name" content="우유" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#14100d" />
+  <link rel="manifest" href="/manifest.json?v=4" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png?v=4" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png?v=4" />
+  <link rel="shortcut icon" href="/icon-192.png?v=4" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png?v=4" />
+  <link rel="apple-touch-icon-precomposed" href="/icon-180.png?v=4" />
+  <title>우유 (Ooyoo)</title>
+  <style>
+    :root {
+      --bg: #14100d;
+      --panel: #1f1914;
+      --panel-border: #3a2e23;
+      --primary: #f59e0b;
+      --primary-glow: rgba(245, 158, 11, 0.35);
+      --accent: #ea580c;
+      --text: #fefcf9;
+      --text-sub: #c2b29f;
+      --user-msg: linear-gradient(135deg, #d97706, #ea580c);
+      --ooyoo-msg: #241d17;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* =====================================================
+       📂 제미나이 스타일 좌측 대화 목록 사이드바 (Drawer)
+       ===================================================== */
+    #drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      display: none;
+    }
+    #drawer-backdrop.open { display: block; }
+
+    #sidebar-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      max-width: 82vw;
+      background: #1a1410;
+      border-right: 1px solid var(--panel-border);
+      z-index: 201;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    #sidebar-drawer.open { transform: translateX(0); }
+
+    .drawer-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fef3c7;
+    }
+
+    .new-chat-btn {
+      margin: 12px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid #d97706;
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.28), rgba(234, 88, 12, 0.25));
+      color: #fffbeb;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .new-chat-btn:active { transform: scale(0.98); }
+
+    .conv-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 10px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .conv-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      border: 1px solid transparent;
+    }
+    .conv-item:hover, .conv-item:active { background: #292018; }
+    .conv-item.active {
+      background: #33261b;
+      border-color: #f59e0b;
+    }
+
+    .conv-title {
+      font-size: 13px;
+      color: #fef3c7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+    .conv-date {
+      font-size: 10.5px;
+      color: var(--text-sub);
+    }
+
+    /* =====================================================
+       상단 헤더
+       ===================================================== */
+    header {
+      background: rgba(31, 25, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 9px 12px;
+      z-index: 10;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 6px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .menu-btn {
+      background: #2b221a;
+      border: 1px solid #4a3a2c;
+      color: var(--text);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .avatar-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 0 12px var(--primary-glow);
+      border: 1.5px solid rgba(251, 191, 36, 0.55);
+    }
+
+    .brand-info { min-width: 0; }
+    .brand-info h1 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #fef3c7;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .brand-info p {
+      font-size: 10.5px;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: #2b221a;
+      border: 1px solid #4a3a2c;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 6px 9px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn.remote-trigger {
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      border-color: #5eead4;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(20, 184, 166, 0.35);
+    }
+
+    /* 🧠 모델 선택(아르곤 / 프로 / 플래시 / 라이트) & ⚡ 성능(Low / Medium / High) 컨트롤 바 */
+    .model-perf-bar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .model-select-wrap {
+      position: relative;
+      flex: 1.15;
+    }
+
+    .model-select {
+      width: 100%;
+      background: #120e0b;
+      color: #fef3c7;
+      border: 1px solid #4a3a2c;
+      border-radius: 10px;
+      padding: 7px 24px 7px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      appearance: none;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .model-select-wrap::after {
+      content: "▾";
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fbbf24;
+      pointer-events: none;
+      font-size: 11px;
+    }
+
+    .perf-selector {
+      flex: 1.4;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #120e0b;
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 2px;
+      gap: 3px;
+    }
+
+    .perf-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      padding: 5px 2px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .perf-btn.active {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      color: #14100d;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    /* 빠른 명령 바 */
+    .quick-bar {
+      display: flex;
+      gap: 7px;
+      padding: 6px 12px;
+      overflow-x: auto;
+      background: rgba(26, 20, 16, 0.8);
+      border-bottom: 1px solid var(--panel-border);
+      scrollbar-width: none;
+    }
+    .quick-bar::-webkit-scrollbar { display: none; }
+
+    .chip {
+      white-space: nowrap;
+      background: #281f18;
+      border: 1px solid #473628;
+      color: #fde68a;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* 채팅 영역 */
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+      user-select: text;
+    }
+
+    .welcome-card {
+      background: linear-gradient(145deg, #211a14, #2c2219);
+      border: 1px solid #4d3b2b;
+      border-radius: 18px;
+      padding: 20px 16px;
+      text-align: center;
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .welcome-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      object-fit: cover;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+      border: 2px solid rgba(251, 191, 36, 0.65);
+    }
+
+    .welcome-card h2 { font-size: 16px; color: #fef3c7; }
+    .welcome-card p { font-size: 12.5px; color: var(--text-sub); line-height: 1.5; }
+
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 88%;
+    }
+    .msg-row.user { align-self: flex-end; align-items: flex-end; }
+    .msg-row.ooyoo, .msg-row.ea { align-self: flex-start; align-items: flex-start; }
+
+    .msg-sender {
+      font-size: 10.5px;
+      color: var(--text-sub);
+      margin-bottom: 3px;
+      padding: 0 4px;
+    }
+
+    .bubble {
+      padding: 11px 14px;
+      border-radius: 15px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      word-break: break-word;
+      white-space: pre-wrap;
+      user-select: text;
+    }
+
+    .msg-row.user .bubble {
+      background: var(--user-msg);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-row.ooyoo .bubble, .msg-row.ea .bubble {
+      background: var(--ooyoo-msg);
+      border: 1px solid var(--panel-border);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .meta-box {
+      margin-bottom: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .tool-badge {
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fcd34d;
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 8px;
+    }
+
+    details.thinking-box {
+      background: rgba(26, 20, 16, 0.85);
+      border: 1px solid #3a2e23;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 11px;
+      color: #c2b29f;
+    }
+
+    details.thinking-box summary { cursor: pointer; font-weight: 600; color: #fde68a; }
+    details.thinking-box p { margin-top: 5px; white-space: pre-wrap; line-height: 1.4; }
+
+    #thinking-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #241d17;
+      border: 1px solid var(--panel-border);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #fcd34d;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spinner {
+      width: 13px;
+      height: 13px;
+      border: 2px solid #f59e0b;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      background: var(--panel);
+      border-top: 1px solid var(--panel-border);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .input-wrap {
+      flex: 1;
+      background: #120e0b;
+      border: 1px solid #4a3a2c;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      padding: 3px 10px;
+    }
+
+    textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 14px;
+      padding: 7px 4px;
+      max-height: 100px;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .mic-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 18px;
+      padding: 5px;
+      cursor: pointer;
+    }
+    .mic-btn.listening { color: var(--danger); }
+
+    .send-btn {
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #14100d; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      box-shadow: 0 2px 10px var(--primary-glow);
+    }
+
+    /* =====================================================
+       🤖 우유(Ooyoo) ↔ 에아(Ea) 양방향 브릿지 UI
+       ===================================================== */
+    .icon-btn.peer-trigger {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(245, 158, 11, 0.22));
+      border-color: rgba(129, 140, 248, 0.5);
+      color: #e0e7ff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .peer-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #94a3b8;
+      display: inline-block;
+    }
+
+    .peer-dot.linked {
+      background: #818cf8;
+      box-shadow: 0 0 8px #818cf8;
+    }
+
+    #peer-mode-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.2));
+      border-bottom: 1px solid rgba(129, 140, 248, 0.4);
+      font-size: 12px;
+      color: #e0e7ff;
+      flex-shrink: 0;
+    }
+
+    #peer-mode-banner.active {
+      display: flex;
+    }
+
+    .peer-switch-back-btn {
+      background: rgba(20, 16, 13, 0.8);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde68a;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #peer-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 6, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    #peer-modal.open {
+      display: flex;
+    }
+
+    .peer-card {
+      width: 100%;
+      max-width: 400px;
+      background: #1c1612;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .peer-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .peer-card-header h3 {
+      font-size: 16px;
+      color: #fef3c7;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .peer-field-label {
+      font-size: 11.5px;
+      color: #d6d3d1;
+      margin-bottom: 4px;
+      display: block;
+      font-weight: 600;
+    }
+
+    .peer-input {
+      width: 100%;
+      background: #100c09;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #fef3c7;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .peer-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .peer-action-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .peer-action-btn.primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+    }
+
+    .peer-action-btn.secondary {
+      background: #29201a;
+      color: #fef3c7;
+      border: 1px solid var(--border);
+    }
+
+    .peer-tip-box {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #e7e5e4;
+      line-height: 1.5;
+    }
+
+    /* =====================================================
+       🖥️ PC 원격제어 오버레이
+       ===================================================== */
+    #remote-overlay {
+      position: fixed;
+      inset: 0;
+      background: #0a0806;
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+    }
+    #remote-overlay.open { display: flex; }
+
+    .remote-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 8px;
+      background: #1a1410;
+      border-bottom: 1px solid #3a2e23;
+      flex-shrink: 0;
+    }
+
+    .remote-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fef3c7;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .remote-top-actions { display: flex; gap: 5px; align-items: center; }
+
+    .kbd-refocus-btn {
+      background: #d97706; color: #fff; border: none; border-radius: 6px;
+      padding: 4px 8px; font-size: 11px; font-weight: 600;
+    }
+
+    .remote-exit-btn {
+      background: var(--danger); color: #fff; border: none; border-radius: 6px;
+      padding: 4px 9px; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+
+    .remote-screen-wrap {
+      flex: 1;
+      min-height: 110px;
+      position: relative;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    #remote-screen-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .touch-ripple {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: rippleOut 0.4s ease-out forwards;
+    }
+    .touch-ripple.left { border: 2px solid #fbbf24; background: rgba(251, 191, 36, 0.25); }
+    .touch-ripple.right { border: 2px solid #f43f5e; background: rgba(244, 63, 94, 0.3); }
+
+    @keyframes rippleOut {
+      from { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+      to { transform: translate(-50%, -50%) scale(1.6); opacity: 0; }
+    }
+
+    .mouse-deck {
+      height: 86px;
+      background: #17120e;
+      border-top: 1px solid #3a2e23;
+      display: flex;
+      align-items: stretch;
+      padding: 4px 6px;
+      gap: 6px;
+      flex-shrink: 0;
+      touch-action: none;
+    }
+
+    .joystick-zone {
+      width: 78px;
+      background: #221b15;
+      border: 1px solid #4a3a2c;
+      border-radius: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      touch-action: none;
+    }
+
+    .joystick-base {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 1.5px dashed #78624c;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .joystick-stick {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fcd34d, #d97706);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+      position: absolute;
+      transform: translate(0px, 0px);
+      pointer-events: none;
+    }
+
+    .trackpad-zone {
+      flex: 1;
+      background: linear-gradient(180deg, #241c16, #1a1410);
+      border: 1px solid #4a3a2c;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      touch-action: none;
+    }
+
+    .trackpad-zone span {
+      font-size: 11px;
+      color: #a89481;
+      pointer-events: none;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .mouse-btns {
+      width: 68px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .mbtn {
+      flex: 1;
+      background: #2b221a;
+      border: 1px solid #4a3a2c;
+      color: #fef3c7;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mbtn:active { background: #d97706; color: #fff; }
+
+    .termux-bar {
+      background: #17120e;
+      border-top: 1px solid #3a2e23;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px 4px;
+      flex-shrink: 0;
+      touch-action: none;
+    }
+
+    .termux-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+
+    .tkey {
+      background: #261e17;
+      border: 1px solid #4a3a2c;
+      color: #fef3c7;
+      border-radius: 5px;
+      padding: 6px 0;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+    }
+    .tkey:active { background: #d97706; color: #fff; }
+    .tkey.active-mod {
+      background: #d97706;
+      border-color: #fbbf24;
+      color: #fff;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    }
+
+    #kbd-trap {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0.01;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: transparent;
+      caret-color: transparent;
+      z-index: -1;
+    }
+
+    /* =====================================================
+       ⏰ 1번: 스마트 예약 알림 · 일정 타이머 모달 & 실시간 알림창
+       ===================================================== */
+    .icon-btn.alarm-trigger {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(234, 88, 12, 0.25));
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #fef3c7;
+      position: relative;
+    }
+
+    .alarm-badge {
+      background: #f59e0b;
+      color: #14100d;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 999px;
+      margin-left: 2px;
+    }
+
+    #alarm-modal, #alarm-ring-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 6, 0.82);
+      backdrop-filter: blur(8px);
+      z-index: 2600;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #alarm-modal.open, #alarm-ring-modal.open { display: flex; }
+
+    .alarm-card {
+      width: 100%;
+      max-width: 410px;
+      max-height: 85dvh;
+      background: #1c1612;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      overflow-y: auto;
+    }
+
+    .alarm-quick-row {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .alarm-preset-btn {
+      background: #2b221a;
+      border: 1px solid #4a3a2c;
+      color: #fde68a;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .alarm-preset-btn:active { background: #d97706; color: #fff; }
+
+    .alarm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 210px;
+      overflow-y: auto;
+    }
+
+    .alarm-item {
+      background: #120e0b;
+      border: 1px solid #3a2e23;
+      border-radius: 10px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .alarm-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .alarm-item-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef3c7;
+    }
+
+    .alarm-item-time {
+      font-size: 11px;
+      color: #fbbf24;
+    }
+
+    .alarm-del-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .ring-card {
+      width: 100%;
+      max-width: 370px;
+      background: linear-gradient(145deg, #2b1d12, #451a03);
+      border: 2px solid #fbbf24;
+      border-radius: 22px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 0 40px rgba(251, 191, 36, 0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: ringPulse 1s ease-in-out infinite alternate;
+    }
+
+    @keyframes ringPulse {
+      from { transform: scale(0.99); box-shadow: 0 0 25px rgba(251, 191, 36, 0.35); }
+      to { transform: scale(1.02); box-shadow: 0 0 45px rgba(251, 191, 36, 0.7); }
+    }
+
+    .ring-icon { font-size: 44px; }
+    .ring-title { font-size: 18px; font-weight: 800; color: #fef08a; }
+    .ring-desc { font-size: 15px; font-weight: 700; color: #fff; background: rgba(0,0,0,0.35); padding: 10px 14px; border-radius: 12px; width: 100%; }
+    .ring-time { font-size: 12px; color: #fde68a; }
+
+    /* =====================================================
+       📎 8번: 휴대폰 사진·파일 즉시 업로드 미리보기 & 채팅 첨부 카드
+       ===================================================== */
+    #attachment-preview-bar {
+      display: none;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #1a1410;
+      border-top: 1px solid var(--panel-border);
+      overflow-x: auto;
+      align-items: center;
+    }
+    #attachment-preview-bar.active { display: flex; }
+
+    .att-preview-item {
+      position: relative;
+      background: #281f18;
+      border: 1px solid #57412f;
+      border-radius: 10px;
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+      max-width: 210px;
+    }
+
+    .att-preview-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #120e0b;
+      flex-shrink: 0;
+    }
+
+    .att-preview-name {
+      font-size: 11.5px;
+      color: #fef3c7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .att-remove-btn {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .attach-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 18px;
+      padding: 6px 5px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .attach-btn:active { color: #fbbf24; transform: scale(0.92); }
+
+    .chat-attachments {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .chat-attached-img {
+      max-width: 220px;
+      max-height: 220px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      object-fit: cover;
+      cursor: pointer;
+      display: block;
+    }
+
+    .chat-attached-file {
+      background: rgba(20, 16, 13, 0.7);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 9px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: #fef3c7;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    /* =====================================================
+       📋 9번: 마크다운(표·하이라이트) & 코드 블록/답변 원터치 복사
+       ===================================================== */
+    .msg-row.ooyoo .bubble, .msg-row.ea .bubble {
+      white-space: normal;
+      position: relative;
+    }
+
+    .bubble-header-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 3px;
+      width: 100%;
+    }
+
+    .copy-reply-btn {
+      background: rgba(43, 34, 26, 0.9);
+      border: 1px solid #4a3a2c;
+      color: #d6c5b3;
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-size: 10.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .copy-reply-btn:active, .copy-reply-btn.copied {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #6ee7b7;
+    }
+
+    .md-content p { margin: 0 0 8px 0; line-height: 1.58; }
+    .md-content p:last-child { margin-bottom: 0; }
+    .md-content h1, .md-content h2, .md-content h3, .md-content h4 {
+      color: #fef3c7;
+      margin: 10px 0 6px 0;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+    .md-content h1 { font-size: 16px; border-bottom: 1px solid #4a3a2c; padding-bottom: 4px; }
+    .md-content h2 { font-size: 15px; color: #fde68a; }
+    .md-content h3 { font-size: 14px; color: #fcd34d; }
+    .md-content ul, .md-content ol {
+      margin: 4px 0 8px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .md-content li { line-height: 1.5; }
+    .md-content strong { color: #fef08a; font-weight: 700; }
+    .md-content em { color: #e7e5e4; }
+    .md-content hr {
+      border: none;
+      border-top: 1px solid #4a3a2c;
+      margin: 10px 0;
+    }
+    .md-content blockquote {
+      border-left: 3px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 6px 10px;
+      border-radius: 0 8px 8px 0;
+      margin: 6px 0;
+      color: #fde68a;
+      font-size: 12.5px;
+    }
+    .md-content a {
+      color: #fbbf24;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .inline-code {
+      background: #120e0b;
+      border: 1px solid #4a3a2c;
+      color: #fbbf24;
+      padding: 1px 5px;
+      border-radius: 5px;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 12px;
+    }
+
+    .code-block-card {
+      background: #100c09;
+      border: 1px solid #4a3a2c;
+      border-radius: 10px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      background: #1c1510;
+      border-bottom: 1px solid #3a2e23;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #c2b29f;
+    }
+
+    .code-lang-badge {
+      font-weight: 700;
+      color: #fbbf24;
+      text-transform: uppercase;
+      font-size: 10.5px;
+    }
+
+    .copy-code-btn {
+      background: #2b221a;
+      border: 1px solid #4a3a2c;
+      color: #fef3c7;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .copy-code-btn.copied {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #10b981;
+      color: #6ee7b7;
+    }
+
+    .code-block-pre {
+      margin: 0;
+      padding: 10px 12px;
+      overflow-x: auto;
+      font-family: "Consolas", "Monaco", "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.48;
+      color: #fefcf9;
+      white-space: pre;
+    }
+
+    .md-table-wrap {
+      overflow-x: auto;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #4a3a2c;
+    }
+
+    .md-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #17120e;
+    }
+
+    .md-table th, .md-table td {
+      border: 1px solid #3a2e23;
+      padding: 6px 9px;
+      text-align: left;
+    }
+
+    .md-table th {
+      background: #281f18;
+      color: #fde68a;
+      font-weight: 700;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- 좌측 대화 목록 사이드바 -->
+  <div id="drawer-backdrop" onclick="toggleDrawer(false)"></div>
+  <aside id="sidebar-drawer">
+    <div class="drawer-header">
+      <h2>🥛 우유 대화 기록</h2>
+      <button class="icon-btn" onclick="toggleDrawer(false)">✖</button>
+    </div>
+    <button class="new-chat-btn" onclick="startNewChat()">
+      <span>➕</span> 새 대화 시작하기
+    </button>
+    <div class="conv-list" id="conv-list"></div>
+  </aside>
+
+  <!-- 상단 헤더 -->
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <button class="menu-btn" onclick="toggleDrawer(true)" title="대화 목록 열기">☰</button>
+        <img src="/icon-192.png?v=4" class="avatar-img" alt="우유 (Ooyoo)" />
+        <div class="brand-info">
+          <h1>우유 (Ooyoo 🥛) <span class="status-dot"></span></h1>
+          <p id="conn-info">유동수 박사님 전속 수석 비서</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn alarm-trigger" id="alarm-header-btn" onclick="openAlarmModal()">
+          ⏰ 알림 <span class="alarm-badge" id="alarm-count-badge" style="display:none;">0</span>
+        </button>
+        <button class="icon-btn peer-trigger" id="peer-header-btn" onclick="openPeerModal()">
+          <span class="peer-dot linked" id="peer-dot"></span>🤖 에아
+        </button>
+        <button class="icon-btn remote-trigger" onclick="openRemoteControl()">🖥️ 원격</button>
+        <button class="icon-btn" onclick="startNewChat()">➕</button>
+      </div>
+    </div>
+
+    <!-- 🧠 모델 선택(아르곤 / 프로 / 플래시 / 라이트) + ⚡ 성능(Low / Medium / High) 바 -->
+    <div class="model-perf-bar">
+      <div class="model-select-wrap">
+        <select id="model-select" class="model-select" onchange="setModel(this.value)">
+          <option value="argon">✨ Gemini 4 Argon (아르곤)</option>
+          <option value="pro">🧠 Gemini Pro (프로)</option>
+          <option value="flash">⚡ Gemini Flash (플래시)</option>
+          <option value="flash_lite">🪶 Flash Lite (라이트)</option>
+        </select>
+      </div>
+      <div class="perf-selector">
+        <button class="perf-btn" data-level="low" onclick="setPerformance('low')">⚡ Low</button>
+        <button class="perf-btn active" data-level="medium" onclick="setPerformance('medium')">🚀 Med</button>
+        <button class="perf-btn" data-level="high" onclick="setPerformance('high')">🧠 High</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 빠른 명령 칩 -->
+  <div class="quick-bar">
+    <button class="chip" style="background:#FEE500;color:#191919;border-color:#F59E0B;font-weight:800;" onclick="location.href='/kokio/'">🐓 꼬끼오톡(KokioTalk) 열기</button>
+    <button class="chip" onclick="openAlarmModal()">⏰ 일정 알림 맞추기</button>
+    <button class="chip" onclick="triggerFilePicker()">📎 사진·파일 보내기</button>
+    <button class="chip" onclick="prefillEaCall()">🤖 "에아야" 부르기</button>
+    <button class="chip" onclick="openRemoteControl()">🕹️ 실시간 PC 원격제어 열기</button>
+    <button class="chip" onclick="toggleDrawer(true)">📂 이전 대화 기록</button>
+    <button class="chip" onclick="sendQuick('우유야, 오늘과 이번 주 강의·연구·개인 일정을 4대 카테고리로 정리해서 다정하게 브리핑해줘!')">📅 일정 브리핑</button>
+  </div>
+
+  <!-- 🤖 에아(Ea) 직접 대화 모드 배너 -->
+  <div id="peer-mode-banner">
+    <span>🤖 현재 <b>에아(도준님 AI 비서)</b>와 실시간 연동 대화 중입니다</span>
+    <button class="peer-switch-back-btn" onclick="switchAgentMode('ooyoo')">🥛 우유(Ooyoo)로 복귀</button>
+  </div>
+
+  <!-- 대화 내역 -->
+  <main id="chat-container">
+    <div class="welcome-card" id="welcome-card">
+      <img src="/icon-192.png?v=4" class="welcome-logo" alt="우유 (Ooyoo)" />
+      <h2>반가워요, 박사님! 전속 비서 우유(Ooyoo)예요 🥛🐱</h2>
+      <p>
+        ⏰ <b>"3시에 교수회의 알려줘"</b>처럼 말씀하시면 자동으로 알림이 울려요!<br/>
+        📎 아래 클립 버튼으로 <b>사진·문서 파일</b>을 바로 보내실 수 있고, 📋 <b>코드/답변 원터치 복사</b>도 지원합니다!
+      </p>
+    </div>
+  </main>
+
+  <div id="thinking-indicator" style="margin: 0 14px 8px;">
+    <div class="spinner"></div>
+    <span id="thinking-text">우유가 박사님의 작업을 수행하고 있어요... 🥛</span>
+  </div>
+
+  <!-- 📎 첨부파일(사진/문서) 미리보기 바 -->
+  <div id="attachment-preview-bar"></div>
+  <input type="file" id="file-input" multiple accept="image/*,.pdf,.txt,.md,.py,.js,.html,.css,.json,.csv,.zip,.docx,.xlsx,.hwp" style="display:none;" onchange="handleFileSelect(event)" />
+
+  <!-- 입력 바 -->
+  <footer>
+    <div class="input-wrap">
+      <button class="attach-btn" onclick="triggerFilePicker()" title="사진 촬영 또는 파일 첨부">📎</button>
+      <textarea id="msg-input" rows="1" placeholder="우유에게 작업·일정 알림을 말씀하시거나 📎파일을 보내보세요..." oninput="autoResize(this)"></textarea>
+      <button class="mic-btn" id="mic-btn" onclick="toggleSpeech()" title="음성 입력">🎤</button>
+    </div>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+  </footer>
+
+  <!-- ⏰ 1번: 스마트 일정 알림 · 타이머 관리 모달 -->
+  <div id="alarm-modal" onclick="if(event.target===this)closeAlarmModal()">
+    <div class="alarm-card">
+      <div class="peer-card-header">
+        <h3>⏰ 우유 스마트 일정 알림 · 타이머</h3>
+        <button class="icon-btn" onclick="closeAlarmModal()">✖</button>
+      </div>
+
+      <div class="peer-tip-box" style="border-color: rgba(251, 191, 36, 0.35); background: rgba(245, 158, 11, 0.12);">
+        💡 채팅창에 <b>"3시에 교수회의 알려줘"</b> 또는 <b>"15분 뒤에 실험 체크 알려줘"</b>라고 말씀하셔도 자동으로 예약됩니다!
+      </div>
+
+      <div>
+        <label class="peer-field-label">📌 알림 내용 (일정 메모)</label>
+        <input type="text" id="alarm-title-input" class="peer-input" placeholder="예: 대학원 세미나 / 교수회의 / 강의 출발" />
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center;">
+        <div style="flex:1;">
+          <label class="peer-field-label">🕒 시각 지정</label>
+          <input type="time" id="alarm-time-input" class="peer-input" />
+        </div>
+        <label style="display:flex; align-items:center; gap:5px; font-size:12px; color:#fde68a; margin-top:18px; cursor:pointer;">
+          <input type="checkbox" id="alarm-repeat-chk" /> 매일 반복
+        </label>
+      </div>
+
+      <div>
+        <label class="peer-field-label">⚡ 빠른 타이머로 즉시 추가</label>
+        <div class="alarm-quick-row">
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delaySeconds: 10 })">🔔 +10초 (테스트)</button>
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delayMinutes: 1 })">+1분</button>
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delayMinutes: 5 })">+5분</button>
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delayMinutes: 10 })">+10분</button>
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delayMinutes: 30 })">+30분</button>
+          <button class="alarm-preset-btn" onclick="addQuickAlarm({ delayMinutes: 60 })">+1시간</button>
+        </div>
+      </div>
+
+      <div class="peer-btn-row">
+        <button class="peer-action-btn primary" style="background: linear-gradient(135deg, #d97706, #ea580c);" onclick="addTimeAlarm()">⏰ 지정 시각으로 알림 등록</button>
+      </div>
+
+      <div>
+        <label class="peer-field-label">📋 예약된 알림 목록</label>
+        <div class="alarm-list" id="alarm-list-box">
+          <div style="font-size:12px; color:#a89481; text-align:center; padding:12px;">예약된 알림이 없습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔔 알림이 울릴 때 화면 중앙에 뜨는 팝업 모달 -->
+  <div id="alarm-ring-modal">
+    <div class="ring-card">
+      <div class="ring-icon">⏰🥛</div>
+      <div class="ring-title">박사님! 예약하신 알림 시간이에요!</div>
+      <div class="ring-desc" id="ring-alarm-title">일정 알림</div>
+      <div class="ring-time" id="ring-alarm-time">오늘 오후 3:00</div>
+      <div class="peer-btn-row" style="width:100%; margin-top:6px;">
+        <button class="peer-action-btn secondary" onclick="dismissRingingAlarm(5)">💤 5분 뒤 다시 알림</button>
+        <button class="peer-action-btn primary" style="background: linear-gradient(135deg, #10b981, #059669);" onclick="dismissRingingAlarm(0)">✅ 확인 (알림 끄기)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🤖 우유(Ooyoo) ↔ 에아(Ea) 연동 설정 및 모드 전환 모달 -->
+  <div id="peer-modal" onclick="if(event.target===this)closePeerModal()">
+    <div class="peer-card">
+      <div class="peer-card-header">
+        <h3>🤖 우유(Ooyoo) ↔ 에아(Ea) 연동</h3>
+        <button class="icon-btn" onclick="closePeerModal()">✖</button>
+      </div>
+
+      <div class="peer-tip-box">
+        💡 <b>연동 사용법 2가지</b><br/>
+        1️⃣ 평소처럼 채팅창에 <b>"에아야 도준이한테 저녁 먹으라고 전해줘"</b>처럼 부르시면 우유가 에아에게 전달하고 답변을 받아옵니다!<br/>
+        2️⃣ 아래 <b>[🤖 에아와 직접 대화]</b> 버튼을 누르면 에아 채팅방으로 바로 전환됩니다.
+      </div>
+
+      <div>
+        <label class="peer-field-label">🔗 에아 (도준님 AI 비서) 서버 주소 (ngrok URL)</label>
+        <input type="text" id="peer-url-input" class="peer-input" value="" />
+      </div>
+
+      <div id="peer-status-msg" style="font-size: 12px; color: #818cf8; min-height: 16px;"></div>
+
+      <div class="peer-btn-row">
+        <button class="peer-action-btn secondary" onclick="savePeerConfig()">💾 주소 저장/연결</button>
+        <button class="peer-action-btn primary" onclick="switchAgentMode('peer')">🤖 에아와 직접 대화</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🖥️ 실시간 PC 원격제어 모드 -->
+  <div id="remote-overlay">
+    <div class="remote-topbar">
+      <div class="remote-title">
+        <span>🖥️ 박사님 PC 실시간 원격제어 (우유 🥛)</span>
+      </div>
+      <div class="remote-top-actions">
+        <button class="kbd-refocus-btn" onclick="focusKeyboardTrap()">⌨️ 키보드</button>
+        <button class="remote-exit-btn" onclick="closeRemoteControl()">✖ 종료</button>
+      </div>
+    </div>
+
+    <div class="remote-screen-wrap" id="remote-touch-area">
+      <img id="remote-screen-img" alt="PC 화면 로딩 중..." />
+    </div>
+
+    <div class="mouse-deck" id="mouse-deck">
+      <div class="joystick-zone" id="joystick-zone">
+        <div class="joystick-base">
+          <div class="joystick-stick" id="joystick-stick"></div>
+        </div>
+      </div>
+
+      <div class="trackpad-zone" id="trackpad-zone">
+        <span>🖱️ <b>마우스 패드</b> (문질러서 이동)<br/>짧은터치: 좌클릭 · 긴터치: 우클릭</span>
+      </div>
+
+      <div class="mouse-btns">
+        <div class="mbtn" id="btn-left-click">좌클릭</div>
+        <div class="mbtn" id="btn-right-click">우클릭</div>
+      </div>
+    </div>
+
+    <div class="termux-bar" id="termux-bar">
+      <div class="termux-row">
+        <div class="tkey" data-special="ESC">ESC</div>
+        <div class="tkey" data-special="TAB">TAB</div>
+        <div class="tkey" id="mod-ctrl" data-mod="ctrl">CTRL</div>
+        <div class="tkey" id="mod-alt" data-mod="alt">ALT</div>
+        <div class="tkey" id="mod-shift" data-mod="shift">SHIFT</div>
+        <div class="tkey" id="mod-win" data-mod="win">WIN</div>
+        <div class="tkey" data-special="HANGUL">한/영</div>
+        <div class="tkey" data-special="DEL">DEL</div>
+      </div>
+      <div class="termux-row">
+        <div class="tkey" data-special="HOME">HOME</div>
+        <div class="tkey" data-special="END">END</div>
+        <div class="tkey" data-special="PGUP">PgUp</div>
+        <div class="tkey" data-special="PGDN">PgDn</div>
+        <div class="tkey" data-special="LEFT">◀</div>
+        <div class="tkey" data-special="DOWN">▼</div>
+        <div class="tkey" data-special="UP">▲</div>
+        <div class="tkey" data-special="RIGHT">▶</div>
+      </div>
+    </div>
+
+    <input type="text" id="kbd-trap" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+  </div>
+
+  <script>
+    // ngrok 무료 도메인 보안 안내 페이지(ERR_NGROK_6024)로 인해 백그라운드 API가 차단되는 현상 원천 방지
+    const _origFetch = window.fetch.bind(window);
+    window.fetch = function(input, init = {}) {
+      const headers = new Headers(init.headers || {});
+      if (!headers.has('ngrok-skip-browser-warning')) {
+        headers.set('ngrok-skip-browser-warning', 'true');
+      }
+      return _origFetch(input, { ...init, headers });
+    };
+
+    let currentModel = 'argon';
+    let currentLevel = 'medium';
+    let currentConvId = null;
+    let lastRenderedHash = '';
+    let isPolling = false;
+
+    // 📎 첨부파일 및 📋 마크다운/코드 복사 상태 변수
+    let pendingAttachments = [];
+    const codeSnippetStore = [];
+
+    // ⏰ 알림 상태 변수
+    let activeRingingAlarmId = null;
+    const notifiedAlarmIds = new Set();
+
+    function requestNotificationPermission() {
+      try {
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission().catch(() => {});
+        }
+      } catch (e) {}
+    }
+
+    function copyToClipboard(text, btn, defaultLabel = '📋 복사') {
+      const done = () => {
+        if (!btn) return;
+        btn.classList.add('copied');
+        btn.textContent = '✅ 복사됨!';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = defaultLabel;
+        }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+      } else {
+        fallbackCopy(text, done);
+      }
+    }
+
+    function fallbackCopy(text, cb) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (cb) cb();
+      } catch (e) {}
+    }
+
+    function copyCodeByIdx(idx, btn) {
+      const code = codeSnippetStore[idx] || '';
+      copyToClipboard(code, btn, '📋 코드 복사');
+    }
+
+    function renderMarkdown(raw) {
+      if (!raw) return '';
+      let text = String(raw);
+
+      // 1) 코드 블록 추출 및 플레이스홀더 치환
+      const codeBlocks = [];
+      text = text.replace(/```([a-zA-Z0-9_-]*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
+        const idx = codeSnippetStore.length;
+        const cleanCode = code.replace(/\r?\n$/, '');
+        codeSnippetStore.push(cleanCode);
+        const badge = escapeHtml(lang || 'CODE');
+        const html = `
+          <div class="code-block-card">
+            <div class="code-block-header">
+              <span class="code-lang-badge">${badge}</span>
+              <button class="copy-code-btn" onclick="copyCodeByIdx(${idx}, this)">📋 코드 복사</button>
+            </div>
+            <pre class="code-block-pre"><code>${escapeHtml(cleanCode)}</code></pre>
+          </div>
+        `;
+        const token = `@@CODEBLOCK_${codeBlocks.length}@@`;
+        codeBlocks.push(html);
+        return token;
+      });
+
+      // 2) HTML 이스케이프
+      let safe = escapeHtml(text);
+
+      // 3) 마크다운 표 렌더링
+      safe = safe.replace(/(?:^|\n)(\|.+\|\r?\n\|[-:\s|]+\|\r?\n(?:\|.+\|(?:\r?\n|$))+)/g, (match, tableBlock) => {
+        const rows = tableBlock.trim().split(/\r?\n/);
+        if (rows.length < 2) return match;
+        const parseRow = r => r.replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+        const headers = parseRow(rows[0]);
+        const bodyRows = rows.slice(2).map(parseRow);
+        const thHtml = headers.map(h => `<th>${h}</th>`).join('');
+        const trHtml = bodyRows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('');
+        return `\n<div class="md-table-wrap"><table class="md-table"><thead><tr>${thHtml}</tr></thead><tbody>${trHtml}</tbody></table></div>\n`;
+      });
+
+      // 4) 인라인 문법 처리
+      safe = safe
+        .replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>')
+        .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/^####\s+(.+)$/gm, '<h4>$1</h4>')
+        .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+        .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
+        .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
+        .replace(/^&gt;\s+(.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/^---$/gm, '<hr/>')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+      // 5) 줄바꿈 처리 및 코드블록 복원
+      safe = safe.replace(/\r?\n/g, '<br/>');
+      codeBlocks.forEach((html, i) => {
+        safe = safe.replace(`@@CODEBLOCK_${i}@@`, html);
+      });
+
+      return `<div class="md-content">${safe}</div>`;
+    }
+
+    function triggerFilePicker() {
+      const fileInput = document.getElementById('file-input');
+      if (fileInput) fileInput.click();
+    }
+
+    async function handleFileSelect(event) {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      for (const file of files) {
+        try {
+          const base64Data = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fileName: file.name,
+              mimeType: file.type,
+              base64Data
+            })
+          });
+          const data = await res.json();
+          if (data.ok) {
+            pendingAttachments.push({
+              fileName: data.fileName,
+              fileUrl: data.fileUrl,
+              absolutePath: data.absolutePath,
+              isImage: data.isImage
+            });
+            renderAttachmentPreviewBar();
+          } else {
+            alert('파일 업로드 실패: ' + (data.error || '알 수 없는 오류'));
+          }
+        } catch (err) {
+          alert('파일 처리 중 오류: ' + err.message);
+        }
+      }
+      event.target.value = '';
+    }
+
+    function removeAttachment(idx) {
+      pendingAttachments.splice(idx, 1);
+      renderAttachmentPreviewBar();
+    }
+
+    function renderAttachmentPreviewBar() {
+      const bar = document.getElementById('attachment-preview-bar');
+      if (!bar) return;
+      if (pendingAttachments.length === 0) {
+        bar.classList.remove('active');
+        bar.innerHTML = '';
+        return;
+      }
+      bar.classList.add('active');
+      bar.innerHTML = pendingAttachments.map((a, idx) => `
+        <div class="att-preview-item">
+          ${a.isImage
+            ? `<img src="${a.fileUrl}" class="att-preview-thumb" alt="미리보기" />`
+            : `<span style="font-size:18px;">📄</span>`}
+          <span class="att-preview-name">${escapeHtml(a.fileName)}</span>
+          <button class="att-remove-btn" onclick="removeAttachment(${idx})">✖</button>
+        </div>
+      `).join('');
+    }
+
+    function updateAlarmBadge(count) {
+      const badge = document.getElementById('alarm-count-badge');
+      if (!badge) return;
+      if (count > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = String(count);
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    function playAlarmSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const notes = [880, 1174.66, 880, 1174.66];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.22, ctx.currentTime + i * 0.22);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (i + 1) * 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.22);
+          osc.stop(ctx.currentTime + (i + 1) * 0.22);
+        });
+      } catch (e) {}
+    }
+
+    function checkAndTriggerFiredAlarms(firedAlarms) {
+      if (!Array.isArray(firedAlarms) || firedAlarms.length === 0) {
+        const ringModal = document.getElementById('alarm-ring-modal');
+        if (ringModal) ringModal.classList.remove('open');
+        activeRingingAlarmId = null;
+        return;
+      }
+      const target = firedAlarms[0];
+      if (!target) return;
+      activeRingingAlarmId = target.id;
+      document.getElementById('ring-alarm-title').textContent = target.title || '일정 알림';
+      document.getElementById('ring-alarm-time').textContent = target.timeLabel || '';
+      document.getElementById('alarm-ring-modal').classList.add('open');
+
+      if (!notifiedAlarmIds.has(target.id)) {
+        notifiedAlarmIds.add(target.id);
+        playAlarmSound();
+        if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+        try {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('⏰ 우유(Ooyoo 🥛) 일정 알림', {
+              body: `${target.title} (${target.timeLabel})`,
+              icon: '/icon-192.png'
+            });
+          }
+        } catch (e) {}
+      }
+    }
+
+    async function dismissRingingAlarm(snoozeMinutes = 0) {
+      try {
+        await fetch('/api/alarms/dismiss', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: activeRingingAlarmId, snoozeMinutes })
+        });
+      } catch (e) {}
+      document.getElementById('alarm-ring-modal').classList.remove('open');
+      activeRingingAlarmId = null;
+      await pollStatus(true);
+    }
+
+    async function openAlarmModal() {
+      requestNotificationPermission();
+      document.getElementById('alarm-modal').classList.add('open');
+      await loadAlarmList();
+    }
+
+    function closeAlarmModal() {
+      document.getElementById('alarm-modal').classList.remove('open');
+    }
+
+    async function loadAlarmList() {
+      try {
+        const res = await fetch('/api/alarms');
+        const data = await res.json();
+        if (!data.ok) return;
+        updateAlarmBadge(data.pendingCount || 0);
+        const box = document.getElementById('alarm-list-box');
+        const list = (data.alarms || []).filter(a => a.status === 'pending');
+        if (list.length === 0) {
+          box.innerHTML = '<div style="font-size:12px; color:#a89481; text-align:center; padding:12px;">예약된 알림이 없습니다.</div>';
+          return;
+        }
+        box.innerHTML = list.map(a => `
+          <div class="alarm-item">
+            <div class="alarm-item-info">
+              <div class="alarm-item-title">📌 ${escapeHtml(a.title)}</div>
+              <div class="alarm-item-time">🕒 ${escapeHtml(a.timeLabel)}${a.repeatDaily ? ' · 매일 반복' : ''}</div>
+            </div>
+            <button class="alarm-del-btn" onclick="deleteAlarm('${a.id}')">삭제</button>
+          </div>
+        `).join('');
+      } catch (e) {}
+    }
+
+    async function addQuickAlarm(opts) {
+      const titleInput = document.getElementById('alarm-title-input');
+      const title = (titleInput && titleInput.value.trim()) || '빠른 타이머 알림';
+      try {
+        const res = await fetch('/api/alarms/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, ...opts })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (titleInput) titleInput.value = '';
+          await loadAlarmList();
+          await pollStatus(true);
+        }
+      } catch (e) {}
+    }
+
+    async function addTimeAlarm() {
+      const titleInput = document.getElementById('alarm-title-input');
+      const timeInput = document.getElementById('alarm-time-input');
+      const repeatChk = document.getElementById('alarm-repeat-chk');
+      const timeStr = timeInput ? timeInput.value : '';
+      if (!timeStr) {
+        alert('알림을 울릴 시각을 먼저 선택해 주세요!');
+        return;
+      }
+      const title = (titleInput && titleInput.value.trim()) || '예약된 일정 알림';
+      try {
+        const res = await fetch('/api/alarms/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            timeStr,
+            repeatDaily: Boolean(repeatChk && repeatChk.checked)
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          if (titleInput) titleInput.value = '';
+          await loadAlarmList();
+          await pollStatus(true);
+        } else {
+          alert(data.error || '알림 등록 실패');
+        }
+      } catch (e) {}
+    }
+
+    async function deleteAlarm(id) {
+      try {
+        await fetch('/api/alarms/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        await loadAlarmList();
+        await pollStatus(true);
+      } catch (e) {}
+    }
+
+    // 🤖 우유(Ooyoo) ↔ 에아(Ea) 연동 상태 변수
+    let currentAgentMode = 'ooyoo'; // 'ooyoo' | 'peer'
+    let currentPeerUrl = '';
+    let currentPeerName = '에아 (Ea)';
+    let currentPeerConvId = null;
+
+    function prefillEaCall() {
+      const input = document.getElementById('msg-input');
+      if (!input.value.startsWith('에아야')) {
+        input.value = '에아야 ' + input.value;
+      }
+      input.focus();
+      autoResize(input);
+    }
+
+    async function openPeerModal() {
+      const modal = document.getElementById('peer-modal');
+      modal.classList.add('open');
+      const statusMsg = document.getElementById('peer-status-msg');
+      statusMsg.textContent = '에아(Ea) 서버 연결 상태를 확인하는 중...';
+      try {
+        const res = await fetch('/api/peer/config?check=1');
+        const data = await res.json();
+        if (data.ok) {
+          currentPeerUrl = data.peerUrl || '';
+          currentPeerName = data.peerName || '에아 (Ea)';
+          document.getElementById('peer-url-input').value = currentPeerUrl;
+          updatePeerDot(Boolean(currentPeerUrl));
+          statusMsg.textContent = data.peerOnline
+            ? `🟢 ${currentPeerName} 서버와 정상 연결되어 있습니다!`
+            : `🟡 주소는 등록되어 있으나 현재 ${currentPeerName} PC가 꺼져 있거나 응답 대기 중입니다.`;
+        }
+      } catch (e) {
+        statusMsg.textContent = '상태 확인 실패';
+      }
+    }
+
+    function closePeerModal() {
+      document.getElementById('peer-modal').classList.remove('open');
+    }
+
+    function updatePeerDot(linked) {
+      const dot = document.getElementById('peer-dot');
+      if (dot) dot.classList.toggle('linked', Boolean(linked));
+    }
+
+    async function savePeerConfig() {
+      const rawUrl = document.getElementById('peer-url-input').value.trim();
+      const statusMsg = document.getElementById('peer-status-msg');
+      statusMsg.textContent = '저장 및 양방향 페어링 중...';
+      try {
+        const res = await fetch('/api/peer/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ peerUrl: rawUrl, peerName: '에아 (Ea)' })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          currentPeerUrl = data.peerUrl || '';
+          updatePeerDot(Boolean(currentPeerUrl));
+          statusMsg.textContent = data.syncedBack
+            ? '✅ 저장 완료! 에아 서버와 양방향 자동 페어링에 성공했습니다!'
+            : '✅ 에아 주소가 저장되었습니다!';
+        } else {
+          statusMsg.textContent = '❌ 오류: ' + (data.error || '저장 실패');
+        }
+      } catch (err) {
+        statusMsg.textContent = '❌ 통신 오류: ' + err.message;
+      }
+    }
+
+    async function switchAgentMode(mode) {
+      currentAgentMode = mode;
+      lastRenderedHash = '';
+      closePeerModal();
+
+      const banner = document.getElementById('peer-mode-banner');
+      const input = document.getElementById('msg-input');
+      const thinkingText = document.getElementById('thinking-text');
+
+      if (mode === 'peer') {
+        banner.classList.add('active');
+        input.placeholder = '🤖 에아(도준님 AI 비서)에게 시킬 작업을 말씀해 주세요...';
+        thinkingText.textContent = '에아(Ea)가 작업을 수행하고 있어요... 🤖';
+      } else {
+        banner.classList.remove('active');
+        input.placeholder = "우유에게 시키실 작업을 말씀해 주세요... ('에아야 ~' 입력 시 에아 호출)";
+        thinkingText.textContent = '우유가 박사님의 작업을 수행하고 있어요... 🥛';
+      }
+      await pollStatus(true);
+    }
+
+    if (window.visualViewport) {
+      const adjustViewport = () => {
+        const overlay = document.getElementById('remote-overlay');
+        if (overlay.classList.contains('open')) {
+          overlay.style.height = window.visualViewport.height + 'px';
+          overlay.style.top = window.visualViewport.offsetTop + 'px';
+        }
+      };
+      window.visualViewport.addEventListener('resize', adjustViewport);
+      window.visualViewport.addEventListener('scroll', adjustViewport);
+    }
+
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+    }
+
+    document.getElementById('msg-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && window.innerWidth > 768) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    async function toggleDrawer(open) {
+      const backdrop = document.getElementById('drawer-backdrop');
+      const drawer = document.getElementById('sidebar-drawer');
+      if (open) {
+        backdrop.classList.add('open');
+        drawer.classList.add('open');
+        await loadConversationList();
+      } else {
+        backdrop.classList.remove('open');
+        drawer.classList.remove('open');
+      }
+    }
+
+    async function loadConversationList() {
+      try {
+        const res = await fetch('/api/conversations');
+        const data = await res.json();
+        if (!data.ok) return;
+        currentConvId = data.activeConversationId;
+        const listEl = document.getElementById('conv-list');
+        listEl.innerHTML = '';
+
+        for (const item of data.conversations) {
+          const div = document.createElement('div');
+          div.className = 'conv-item' + (item.id === currentConvId ? ' active' : '');
+          const d = new Date(item.updatedAt);
+          const dateStr = `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+          div.innerHTML = `
+            <div class="conv-title">💬 ${escapeHtml(item.title)}</div>
+            <div class="conv-date">${dateStr} · ${item.id.slice(0, 8)}</div>
+          `;
+          div.onclick = () => selectConversation(item.id);
+          listEl.appendChild(div);
+        }
+      } catch (e) {}
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+    }
+
+    async function selectConversation(convId) {
+      currentAgentMode = 'ooyoo';
+      document.getElementById('peer-mode-banner').classList.remove('active');
+      currentConvId = convId;
+      lastRenderedHash = '';
+      toggleDrawer(false);
+      await fetch('/api/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId: convId })
+      });
+      await pollStatus(true);
+    }
+
+    async function startNewChat() {
+      lastRenderedHash = '';
+      toggleDrawer(false);
+      if (currentAgentMode === 'peer') {
+        currentPeerConvId = null;
+        await fetch('/api/peer/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resetConv: true, autoSync: false })
+        });
+        await pollStatus(true);
+        return;
+      }
+      currentConvId = null;
+      await fetch('/api/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newConversation: true })
+      });
+      await pollStatus(true);
+    }
+
+    function updateModelAndPerfUI(model, level) {
+      if (model) {
+        currentModel = model;
+        const sel = document.getElementById('model-select');
+        if (sel && sel.value !== model) sel.value = model;
+      }
+      if (level) {
+        currentLevel = level;
+        document.querySelectorAll('.perf-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.level === level);
+        });
+      }
+    }
+
+    async function setModel(model) {
+      updateModelAndPerfUI(model, currentLevel);
+      try {
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model })
+        });
+      } catch (err) {}
+    }
+
+    async function setPerformance(level) {
+      updateModelAndPerfUI(currentModel, level);
+      try {
+        await fetch('/api/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ level })
+        });
+      } catch (err) {}
+    }
+
+    function sendQuick(text) {
+      const input = document.getElementById('msg-input');
+      input.value = text;
+      sendMessage();
+    }
+
+    async function sendMessage() {
+      if (typeof stopSpeechAll === 'function') stopSpeechAll();
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      const attachmentsToSend = [...pendingAttachments];
+      if (!text && attachmentsToSend.length === 0) return;
+
+      requestNotificationPermission();
+      input.value = '';
+      input.style.height = 'auto';
+      pendingAttachments = [];
+      renderAttachmentPreviewBar();
+
+      const container = document.getElementById('chat-container');
+      const welcome = document.getElementById('welcome-card');
+      if (welcome) welcome.style.display = 'none';
+
+      const isDirectEaCall = /^(?:에아야|에아님|@에아)\b/i.test(text);
+      const userDiv = document.createElement('div');
+      userDiv.className = 'msg-row user';
+      const targetBadge = (currentAgentMode === 'peer' || isDirectEaCall) ? ' ➔ 🤖 에아 호출' : '';
+      userDiv.innerHTML = `<div class="msg-sender">박사님 (${currentModel.toUpperCase()} · ${currentLevel.toUpperCase()})${targetBadge}</div><div class="bubble"></div>`;
+      const bubbleEl = userDiv.querySelector('.bubble');
+
+      if (attachmentsToSend.length > 0) {
+        const attWrap = document.createElement('div');
+        attWrap.className = 'chat-attachments';
+        for (const a of attachmentsToSend) {
+          if (a.isImage) {
+            const img = document.createElement('img');
+            img.src = a.fileUrl;
+            img.className = 'chat-attached-img';
+            img.onclick = () => window.open(a.fileUrl, '_blank');
+            attWrap.appendChild(img);
+          } else {
+            const link = document.createElement('a');
+            link.href = a.fileUrl;
+            link.target = '_blank';
+            link.className = 'chat-attached-file';
+            link.textContent = `📎 ${a.fileName}`;
+            attWrap.appendChild(link);
+          }
+        }
+        bubbleEl.appendChild(attWrap);
+      }
+
+      if (text) {
+        const txtSpan = document.createElement('div');
+        txtSpan.textContent = text;
+        bubbleEl.appendChild(txtSpan);
+      }
+
+      container.appendChild(userDiv);
+      container.scrollTop = container.scrollHeight;
+
+      const indicator = document.getElementById('thinking-indicator');
+      const thinkingText = document.getElementById('thinking-text');
+      indicator.style.display = 'flex';
+      if (isDirectEaCall && currentAgentMode !== 'peer') {
+        thinkingText.textContent = '우유가 에아(Ea)에게 말씀을 전달하고 답변을 받아오고 있어요... 🤖';
+      }
+
+      try {
+        if (currentAgentMode === 'peer') {
+          const res = await fetch('/api/peer/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: text,
+              model: currentModel,
+              level: currentLevel
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            alert(data.error || '에아 호출 실패');
+          } else if (data.peerConvId) {
+            currentPeerConvId = data.peerConvId;
+          }
+        } else {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: text,
+              attachments: attachmentsToSend,
+              model: currentModel,
+              level: currentLevel,
+              conversationId: currentConvId
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            indicator.style.display = 'none';
+            alert(data.error || '우유 호출 실패');
+          } else if (data.conversationId) {
+            currentConvId = data.conversationId;
+          }
+        }
+        setTimeout(() => pollStatus(true), 700);
+      } catch (err) {
+        indicator.style.display = 'none';
+        alert('명령 전송 실패: ' + err.message);
+      }
+    }
+
+    function renderMessages(messages, isThinking) {
+      const indicator = document.getElementById('thinking-indicator');
+      if (indicator) indicator.style.display = isThinking ? 'flex' : 'none';
+
+      const hash = JSON.stringify({ messages, isThinking, currentConvId, currentAgentMode, currentPeerConvId });
+      if (hash === lastRenderedHash) return;
+      lastRenderedHash = hash;
+
+      const container = document.getElementById('chat-container');
+
+      const assistantLabel = currentAgentMode === 'peer' ? '🤖 에아 (Ea · 원격 연동)' : '우유 (Ooyoo 🥛)';
+
+      if (!messages || messages.length === 0) {
+        container.innerHTML = `
+          <div class="welcome-card" id="welcome-card">
+            <img src="/icon-192.png?v=4" class="welcome-logo" alt="우유 (Ooyoo)" />
+            <h2>${currentAgentMode === 'peer' ? '🤖 에아(Ea) 원격 대화방입니다!' : '반가워요, 박사님! 전속 비서 우유(Ooyoo)예요 🥛🐱'}</h2>
+            <p>
+              ${currentAgentMode === 'peer'
+                ? '이곳에 입력하시는 말씀은 도준님 PC의 <b>에아(Ea)</b>에게 직접 전달됩니다!'
+                : '⏰ <b>"3시에 교수회의 알려줘"</b>처럼 말씀하시면 자동으로 알림이 울려요!<br/>📎 아래 클립 버튼으로 <b>사진·문서 파일</b>을 바로 보내실 수 있고, 📋 <b>코드/답변 원터치 복사</b>도 지원합니다!'}
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+      codeSnippetStore.length = 0;
+
+      for (const m of messages) {
+        const isAssistant = (m.role === 'ooyoo' || m.role === 'ea');
+        const row = document.createElement('div');
+        row.className = `msg-row ${isAssistant ? 'ooyoo' : 'user'}`;
+
+        if (isAssistant) {
+          const headerWrap = document.createElement('div');
+          headerWrap.className = 'bubble-header-tools';
+          const sender = document.createElement('div');
+          sender.className = 'msg-sender';
+          sender.textContent = assistantLabel;
+          headerWrap.appendChild(sender);
+
+          if (m.text) {
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-reply-btn';
+            copyBtn.textContent = '📋 전체 복사';
+            copyBtn.onclick = () => copyToClipboard(m.text, copyBtn, '📋 전체 복사');
+            headerWrap.appendChild(copyBtn);
+          }
+          row.appendChild(headerWrap);
+        } else {
+          const sender = document.createElement('div');
+          sender.className = 'msg-sender';
+          sender.textContent = '박사님';
+          row.appendChild(sender);
+        }
+
+        if (isAssistant && ((m.tools && m.tools.length > 0) || m.thinking)) {
+          const meta = document.createElement('div');
+          meta.className = 'meta-box';
+
+          if (m.thinking) {
+            const det = document.createElement('details');
+            det.className = 'thinking-box';
+            const sum = document.createElement('summary');
+            sum.textContent = currentAgentMode === 'peer' ? '💭 에아의 생각 과정 보기' : '💭 우유의 생각 과정 보기';
+            const p = document.createElement('p');
+            p.textContent = m.thinking;
+            det.appendChild(sum);
+            det.appendChild(p);
+            meta.appendChild(det);
+          }
+
+          if (m.tools && m.tools.length > 0) {
+            for (const t of m.tools) {
+              const badge = document.createElement('div');
+              badge.className = 'tool-badge';
+              badge.textContent = `⚙️ ${currentAgentMode === 'peer' ? '에아 PC 작업' : 'PC 작업 실행'}: ${t.summary || t.name}`;
+              meta.appendChild(badge);
+            }
+          }
+          row.appendChild(meta);
+        }
+
+        if (m.text || (m.attachments && m.attachments.length > 0)) {
+          const bubble = document.createElement('div');
+          bubble.className = 'bubble';
+
+          if (!isAssistant && m.attachments && m.attachments.length > 0) {
+            const attWrap = document.createElement('div');
+            attWrap.className = 'chat-attachments';
+            for (const a of m.attachments) {
+              if (a.isImage) {
+                const img = document.createElement('img');
+                img.src = a.fileUrl;
+                img.className = 'chat-attached-img';
+                img.onclick = () => window.open(a.fileUrl, '_blank');
+                attWrap.appendChild(img);
+              } else {
+                const link = document.createElement('a');
+                link.href = a.fileUrl;
+                link.target = '_blank';
+                link.className = 'chat-attached-file';
+                link.textContent = `📎 ${a.fileName}`;
+                attWrap.appendChild(link);
+              }
+            }
+            bubble.appendChild(attWrap);
+          }
+
+          if (m.text) {
+            if (isAssistant) {
+              const mdDiv = document.createElement('div');
+              mdDiv.innerHTML = renderMarkdown(m.text);
+              bubble.appendChild(mdDiv);
+            } else {
+              const txtDiv = document.createElement('div');
+              txtDiv.textContent = m.text;
+              bubble.appendChild(txtDiv);
+            }
+          }
+          row.appendChild(bubble);
+        }
+
+        container.appendChild(row);
+      }
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function pollStatus(force = false) {
+      if (isPolling && !force) return;
+      isPolling = true;
+      try {
+        if (currentAgentMode === 'peer') {
+          const q = currentPeerConvId ? `?convId=${encodeURIComponent(currentPeerConvId)}` : '';
+          const res = await fetch(`/api/peer/status${q}`);
+          const data = await res.json();
+          if (data.ok) {
+            currentPeerConvId = data.conversationId || currentPeerConvId;
+            document.getElementById('conn-info').textContent = `🤖 에아(Ea) 실시간 연동 중`;
+            renderMessages(data.messages || [], data.isThinking);
+          }
+        } else {
+          const q = currentConvId ? `?convId=${encodeURIComponent(currentConvId)}` : '';
+          const res = await fetch(`/api/status${q}`);
+          const data = await res.json();
+          if (data.ok) {
+            currentConvId = data.conversationId;
+            if (data.peerUrl !== undefined) {
+              currentPeerUrl = data.peerUrl || '';
+              updatePeerDot(Boolean(currentPeerUrl));
+            }
+            if (data.pendingAlarmsCount !== undefined) {
+              updateAlarmBadge(data.pendingAlarmsCount);
+            }
+            if (data.firedAlarms) {
+              checkAndTriggerFiredAlarms(data.firedAlarms);
+            }
+            updateModelAndPerfUI(data.activeModel || currentModel, data.activeLevel || currentLevel);
+            document.getElementById('conn-info').textContent =
+              `${data.modelInfo?.name || ''} · ${data.performanceInfo?.label || ''}`;
+            renderMessages(data.messages || [], data.isThinking);
+          }
+        }
+      } catch (e) {} finally {
+        isPolling = false;
+      }
+    }
+
+    // 🖥️ PC 원격제어 로직
+    let remoteActive = false;
+    let frameTimer = null;
+    let frameBusy = false;
+    const modifiers = { ctrl: false, alt: false, shift: false, win: false };
+
+    function focusKeyboardTrap() {
+      if (!remoteActive) return;
+      const trap = document.getElementById('kbd-trap');
+      trap.focus({ preventScroll: true });
+    }
+
+    async function openRemoteControl() {
+      remoteActive = true;
+      const overlay = document.getElementById('remote-overlay');
+      overlay.classList.add('open');
+
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          await screen.orientation.lock('portrait');
+        }
+      } catch (e) {}
+
+      focusKeyboardTrap();
+      fetchRemoteFrame();
+      frameTimer = setInterval(fetchRemoteFrame, 300);
+    }
+
+    function closeRemoteControl() {
+      remoteActive = false;
+      if (frameTimer) clearInterval(frameTimer);
+      frameTimer = null;
+      stopJoystickLoop();
+      const overlay = document.getElementById('remote-overlay');
+      overlay.classList.remove('open');
+      overlay.style.height = '100dvh';
+      document.getElementById('kbd-trap').blur();
+    }
+
+    async function fetchRemoteFrame() {
+      if (!remoteActive || frameBusy) return;
+      frameBusy = true;
+      try {
+        const res = await fetch('/api/remote/frame');
+        const data = await res.json();
+        if (data.ok && data.image) {
+          document.getElementById('remote-screen-img').src = 'data:image/jpeg;base64,' + data.image;
+        }
+      } catch (e) {} finally {
+        frameBusy = false;
+      }
+    }
+
+    function getRelativeCoords(clientX, clientY) {
+      const img = document.getElementById('remote-screen-img');
+      const rect = img.getBoundingClientRect();
+      if (!rect.width || !rect.height) return { rx: 0.5, ry: 0.5 };
+
+      const natW = img.naturalWidth || 1920;
+      const natH = img.naturalHeight || 1080;
+      const scale = Math.min(rect.width / natW, rect.height / natH);
+      const dispW = natW * scale;
+      const dispH = natH * scale;
+      const offsetX = rect.left + (rect.width - dispW) / 2;
+      const offsetY = rect.top + (rect.height - dispH) / 2;
+
+      const rx = Math.max(0, Math.min(1, (clientX - offsetX) / dispW));
+      const ry = Math.max(0, Math.min(1, (clientY - offsetY) / dispH));
+      return { rx, ry };
+    }
+
+    function showRipple(x, y, type) {
+      const area = document.getElementById('remote-touch-area');
+      const rect = area.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = `touch-ripple ${type}`;
+      ripple.style.left = (x - rect.left) + 'px';
+      ripple.style.top = (y - rect.top) + 'px';
+      area.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 400);
+    }
+
+    async function sendMouseAction(payload) {
+      try {
+        await fetch('/api/remote/mouse', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        setTimeout(fetchRemoteFrame, 80);
+      } catch (e) {}
+    }
+
+    const touchArea = document.getElementById('remote-touch-area');
+    let pressTimer = null;
+    let longPressTriggered = false;
+    let startPos = { x: 0, y: 0 };
+
+    touchArea.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      startPos = { x: e.clientX, y: e.clientY };
+      longPressTriggered = false;
+
+      pressTimer = setTimeout(() => {
+        longPressTriggered = true;
+        const { rx, ry } = getRelativeCoords(startPos.x, startPos.y);
+        showRipple(startPos.x, startPos.y, 'right');
+        if (navigator.vibrate) navigator.vibrate(40);
+        sendMouseAction({ rx, ry, button: 'right' });
+      }, 480);
+    });
+
+    touchArea.addEventListener('pointermove', (e) => {
+      if (!pressTimer) return;
+      if (Math.hypot(e.clientX - startPos.x, e.clientY - startPos.y) > 15) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    });
+
+    touchArea.addEventListener('pointerup', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+      if (!longPressTriggered) {
+        const { rx, ry } = getRelativeCoords(e.clientX, e.clientY);
+        showRipple(e.clientX, e.clientY, 'left');
+        sendMouseAction({ rx, ry, button: 'left' });
+      }
+    });
+
+    const joyZone = document.getElementById('joystick-zone');
+    const joyStick = document.getElementById('joystick-stick');
+    let joyVec = { dx: 0, dy: 0 };
+    let joyInterval = null;
+    let joyPointerId = null;
+    let joyCenter = { x: 0, y: 0 };
+
+    function stopJoystickLoop() {
+      if (joyInterval) clearInterval(joyInterval);
+      joyInterval = null;
+      joyVec = { dx: 0, dy: 0 };
+      joyStick.style.transform = 'translate(0px, 0px)';
+    }
+
+    joyZone.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      joyPointerId = e.pointerId;
+      joyZone.setPointerCapture(e.pointerId);
+      const rect = joyZone.getBoundingClientRect();
+      joyCenter = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+
+      if (!joyInterval) {
+        joyInterval = setInterval(() => {
+          if (joyVec.dx !== 0 || joyVec.dy !== 0) {
+            sendMouseAction({ dx: joyVec.dx, dy: joyVec.dy, button: 'move' });
+          }
+        }, 110);
+      }
+    });
+
+    joyZone.addEventListener('pointermove', (e) => {
+      if (e.pointerId !== joyPointerId) return;
+      e.preventDefault();
+      const maxR = 24;
+      let ox = e.clientX - joyCenter.x;
+      let oy = e.clientY - joyCenter.y;
+      const dist = Math.hypot(ox, oy);
+      if (dist > maxR) {
+        ox = (ox / dist) * maxR;
+        oy = (oy / dist) * maxR;
+      }
+      joyStick.style.transform = `translate(${ox}px, ${oy}px)`;
+      joyVec.dx = Math.round(ox * 2.2);
+      joyVec.dy = Math.round(oy * 2.2);
+    });
+
+    joyZone.addEventListener('pointerup', (e) => {
+      if (e.pointerId === joyPointerId) {
+        joyPointerId = null;
+        stopJoystickLoop();
+      }
+    });
+    joyZone.addEventListener('pointercancel', stopJoystickLoop);
+
+    const trackpad = document.getElementById('trackpad-zone');
+    let padLast = null;
+    let padMoved = false;
+    let padLongTimer = null;
+    let padLongFired = false;
+    let padAccum = { dx: 0, dy: 0 };
+    let padSending = false;
+
+    trackpad.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      trackpad.setPointerCapture(e.pointerId);
+      padLast = { x: e.clientX, y: e.clientY };
+      padMoved = false;
+      padLongFired = false;
+
+      padLongTimer = setTimeout(() => {
+        if (!padMoved) {
+          padLongFired = true;
+          if (navigator.vibrate) navigator.vibrate(40);
+          sendMouseAction({ button: 'right' });
+        }
+      }, 480);
+    });
+
+    trackpad.addEventListener('pointermove', async (e) => {
+      if (!padLast) return;
+      e.preventDefault();
+      const mx = e.clientX - padLast.x;
+      const my = e.clientY - padLast.y;
+      if (Math.hypot(mx, my) > 3) {
+        padMoved = true;
+        if (padLongTimer) {
+          clearTimeout(padLongTimer);
+          padLongTimer = null;
+        }
+      }
+      padLast = { x: e.clientX, y: e.clientY };
+      padAccum.dx += Math.round(mx * 2.6);
+      padAccum.dy += Math.round(my * 2.6);
+
+      if (!padSending && (Math.abs(padAccum.dx) > 2 || Math.abs(padAccum.dy) > 2)) {
+        padSending = true;
+        const sendDx = padAccum.dx;
+        const sendDy = padAccum.dy;
+        padAccum = { dx: 0, dy: 0 };
+        await sendMouseAction({ dx: sendDx, dy: sendDy, button: 'move' });
+        padSending = false;
+      }
+    });
+
+    trackpad.addEventListener('pointerup', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      if (padLongTimer) {
+        clearTimeout(padLongTimer);
+        padLongTimer = null;
+      }
+      if (!padMoved && !padLongFired) {
+        sendMouseAction({ button: 'left' });
+      }
+      padLast = null;
+    });
+
+    document.getElementById('btn-left-click').addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      sendMouseAction({ button: 'left' });
+    });
+    document.getElementById('btn-right-click').addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      focusKeyboardTrap();
+      if (navigator.vibrate) navigator.vibrate(30);
+      sendMouseAction({ button: 'right' });
+    });
+
+    document.getElementById('termux-bar').addEventListener('pointerdown', async (e) => {
+      const keyEl = e.target.closest('.tkey');
+      if (!keyEl) return;
+      e.preventDefault();
+      focusKeyboardTrap();
+
+      const mod = keyEl.dataset.mod;
+      const special = keyEl.dataset.special;
+
+      if (mod) {
+        modifiers[mod] = !modifiers[mod];
+        keyEl.classList.toggle('active-mod', modifiers[mod]);
+        return;
+      }
+
+      if (special) {
+        await sendKeyPayload({ special });
+      }
+    });
+
+    function clearModifiers() {
+      for (const k of Object.keys(modifiers)) modifiers[k] = false;
+      document.querySelectorAll('.tkey[data-mod]').forEach(el => el.classList.remove('active-mod'));
+    }
+
+    async function sendKeyPayload({ text = '', special = '' }) {
+      const payload = {
+        text,
+        special,
+        ctrl: modifiers.ctrl,
+        alt: modifiers.alt,
+        shift: modifiers.shift,
+        win: modifiers.win
+      };
+      clearModifiers();
+      try {
+        await fetch('/api/remote/key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        setTimeout(fetchRemoteFrame, 90);
+      } catch (e) {}
+    }
+
+    const kbdTrap = document.getElementById('kbd-trap');
+
+    kbdTrap.addEventListener('keydown', (e) => {
+      if (!remoteActive) return;
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        sendKeyPayload({ special: 'BS' });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        sendKeyPayload({ special: 'ENTER' });
+      } else if (e.key === 'Tab') {
+        e.preventDefault();
+        sendKeyPayload({ special: 'TAB' });
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        sendKeyPayload({ special: 'ESC' });
+      } else if (e.key.startsWith('Arrow')) {
+        e.preventDefault();
+        const dir = e.key.replace('Arrow', '').toUpperCase();
+        sendKeyPayload({ special: dir });
+      }
+    });
+
+    kbdTrap.addEventListener('input', () => {
+      if (!remoteActive) return;
+      const val = kbdTrap.value;
+      if (val) {
+        kbdTrap.value = '';
+        sendKeyPayload({ text: val });
+      }
+    });
+
+    kbdTrap.addEventListener('blur', () => {
+      if (remoteActive) {
+        setTimeout(() => {
+          if (remoteActive) kbdTrap.focus({ preventScroll: true });
+        }, 80);
+      }
+    });
+
+    let recognition = null;
+    let isContinuousSpeech = false;
+    let speechSilenceTimer = null;
+
+    function stopSpeechAll() {
+      isContinuousSpeech = false;
+      if (speechSilenceTimer) {
+        clearTimeout(speechSilenceTimer);
+        speechSilenceTimer = null;
+      }
+      if (recognition) {
+        try { recognition.onend = null; recognition.stop(); } catch (e) {}
+        recognition = null;
+      }
+      const btn = document.getElementById('mic-btn');
+      if (btn) btn.classList.remove('listening');
+    }
+
+    function resetSpeechTimer() {
+      if (speechSilenceTimer) clearTimeout(speechSilenceTimer);
+      speechSilenceTimer = setTimeout(() => {
+        stopSpeechAll();
+      }, 15000);
+    }
+
+    function startSpeechSegment() {
+      if (!isContinuousSpeech) return;
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return;
+      const btn = document.getElementById('mic-btn');
+      const input = document.getElementById('msg-input');
+      const baseText = input.value.trim();
+
+      recognition = new SR();
+      recognition.lang = 'ko-KR';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+      recognition.onstart = () => btn.classList.add('listening');
+      recognition.onresult = (event) => {
+        resetSpeechTimer();
+        const lastIdx = event.results.length - 1;
+        const transcript = (event.results[lastIdx] && event.results[lastIdx][0])
+          ? event.results[lastIdx][0].transcript.trim()
+          : '';
+        if (!transcript) return;
+        input.value = baseText ? (baseText + ' ' + transcript) : transcript;
+        autoResize(input);
+      };
+      recognition.onend = () => {
+        recognition = null;
+        if (isContinuousSpeech) {
+          setTimeout(() => {
+            if (isContinuousSpeech) startSpeechSegment();
+          }, 120);
+        } else {
+          btn.classList.remove('listening');
+        }
+      };
+      recognition.onerror = (ev) => {
+        if (ev && (ev.error === 'not-allowed' || ev.error === 'service-not-allowed')) {
+          stopSpeechAll();
+        }
+      };
+      try {
+        recognition.start();
+      } catch (e) {
+        setTimeout(() => {
+          if (isContinuousSpeech) startSpeechSegment();
+        }, 250);
+      }
+    }
+
+    function toggleSpeech() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) {
+        alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
+        return;
+      }
+      const input = document.getElementById('msg-input');
+      if (isContinuousSpeech) {
+        stopSpeechAll();
+        return;
+      }
+      if (input) input.blur();
+      isContinuousSpeech = true;
+      resetSpeechTimer();
+      startSpeechSegment();
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    setInterval(() => pollStatus(false), 1500);
+    pollStatus(true);
+  </script>
+</body>
+</html>

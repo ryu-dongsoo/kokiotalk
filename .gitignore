@@ -1,0 +1,17 @@
+﻿node_modules/
+storage/*.db
+storage/*.db-shm
+storage/*.db-wal
+storage/uploads/*
+!storage/uploads/.gitkeep
+gateway-server/uploads/*
+!gateway-server/uploads/.gitkeep
+gateway-server/*.log
+gateway-server/sessions.json
+gateway-server/alarms.json
+gateway-server/tunnel_url.txt
+gateway-server/tailscale_url.txt
+gateway-server/ngrok_domain.txt
+gateway-server/cloudflared-ooyoo.exe
+gateway-server/ngrok*.exe
+*.log
