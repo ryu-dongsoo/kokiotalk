@@ -21,19 +21,19 @@ No Node.js or terminal setup required — download and install the standalone de
 
 ## ✨ Key Features
 
-1. **0) Native Google Antigravity 2.0+ Integration**
+1. **Native Google Antigravity 2.0+ Integration**
    - Automatically connects to your local **Google Antigravity 2.0+ Desktop App** (Windows `Antigravity.exe` & macOS `Antigravity.app`) and streams real-time reasoning, tool execution progress, and responses.
    - Includes **Auto-Wakeup** to automatically wake the local Antigravity engine when a message arrives from your smartphone or tablet.
-2. **1) Turnkey Personal AI Agent Client System**
+2. **Turnkey Personal AI Agent Client System**
    - Automatically provisions your AI Agent's identity & rules (`GEMINI.md`, `AGENTS.md`), continuous long-term memory (`MEMORY.md`, `memory/YYYY-MM-DD.md`), and a native **Antigravity 2.0 Plugin** (`~/.gemini/config/plugins/kokio-assistant/`).
-3. **2) KokioTalk Messenger & 3-Layer External Security Gateway**
+3. **KokioTalk Messenger & 3-Layer External Security Gateway**
    - **Multi-Language UI (`🌐 EN` Default / `🇰🇷 한국어` / `🇯🇵 日本語` / `🇨🇳 中文`)**: Instant 1-click language switching across the Setup Wizard (`/setup`), Lock Screen, QR Dashboard (`/qr`), and Messenger UI.
    - **6-Digit Security PIN Lock & Temporary PC Auto-Wipe**:
      - **Localhost Bypass**: Opens immediately on your host PC (`http://localhost:8081`).
      - **📱 My Device Mode**: Remembers authentication on your personal smartphone or tablet.
      - **💻 Temp PC Access Mode (Default on External PCs)**: Blocks browser *"Save password?"* prompts and **automatically destroys the session in both browser (`sessionStorage`) and server memory within 2.5 seconds of closing the tab or window**.
    - **Full Productivity Suite**: Continuous Voice STT (`🎤`) & TTS (`🔊`), Live Simultaneous Interpreter (`🌐`), iPhone `.heic` photo auto-conversion, clipboard image/file paste (`Ctrl+V`), Calendar sync (`📅`), and Live Remote PC Screen Control (`🖥️`).
-4. **3) Graphical Setup Wizard (`/setup`) & CLI Installer**
+4. **Graphical Setup Wizard (`/setup`) & CLI Installer**
    - When launching the Windows `.exe` or macOS `.dmg` app for the first time, the built-in **Graphical Setup Wizard (`/setup`)** lets you configure your name, preferred honorific, AI Agent name/emoji, and 6-digit security PIN in one click, then immediately displays the **Mobile Connection QR Code (`/qr`)**.
 
 ---

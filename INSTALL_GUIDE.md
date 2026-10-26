@@ -8,20 +8,20 @@ This turnkey distribution package (**`KokioTalk`**) enables anyone running **Goo
 
 ## 🇺🇸 English Guide (Default)
 
-### 0) Prerequisites: Antigravity 2.0+ & Runtime (Step 0)
+### Prerequisites: Antigravity 2.0+ & Runtime
 1. **Google Antigravity 2.0+ Desktop App**
    - Install **Google Antigravity 2.0 or higher** and sign in with your Google account.
    - The installer automatically detects `Antigravity.exe` and `resources\bin\language_server.exe` in your user profile.
 2. **Node.js (v20 or v22 LTS+)**
    - Install **Node.js LTS (v22 recommended)** from [nodejs.org](https://nodejs.org/).
 
-### 1) Building Your Personal AI Agent Client System (Step 1)
+### Building Your Personal AI Agent Client System
 Unlike a stateless chatbot, this package automatically provisions a persistent **AI Agent Workspace + Long-Term Memory + Antigravity 2.0 Plugin**:
 - **`GEMINI.md` & `AGENTS.md`**: Defines your AI Agent's identity, your preferred name/title, zero-tolerance rules against fabricated/mock data, and strict domain separation between work and private folders.
 - **`MEMORY.md` & `memory/YYYY-MM-DD.md`**: Continuous long-term memory that survives across sessions and PC reboots.
 - **`~/.gemini/config/plugins/kokio-assistant/`**: Automatically installs a native **Antigravity 2.0 Plugin** (`plugin.json`, `SKILL.md`, `rules/AGENTS.md`) visible in Antigravity's **Skills & Customizations** sidebar.
 
-### 2) KokioTalk Messenger & External Security Gateway (Step 2)
+### KokioTalk Messenger & External Security Gateway
 - **Port `8081` (Security Gateway & Tunnel Manager)**:
   - **Local PC Auto-Bypass**: Opens immediately without a PIN on your host PC (`http://localhost:8081`).
   - **External 6-Digit Security PIN Lock**: Requires your 6-digit PIN when accessed externally via Mobile or shared PCs.
@@ -30,7 +30,7 @@ Unlike a stateless chatbot, this package automatically provisions a persistent *
   - Instant UI language switcher (**`🌐 EN` / `🇰🇷 한국어` / `🇯🇵 日本語` / `🇨🇳 中文`**) in the top header.
   - Voice input (`🎤`) & TTS readout (`🔊`), Simultaneous Live Interpreter (`🌐`), iPhone `.heic` photo auto-conversion, clipboard paste (`Ctrl+V`), Calendar sync (`📅`), and Live Remote PC Control (`🖥️`).
 
-### 3) 3-Minute Turnkey Installation Procedure (Step 3)
+### 3-Minute Turnkey Installation Procedure
 Clone the repository or unzip the package, then double-click the batch files in order:
 1. **Run `1_install_wizard.bat`**:
    - Select your language (`[1] English (Default)`, `[2] 한국어`, `[3] 日本語`, `[4] 中文`).
@@ -45,23 +45,23 @@ Clone the repository or unzip the package, then double-click the batch files in 
 
 ## 🇰🇷 한국어 설치 및 사용 가이드 (Korean)
 
-### 0) 사전 준비: Antigravity 2.0+ 및 기본 환경
+### 사전 준비: Antigravity 2.0+ 및 기본 환경
 1. **Google Antigravity 2.0 이상** 데스크톱 앱 설치 및 로그인
 2. **Node.js (v20 또는 v22 LTS 이상)** 설치 ([nodejs.org](https://nodejs.org/))
 
-### 1) 나만의 AI 에이전트(AI 비서) 클라이언트 시스템 구축
+### 나만의 AI 에이전트(AI 비서) 클라이언트 시스템 구축
 `1_install_wizard.bat` (또는 `1_최초설치_마법사.bat`)을 실행하면 다음이 자동 구축됩니다:
 - **`GEMINI.md` & `AGENTS.md`**: AI 에이전트 이름(기본: `Kokio AI 🤖`), 사용자 호칭, 허위 데이터 금지 및 개인 문서 보호 규칙 자동 생성
 - **`MEMORY.md`**: 대화가 바뀌어도 맥락을 기억하는 장기 기억소 생성
 - **Antigravity 2.0 표준 플러그인 (`~/.gemini/config/plugins/kokio-assistant/`)** 자동 등록
 
-### 2) 꼬끼오톡 메신저 & 외부 접속 보안 시스템
+### 꼬끼오톡 메신저 & 외부 접속 보안 시스템
 - **다국어 메뉴 기본 지원**: 기본 영문(`🌐 EN`)으로 시작하며, 상단 헤더와 잠금 화면 우측 상단에서 언제든 **`🇰🇷 한국어` / `🌐 English` / `🇯🇵 日本語` / `🇨🇳 中文`**로 0.1초 만에 전환됩니다.
 - **6자리 PIN 보안 잠금 & 임시 PC 자동 소멸**:
   - 내 본체 PC(`localhost:8081`)에서는 암호 없이 즉시 열립니다.
   - 외부에서 접속 시 6자리 PIN을 요구하며, 다른 사람의 컴퓨터에서 **`[💻 Temp PC Access / 임시 컴퓨터 접속]`** 모드로 접속하면 **창이나 탭을 닫는 즉시(2.5초 내) 암호와 세션이 흔적 없이 삭제**됩니다.
 
-### 3) 3분 원클릭 설치 절차
+### 3분 원클릭 설치 절차
 1. **`1_install_wizard.bat` 실행**: 언어 선택(`1: English`, `2: 한국어` 등) 후 이름·호칭·AI 에이전트 이름·6자리 PIN 입력 ➔ 바탕화면에 **`🐓 KokioTalk`** 아이콘 자동 생성!
 2. **`2_start_kokiotalk.bat` 실행**: 백그라운드 서버(`8081`, `8082`) 및 외부 접속 터널 자동 개통!
 3. **`3_mobile_qr_connect.bat` 실행**: 화면에 뜬 **QR코드**를 스마트폰 카메라로 찍어 즉시 접속 및 모바일 앱 설치!
