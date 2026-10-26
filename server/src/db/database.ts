@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 🗄️ KokioTalk SQLite Database & Full-Text Search Engine
  * - Built on Node.js v22 native `node:sqlite` (zero native build dependencies)
  * - Persistent storage in `storage/kokiotalk.db` with WAL mode
@@ -69,8 +69,12 @@ export interface MessageRecord {
   created_at: number;
 }
 
-const ROOT_DIR = path.resolve(__dirname, '..', '..', '..');
-export const STORAGE_DIR = path.join(ROOT_DIR, 'storage');
+const ROOT_DIR = fs.existsSync(path.resolve(__dirname, '..', '..', 'client', 'public'))
+  ? path.resolve(__dirname, '..', '..')
+  : path.resolve(__dirname, '..', '..', '..');
+export const STORAGE_DIR = process.env.KOKIO_DATA_DIR
+  ? path.join(process.env.KOKIO_DATA_DIR, 'storage')
+  : path.join(ROOT_DIR, 'storage');
 export const UPLOADS_DIR = path.join(STORAGE_DIR, 'uploads');
 export const DB_PATH = path.join(STORAGE_DIR, 'kokiotalk.db');
 
@@ -147,12 +151,17 @@ export function initDatabase(): void {
 }
 
 function loadKokioConfig(): any {
-  try {
-    const cfgPath = path.join(ROOT_DIR, 'kokio.config.json');
-    if (fs.existsSync(cfgPath)) {
-      return JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
-    }
-  } catch {}
+  const candidates = [
+    process.env.KOKIO_DATA_DIR ? path.join(process.env.KOKIO_DATA_DIR, 'kokio.config.json') : '',
+    path.join(ROOT_DIR, 'kokio.config.json')
+  ].filter(Boolean);
+  for (const cfgPath of candidates) {
+    try {
+      if (fs.existsSync(cfgPath)) {
+        return JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
+      }
+    } catch {}
+  }
   return null;
 }
 
@@ -162,18 +171,18 @@ function seedInitialData(): void {
 
   const cfg = loadKokioConfig();
   const ownerId = cfg?.owner?.id || 'ryu';
-  const ownerName = cfg?.owner?.name || '사용자님';
-  const ownerHonorific = cfg?.owner?.honorific || '사용자님';
-  const ownerAvatar = cfg?.owner?.avatar || '👨‍🏫';
-  const ownerStatus = cfg?.owner?.statusMessage || '전북대 생물산업기계공학과 · 스마트농업 & 디지털트윈 연구실';
+  const ownerName = cfg?.owner?.name || 'Alex';
+  const ownerHonorific = cfg?.owner?.honorific || 'Alex';
+  const ownerAvatar = cfg?.owner?.avatar || '🧑‍💻';
+  const ownerStatus = cfg?.owner?.statusMessage || 'Personal AI Workspace · Antigravity 2.0+';
 
-  const asstName = cfg?.assistant?.name || 'Kokio AI (🤖)';
+  const asstName = cfg?.assistant?.name || 'Kokio AI (🤖 AI Agent)';
   const asstShort = cfg?.assistant?.shortName || 'Kokio AI';
-  const asstAvatar = cfg?.assistant?.avatar || '🥛';
+  const asstAvatar = cfg?.assistant?.avatar || '🤖';
   const asstKeywords = Array.isArray(cfg?.assistant?.mentionKeywords) && cfg.assistant.mentionKeywords.length > 0
     ? cfg.assistant.mentionKeywords
-    : [`@${asstShort}`, `${asstShort}야`, `${asstShort}님`, '@kokio', `${asstShort} 비서`];
-  const asstPersona = cfg?.assistant?.persona || `${ownerName}의 전담 AI 에이전트 AI (따뜻하고 다정한 서술형 존댓말)`;
+    : [`@${asstShort}`, `${asstShort}`, '@kokio', '@agent'];
+  const asstPersona = cfg?.assistant?.persona || `${ownerName}'s Personal AI Agent`;
 
   const now = Date.now();
   const insertUser = db.prepare(`

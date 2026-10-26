@@ -1,14 +1,84 @@
-﻿{
+{
   "name": "kokiotalk",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "KokioTalk (코끼오톡) - 카카오톡 동일 UX 기반 개방형 API · AI 네이티브(Kokio AI/Peer AI) · PC 협업 오픈소스 메신저",
+  "main": "electron-main.cjs",
+  "description": "🐓 KokioTalk — KakaoTalk-style AI Agent Messenger & Remote Control Gateway for Antigravity 2.0+ (EN/KO/JA/ZH)",
   "author": "Dongsoo Ryu <ryudongsoo@jbnu.ac.kr>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryu-dongsoo/kokiotalk.git"
+  },
   "scripts": {
-    "start": "node --experimental-strip-types --no-warnings server/src/index.ts",
+    "build:server": "node scripts/build-server.cjs",
+    "start": "node server/dist/index.mjs",
     "dev": "node --experimental-strip-types --no-warnings --watch server/src/index.ts",
-    "mcp": "node --experimental-strip-types --no-warnings server/src/mcp/stdio.ts"
+    "mcp": "node --experimental-strip-types --no-warnings server/src/mcp/stdio.ts",
+    "setup": "node setup-wizard.js",
+    "electron": "node scripts/build-server.cjs && electron .",
+    "dist:win": "node scripts/build-server.cjs && electron-builder --win --x64",
+    "dist:mac": "node scripts/build-server.cjs && electron-builder --mac"
+  },
+  "devDependencies": {
+    "electron": "^35.1.2",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "io.github.ryudongsoo.kokiotalk",
+    "productName": "KokioTalk",
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron-main.cjs",
+      "setup-wizard.js",
+      "kokio.config.json",
+      "kokio.config.example.json",
+      "INSTALL_GUIDE.md",
+      "README.md",
+      "client/**/*",
+      "server/dist/**/*",
+      "server/src/**/*",
+      "gateway-server/server.js",
+      "gateway-server/rn-kakao-bridge.js",
+      "gateway-server/kokio.config.json",
+      "scripts/build-server.cjs"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "KokioTalk-Setup-Windows-${arch}.${ext}",
+      "icon": "client/public/icon-512.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "KokioTalk"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "KokioTalk-macOS-${arch}.${ext}",
+      "icon": "client/public/icon-512.png",
+      "category": "public.app-category.productivity"
+    }
   },
   "engines": {
     "node": ">=22.6.0"

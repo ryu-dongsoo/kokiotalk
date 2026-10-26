@@ -19,19 +19,25 @@ const rnKakaoBridge = new RnKakaoBridge(__dirname);
 const HOME_DIR = os.homedir();
 const PORT = 8081;
 const KOKIO_PORT = 8082;
+const DATA_DIR = process.env.KOKIO_DATA_DIR || __dirname;
+try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch {}
 const KOKIO_DIR = fs.existsSync(path.join(__dirname, '..', 'server', 'src', 'index.ts'))
   ? path.join(__dirname, '..')
   : fs.existsSync(path.join(__dirname, '..', '1. Projects', '연구계획', 'Works', 'KokioTalk', 'server', 'src', 'index.ts'))
     ? path.join(__dirname, '..', '1. Projects', '연구계획', 'Works', 'KokioTalk')
-    : path.join(__dirname, '..', 'kokiotalk-app');
-const ANTIGRAVITY_GUI_EXE = path.join(HOME_DIR, 'AppData', 'Local', 'Programs', 'antigravity', 'Antigravity.exe');
-const AGENTAPI_EXE = path.join(HOME_DIR, 'AppData', 'Local', 'Programs', 'antigravity', 'resources', 'bin', 'language_server.exe');
+    : path.join(__dirname, '..');
+const ANTIGRAVITY_GUI_EXE = process.platform === 'darwin'
+  ? '/Applications/Antigravity.app/Contents/MacOS/Antigravity'
+  : path.join(HOME_DIR, 'AppData', 'Local', 'Programs', 'antigravity', 'Antigravity.exe');
+const AGENTAPI_EXE = process.platform === 'darwin'
+  ? '/Applications/Antigravity.app/Contents/Resources/bin/language_server'
+  : path.join(HOME_DIR, 'AppData', 'Local', 'Programs', 'antigravity', 'resources', 'bin', 'language_server.exe');
 const BRAIN_DIR = path.join(HOME_DIR, '.gemini', 'antigravity', 'brain');
 const PROJECTS_DIR = path.join(HOME_DIR, '.gemini', 'config', 'projects');
 
-const STATE_FILE = path.join(__dirname, 'sessions.json');
-const TUNNEL_FILE = path.join(__dirname, 'tunnel_url.txt');
-const NGROK_DOMAIN_FILE = path.join(__dirname, 'ngrok_domain.txt');
+const STATE_FILE = path.join(DATA_DIR, 'sessions.json');
+const TUNNEL_FILE = path.join(DATA_DIR, 'tunnel_url.txt');
+const NGROK_DOMAIN_FILE = path.join(DATA_DIR, 'ngrok_domain.txt');
 const DEFAULT_NGROK_DOMAIN = '';
 
 process.on('uncaughtException', (err) => {
@@ -890,6 +896,7 @@ function proxyToKokioTalk(req, res, targetPath) {
 // ============================================================================
 function loadKokioConfig() {
   const candidates = [
+    path.join(DATA_DIR, 'kokio.config.json'),
     path.join(__dirname, 'kokio.config.json'),
     path.join(KOKIO_DIR, 'kokio.config.json'),
     path.join(__dirname, '..', 'kokio.config.json')
@@ -904,11 +911,16 @@ function loadKokioConfig() {
   return {};
 }
 
+function getActivePin() {
+  const cfg = loadKokioConfig();
+  return String(cfg?.security?.accessPin || '000000').trim();
+}
+
 const KOKIO_CONFIG = loadKokioConfig();
-const ACCESS_PIN = String(KOKIO_CONFIG?.security?.accessPin || '000000').trim();
-const OWNER_HONORIFIC = KOKIO_CONFIG?.owner?.honorific || '사용자님';
+const ACCESS_PIN = getActivePin();
+const OWNER_HONORIFIC = KOKIO_CONFIG?.owner?.honorific || 'User';
 const ASSISTANT_SHORT_NAME = KOKIO_CONFIG?.assistant?.shortName || 'Kokio AI';
-const ASSISTANT_AVATAR = KOKIO_CONFIG?.assistant?.avatar || '🥛';
+const ASSISTANT_AVATAR = KOKIO_CONFIG?.assistant?.avatar || '🤖';
 const AUTH_SECRET = crypto.createHash('sha256').update(`kokio-pin-${ACCESS_PIN}-${PROJECT_ID}`).digest('hex');
 const PERSISTENT_TOKEN = crypto.createHmac('sha256', AUTH_SECRET).update('kokio-trusted-device').digest('hex');
 const tempSessions = new Map(); // tempToken -> { createdAt, lastSeenAt, closingTimer }
@@ -1676,6 +1688,262 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // 0.6 Graphical First-Run Setup Wizard (/setup & POST /api/setup) for Windows (.exe) & macOS (.dmg)
+  if (url.pathname === '/setup' && req.method === 'GET') {
+    const authForSetup = getAuthStatus(req);
+    if (!authForSetup.authenticated) {
+      res.writeHead(302, { Location: '/' });
+      res.end();
+      return;
+    }
+    const cfg = loadKokioConfig();
+    const curLang = cfg?.owner?.language || 'en';
+    const curName = cfg?.owner?.name || 'Alex';
+    const curHonorific = cfg?.owner?.honorific || 'Alex';
+    const curAgent = cfg?.assistant?.shortName || 'Kokio AI';
+    const curAvatar = cfg?.assistant?.avatar || '🤖';
+    const curPin = cfg?.security?.accessPin || '123456';
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ KokioTalk · Setup Wizard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 15%, #262E3D 0%, #14171F 80%);
+      color: #F8FAFC;
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      max-width: 540px;
+      width: 100%;
+      background: #1E232E;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 26px 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+    }
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .badge { background: rgba(254,229,0,0.14); color: #FEE500; border: 1px solid rgba(254,229,0,0.35); padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+    select, input {
+      width: 100%;
+      background: #131720;
+      color: #F8FAFC;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 11px 13px;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+    .lang-sel { width: auto; padding: 6px 10px; font-size: 12.5px; margin-top: 0; }
+    h1 { color: #FEE500; font-size: 21px; margin-bottom: 6px; }
+    .sub { color: #94A3B8; font-size: 13px; margin-bottom: 18px; line-height: 1.45; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 12.5px; font-weight: 700; color: #CBD5E1; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    .btn {
+      flex: 1; padding: 13px; border-radius: 12px; border: none; font-weight: 800; font-size: 14px; cursor: pointer;
+    }
+    .btn-primary { background: #FEE500; color: #191919; }
+    .btn-secondary { background: #334155; color: #F8FAFC; text-decoration: none; text-align: center; }
+    .msg { margin-top: 12px; font-size: 13px; font-weight: 700; color: #34D399; text-align: center; min-height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="top-bar">
+      <span class="badge">🐓 KokioTalk · Antigravity 2.0+</span>
+      <select id="wiz-lang" class="lang-sel">
+        <option value="en">🌐 English</option>
+        <option value="ko">🇰🇷 한국어</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="zh">🇨🇳 中文</option>
+      </select>
+    </div>
+    <h1 id="t-title">⚙️ Personal AI Agent Setup Wizard</h1>
+    <p id="t-sub" class="sub">Configure your AI agent profile and 6-digit external security PIN in one click.</p>
+    <form id="wiz-form">
+      <div class="grid2">
+        <div class="field">
+          <label id="l-name">Your Name</label>
+          <input type="text" id="f-name" value="${curName}" required />
+        </div>
+        <div class="field">
+          <label id="l-hon">Preferred Title / Honorific</label>
+          <input type="text" id="f-hon" value="${curHonorific}" required />
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label id="l-agent">AI Agent Name</label>
+          <input type="text" id="f-agent" value="${curAgent}" required />
+        </div>
+        <div class="field">
+          <label id="l-avatar">AI Emoji Avatar</label>
+          <input type="text" id="f-avatar" value="${curAvatar}" required />
+        </div>
+      </div>
+      <div class="field">
+        <label id="l-pin">🔒 6-Digit External Security PIN (Digits 0-9)</label>
+        <input type="text" id="f-pin" pattern="\\d{6}" maxlength="6" value="${curPin}" required />
+      </div>
+      <div class="btn-row">
+        <a href="/" id="b-skip" class="btn btn-secondary">🐓 Open Messenger</a>
+        <button type="submit" id="b-save" class="btn btn-primary">💾 Save & Connect Mobile QR</button>
+      </div>
+      <div id="wiz-msg" class="msg"></div>
+    </form>
+  </div>
+  <script>
+    (function() {
+      const L = {
+        en: {
+          title: '⚙️ Personal AI Agent Setup Wizard',
+          sub: 'Configure your AI agent profile and 6-digit external security PIN in one click.',
+          name: 'Your Name', hon: 'Preferred Title / Honorific',
+          agent: 'AI Agent Name', avatar: 'AI Emoji Avatar',
+          pin: '🔒 6-Digit External Security PIN (Digits 0-9)',
+          skip: '🐓 Open Messenger', save: '💾 Save & Connect Mobile QR',
+          saved: '✅ Saved! Redirecting to Mobile QR Connection...'
+        },
+        ko: {
+          title: '⚙️ 나만의 AI 에이전트 초기 설정 마법사',
+          sub: 'AI 에이전트 프로필과 외부 접속 6자리 보안 PIN 암호를 한 번에 설정합니다.',
+          name: '사용자 이름', hon: '선호하는 호칭 (예: 대표님 / 님)',
+          agent: 'AI 에이전트 이름', avatar: 'AI 이모지 아이콘',
+          pin: '🔒 외부 접속 6자리 보안 PIN 암호 (숫자 6자리)',
+          skip: '🐓 메신저 바로 열기', save: '💾 저장 후 모바일 QR 연결하기',
+          saved: '✅ 저장 완료! 모바일 QR 연결 화면으로 이동합니다...'
+        },
+        ja: {
+          title: '⚙️ パーソナルAIエージェント 初期設定ウィザード',
+          sub: 'AIエージェントのプロフィールと外部接続用6桁セキュリティPINを設定します。',
+          name: 'あなたの名前', hon: '敬称 (例: さん)',
+          agent: 'AIエージェント名', avatar: 'AI絵文字アイコン',
+          pin: '🔒 外部アクセス用 6桁セキュリティPIN (数字6桁)',
+          skip: '🐓 メッセンジャーを開く', save: '💾 保存してモバイルQRへ',
+          saved: '✅ 保存しました！モバイルQR画面へ移動します...'
+        },
+        zh: {
+          title: '⚙️ 个人 AI 代理 初始设置向导',
+          sub: '一键配置您的 AI 代理资料与 6 位外部访问安全 PIN 码。',
+          name: '您的姓名', hon: '称呼',
+          agent: 'AI 代理名称', avatar: 'AI 表情图标',
+          pin: '🔒 外部访问 6 位安全 PIN 码 (6位数字)',
+          skip: '🐓 打开聊天窗口', save: '💾 保存并打开手机扫码连接',
+          saved: '✅ 保存成功！正在跳转至手机二维码连接页面...'
+        }
+      };
+      const sel = document.getElementById('wiz-lang');
+      let lang = localStorage.getItem('kokio_ui_lang') || '${curLang}' || 'en';
+      if (!L[lang]) lang = 'en';
+      function apply(l) {
+        lang = L[l] ? l : 'en';
+        try { localStorage.setItem('kokio_ui_lang', lang); } catch(e){}
+        sel.value = lang;
+        const d = L[lang];
+        document.getElementById('t-title').textContent = d.title;
+        document.getElementById('t-sub').textContent = d.sub;
+        document.getElementById('l-name').textContent = d.name;
+        document.getElementById('l-hon').textContent = d.hon;
+        document.getElementById('l-agent').textContent = d.agent;
+        document.getElementById('l-avatar').textContent = d.avatar;
+        document.getElementById('l-pin').textContent = d.pin;
+        document.getElementById('b-skip').textContent = d.skip;
+        document.getElementById('b-save').textContent = d.save;
+      }
+      sel.addEventListener('change', () => apply(sel.value));
+      apply(lang);
+
+      document.getElementById('wiz-form').addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        const pin = document.getElementById('f-pin').value.trim();
+        if (!/^\\d{6}$/.test(pin)) { alert('Please enter a 6-digit numeric PIN (0-9).'); return; }
+        const payload = {
+          language: lang,
+          ownerName: document.getElementById('f-name').value.trim(),
+          honorific: document.getElementById('f-hon').value.trim(),
+          agentName: document.getElementById('f-agent').value.trim(),
+          avatar: document.getElementById('f-avatar').value.trim() || '🤖',
+          accessPin: pin
+        };
+        const res = await fetch('/api/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data && data.ok) {
+          document.getElementById('wiz-msg').textContent = L[lang].saved;
+          setTimeout(() => { window.location.href = '/qr'; }, 800);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>`);
+    return;
+  }
+
+  if (url.pathname === '/api/setup' && req.method === 'POST') {
+    const authForSetup = getAuthStatus(req);
+    if (!authForSetup.authenticated) {
+      res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ ok: false, error: 'Unauthorized' }));
+      return;
+    }
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const d = JSON.parse(body || '{}');
+        const pin = /^\d{6}$/.test(String(d.accessPin || '').trim()) ? String(d.accessPin).trim() : '123456';
+        const cfg = loadKokioConfig();
+        cfg.owner = {
+          name: d.ownerName || 'Alex',
+          honorific: d.honorific || d.ownerName || 'Alex',
+          affiliation: cfg?.owner?.affiliation || '',
+          language: d.language || 'en'
+        };
+        cfg.assistant = {
+          id: 'ai-assistant',
+          name: `${d.agentName || 'Kokio AI'} (${d.avatar || '🤖'} AI Agent)`,
+          shortName: d.agentName || 'Kokio AI',
+          avatar: d.avatar || '🤖',
+          statusMessage: `${d.honorific || 'User'}'s Personal AI Agent · Antigravity 2.0+`
+        };
+        cfg.security = {
+          accessPin: pin,
+          tempSessionTimeoutSec: 18,
+          setupCompleted: true
+        };
+        const targets = [
+          path.join(DATA_DIR, 'kokio.config.json'),
+          path.join(__dirname, 'kokio.config.json'),
+          path.join(KOKIO_DIR, 'kokio.config.json')
+        ];
+        for (const t of targets) {
+          try { fs.writeFileSync(t, JSON.stringify(cfg, null, 2), 'utf-8'); } catch {}
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ ok: true }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ ok: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
   // 1. 보안 인증 API (/api/auth/login, /api/auth/logout, /api/auth/tab-close, /api/auth/ping, /api/auth/check)
   if (url.pathname.startsWith('/api/auth/')) {
     if (req.method === 'GET' && url.pathname === '/api/auth/check') {
@@ -1695,9 +1963,9 @@ const server = http.createServer(async (req, res) => {
         const pin = String(data.pin || '').trim();
         const mode = data.mode === 'persistent' ? 'persistent' : 'temp';
 
-        if (pin !== ACCESS_PIN) {
+        if (pin !== getActivePin()) {
           res.writeHead(401, { 'Content-Type': 'application/json; charset=utf-8' });
-          res.end(JSON.stringify({ ok: false, error: '보안 암호(6자리)가 올바르지 않습니다.' }));
+          res.end(JSON.stringify({ ok: false, error: 'Invalid 6-digit security PIN.' }));
           return;
         }
 
