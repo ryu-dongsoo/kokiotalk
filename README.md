@@ -1,15 +1,15 @@
-> **Author / Rights Holder:** 전북대학교 생물산업기계공학과 유동수 (ryudongsoo@jbnu.ac.kr)
+> **Author / Rights Holder:** Dongsoo Ryu, Dept. of Bio-Industrial Machinery Engineering, Jeonbuk National University (ryudongsoo@jbnu.ac.kr)
 
 # 🐓 KokioTalk & 🤖 Antigravity 2.0+ Personal AI Agent
 
-> **🌐 Multi-Language Support**: **English (Default)** | **🇰🇷 한국어** | **🇯🇵 日本語** | **🇨🇳 中文**  
-> **Turnkey Personal AI Agent & Multi-Language Mobile/PC Messenger for Google Antigravity 2.0+**
+> **🌐 Multi-Language Support**: **English (Default)** | **Korean (KO)** | **Japanese (JA)** | **Chinese (ZH)**  
+> **Turnkey Personal AI Agent & Multi-Language Mobile/Desktop Messenger for Google Antigravity 2.0+**
 
 ---
 
 ## 📦 Download Standalone Desktop Installers (Windows & macOS)
 
-No Node.js or terminal setup required — download and install the standalone desktop app directly from **GitHub Releases**:
+No Node.js or terminal setup required — download and install the standalone desktop application directly from **GitHub Releases**:
 
 | Platform | Installer Package | Direct Download Link |
 | :--- | :--- | :--- |
@@ -27,11 +27,12 @@ No Node.js or terminal setup required — download and install the standalone de
 2. **Turnkey Personal AI Agent Client System**
    - Automatically provisions your AI Agent's identity & rules (`GEMINI.md`, `AGENTS.md`), continuous long-term memory (`MEMORY.md`, `memory/YYYY-MM-DD.md`), and a native **Antigravity 2.0 Plugin** (`~/.gemini/config/plugins/kokio-assistant/`).
 3. **KokioTalk Messenger & 3-Layer External Security Gateway**
-   - **Multi-Language UI (`🌐 EN` Default / `🇰🇷 한국어` / `🇯🇵 日本語` / `🇨🇳 中文`)**: Instant 1-click language switching across the Setup Wizard (`/setup`), Lock Screen, QR Dashboard (`/qr`), and Messenger UI.
+   - **Multi-Language UI (`🌐 EN` Default / `KO` / `JA` / `ZH`)**: Instant 1-click language switching across the Setup Wizard (`/setup`), Lock Screen, QR Dashboard (`/qr`), and Messenger UI.
    - **6-Digit Security PIN Lock & Temporary PC Auto-Wipe**:
      - **Localhost Bypass**: Opens immediately on your host PC (`http://localhost:8081`).
      - **📱 My Device Mode**: Remembers authentication on your personal smartphone or tablet.
      - **💻 Temp PC Access Mode (Default on External PCs)**: Blocks browser *"Save password?"* prompts and **automatically destroys the session in both browser (`sessionStorage`) and server memory within 2.5 seconds of closing the tab or window**.
+   - **Automatic Update Notification & 1-Click Hot-Update**: Automatically detects new releases on GitHub and displays an in-app update banner (`⚡ Update Now`) to apply patches in seconds while preserving all local chat history and settings.
    - **Full Productivity Suite**: Continuous Voice STT (`🎤`) & TTS (`🔊`), Live Simultaneous Interpreter (`🌐`), iPhone `.heic` photo auto-conversion, clipboard image/file paste (`Ctrl+V`), Calendar sync (`📅`), and Live Remote PC Screen Control (`🖥️`).
 4. **Graphical Setup Wizard (`/setup`) & CLI Installer**
    - When launching the Windows `.exe` or macOS `.dmg` app for the first time, the built-in **Graphical Setup Wizard (`/setup`)** lets you configure your name, preferred honorific, AI Agent name/emoji, and 6-digit security PIN in one click, then immediately displays the **Mobile Connection QR Code (`/qr`)**.
@@ -55,10 +56,10 @@ Because your AI Agent runs on your PC/Mac (Antigravity 2.0+), your smartphone an
 
 | File / Directory | Description |
 | :--- | :--- |
-| [INSTALL_GUIDE.md](./INSTALL_GUIDE.md) | Complete Step-by-Step Installation & Usage Guide (English / 한국어 / 日本語 / 中文) |
+| [INSTALL_GUIDE.md](./INSTALL_GUIDE.md) | Complete Step-by-Step Installation & Usage Guide (English / Korean / Japanese / Chinese) |
 | [electron-main.cjs](./electron-main.cjs) | Standalone Desktop Application wrapper for Windows (`.exe`) and macOS (`.dmg`) |
 | [.github/workflows/release.yml](./.github/workflows/release.yml) | Automated GitHub Actions CI/CD pipeline building Windows `.exe` and macOS `.dmg` releases |
-| [setup-wizard.js](./setup-wizard.js) | Interactive Multi-Language CLI Setup Wizard (Step 0 ~ Step 3 automation) |
+| [setup-wizard.js](./setup-wizard.js) | Interactive Multi-Language CLI Setup Wizard |
 | [Start-KokioTalk.bat](./Start-KokioTalk.bat) | Windows 1-click launcher script |
 | [Start-KokioTalk.command](./Start-KokioTalk.command) | macOS / Linux 1-click launcher script |
 | [1_install_wizard.bat](./1_install_wizard.bat) | One-click interactive CLI installer & desktop shortcut generator |
@@ -86,12 +87,14 @@ chmod +x Start-KokioTalk.command
 ./Start-KokioTalk.command
 ```
 
-For detailed instructions in **English, Korean (한국어), Japanese (日本語), and Chinese (中文)**, please see [INSTALL_GUIDE.md](./INSTALL_GUIDE.md).
+For detailed multi-language instructions, please see [INSTALL_GUIDE.md](./INSTALL_GUIDE.md).
 
 ---
 
-## 📝 변경 이력 (Changelog)
+## 📝 Changelog
 
-- **2026-10-26 12:25:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] feat: add Electron desktop app packaging for Windows (.exe) and macOS (.dmg), graphical first-run setup wizard (/setup), pre-compiled ESM server bundle, and automated GitHub Releases workflow
-- **2026-10-26 12:03:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] refactor: universalize terminology across docs, installer, and codebase (remove personal assistant names and adopt generic Personal AI Agent terminology)
-- **2026-10-26 11:56:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] feat: initial public release of KokioTalk & Antigravity 2.0+ Personal AI Agent Starter Kit (EN/KO/JA/ZH, 6-digit PIN lock, temp PC auto-wipe, QR mobile onboarding)
+- **2026-10-26 12:41:00** [[Dongsoo Ryu](mailto:ryudongsoo@jbnu.ac.kr)] docs: convert main GitHub README.md to 100% English for global open-source distribution
+- **2026-10-26 12:35:00** [[Dongsoo Ryu](mailto:ryudongsoo@jbnu.ac.kr)] feat: add automatic GitHub update notification banner & 1-click hot-update (`/api/system/version` & `/api/system/apply-update`)
+- **2026-10-26 12:25:00** [[Dongsoo Ryu](mailto:ryudongsoo@jbnu.ac.kr)] feat: add Electron desktop app packaging for Windows (`.exe`) and macOS (`.dmg`), graphical first-run setup wizard (`/setup`), pre-compiled ESM server bundle, and automated GitHub Releases workflow
+- **2026-10-26 12:03:00** [[Dongsoo Ryu](mailto:ryudongsoo@jbnu.ac.kr)] refactor: universalize terminology across docs, installer, and codebase
+- **2026-10-26 11:56:00** [[Dongsoo Ryu](mailto:ryudongsoo@jbnu.ac.kr)] feat: initial public release of KokioTalk & Antigravity 2.0+ Personal AI Agent (`v2.0.0`)
