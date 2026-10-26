@@ -11,8 +11,8 @@ const https = require('node:https');
 const net = require('node:net');
 const { spawn } = require('node:child_process');
 
-const PORT_GATEWAY = 8081;
-const PORT_CORE = 8082;
+let PORT_GATEWAY = 8081;
+let PORT_CORE = 8082;
 const APP_ROOT = __dirname;
 const DATA_DIR = app ? app.getPath('userData') : path.join(APP_ROOT, 'data');
 
@@ -126,11 +126,19 @@ async function startCloudflaredTunnel() {
 }
 
 async function ensureLocalServers() {
+  if (await isPortOpen(PORT_GATEWAY)) {
+    const hasSetup = await checkUrlExists(`http://localhost:${PORT_GATEWAY}/setup`);
+    if (!hasSetup) {
+      PORT_GATEWAY = 18081;
+      PORT_CORE = 18082;
+    }
+  }
+
   const coreUp = await isPortOpen(PORT_CORE);
   if (!coreUp) {
     const coreEntry = path.join(APP_ROOT, 'server', 'dist', 'index.mjs');
     if (fs.existsSync(coreEntry)) {
-      spawnNodeScript(coreEntry, APP_ROOT, { PORT: String(PORT_CORE) });
+      spawnNodeScript(coreEntry, APP_ROOT, { PORT: String(PORT_CORE), KOKIO_PORT: String(PORT_CORE) });
     }
   }
 
@@ -138,7 +146,10 @@ async function ensureLocalServers() {
   if (!gwUp) {
     const gwEntry = path.join(APP_ROOT, 'gateway-server', 'server.js');
     if (fs.existsSync(gwEntry)) {
-      spawnNodeScript(gwEntry, path.join(APP_ROOT, 'gateway-server'), { PORT: String(PORT_GATEWAY) });
+      spawnNodeScript(gwEntry, path.join(APP_ROOT, 'gateway-server'), {
+        PORT: String(PORT_GATEWAY),
+        KOKIO_PORT: String(PORT_CORE)
+      });
     }
   }
 

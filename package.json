@@ -41,6 +41,7 @@
       "client/**/*",
       "server/dist/**/*",
       "server/src/**/*",
+      "gateway-server/package.json",
       "gateway-server/server.js",
       "gateway-server/rn-kakao-bridge.js",
       "gateway-server/kokio.config.json",

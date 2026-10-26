@@ -17,8 +17,8 @@ const { RnKakaoBridge } = require('./rn-kakao-bridge');
 const rnKakaoBridge = new RnKakaoBridge(__dirname);
 
 const HOME_DIR = os.homedir();
-const PORT = 8081;
-const KOKIO_PORT = 8082;
+const PORT = Number(process.env.PORT) || 8081;
+const KOKIO_PORT = Number(process.env.KOKIO_PORT) || 8082;
 const DATA_DIR = process.env.KOKIO_DATA_DIR || __dirname;
 try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch {}
 const KOKIO_DIR = fs.existsSync(path.join(__dirname, '..', 'server', 'src', 'index.ts'))
@@ -218,7 +218,15 @@ function getConfiguredNgrokDomain() {
   return DEFAULT_NGROK_DOMAIN;
 }
 
-const { syncPortal, getTailscaleUrl } = require('./sync-portal');
+let syncPortal = async () => {};
+let getTailscaleUrl = () => null;
+try {
+  if (fs.existsSync(path.join(__dirname, 'sync-portal.js'))) {
+    const sp = require('./sync-portal');
+    if (sp.syncPortal) syncPortal = sp.syncPortal;
+    if (sp.getTailscaleUrl) getTailscaleUrl = sp.getTailscaleUrl;
+  }
+} catch {}
 
 function detectCloudflareUrl() {
   try {
@@ -2052,6 +2060,25 @@ const server = http.createServer(async (req, res) => {
         for (const t of targets) {
           try { fs.writeFileSync(t, JSON.stringify(cfg, null, 2), 'utf-8'); } catch {}
         }
+        try {
+          const { DatabaseSync } = require('node:sqlite');
+          const dbFile = path.join(DATA_DIR, 'storage', 'kokiotalk.db');
+          if (fs.existsSync(dbFile)) {
+            const sdb = new DatabaseSync(dbFile);
+            sdb.prepare("UPDATE users SET name = ?, status_message = ? WHERE id = 'ryu'").run(
+              cfg.owner.name,
+              `${cfg.owner.honorific} · Personal AI Workspace`
+            );
+            sdb.prepare("UPDATE users SET name = ?, avatar = ?, status_message = ? WHERE id = 'kokio'").run(
+              cfg.assistant.name,
+              cfg.assistant.avatar,
+              cfg.assistant.statusMessage
+            );
+            sdb.prepare("UPDATE rooms SET name = ? WHERE id = 'room-self'").run(`${cfg.owner.name} (My Memo & Vault)`);
+            sdb.prepare("UPDATE rooms SET name = ?, avatar = ? WHERE id = 'room-kokio'").run(cfg.assistant.name, cfg.assistant.avatar);
+            sdb.close();
+          }
+        } catch {}
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
         res.end(JSON.stringify({ ok: true }));
       } catch (err) {
