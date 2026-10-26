@@ -1,7 +1,7 @@
 ﻿/**
  * 💛 rn-kakao-bridge.js
  * `react-native-kakao-main` (packages/core, user, share, social, channel) 기반
- * 카카오톡 통합 브릿지 모듈 (에아 Ea & 우유 Ooyoo 공용)
+ * 카카오톡 통합 브릿지 모듈 (Peer AI Ea & Kokio AI KokioAI 공용)
  *
  * 지원 기능:
  * 1) [User] 카카오 OAuth 로그인 / 액세스 토큰 발급 & 자동 갱신 (packages/user)

@@ -1,10 +1,10 @@
 ﻿/**
- * 🧠 KokioTalk ↔ Antigravity (우유 Ooyoo 🥛) & 에아 (Ea 🤖) 자연어 직결 브릿지
- * - 코끼오톡에서 "우유야 ~해줘" (또는 우유 1:1 방에서 자연어 메시지) 입력 시:
+ * 🧠 KokioTalk ↔ Antigravity (Kokio AI KokioAI 🥛) & Peer AI (🔗) 자연어 직결 브릿지
+ * - 코끼오톡에서 "AI야 ~해줘" (또는 Kokio AI 1:1 방에서 자연어 메시지) 입력 시:
  *   1) 중간 안내 문구("전달했습니다" 등)를 일절 띄우지 않음
- *   2) 현재 PC의 안티그래비티(우유 본체)로 즉시 자연어 명령을 전달함
+ *   2) 현재 PC의 안티그래비티(Kokio AI 본체)로 즉시 자연어 명령을 전달함
  *   3) 안티그래비티가 모든 도구 실행과 추론을 마치고 최종 답변(`PLANNER_RESPONSE`)을 출력할 때까지 대기함
- *   4) 우유가 작성한 실제 최종 답변 글만 코끼오톡 말풍선으로 전달함
+ *   4) AI 에이전트가 작성한 실제 최종 답변 글만 코끼오톡 말풍선으로 전달함
  */
 
 import fs from 'node:fs';
@@ -15,13 +15,13 @@ import http from 'node:http';
 const HOME_DIR = os.homedir();
 const LOCAL_GATEWAY_DIR = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..', '..', '..', 'gateway-server');
 export const BRAIN_DIR = path.join(HOME_DIR, '.gemini', 'antigravity', 'brain');
-export const OOYOO_SERVER_DIR = fs.existsSync(path.join(HOME_DIR, 'OneDrive', 'RyuVault', 'ooyoo-mobile-server'))
-  ? path.join(HOME_DIR, 'OneDrive', 'RyuVault', 'ooyoo-mobile-server')
+export const GATEWAY_SERVER_DIR = fs.existsSync(path.join(HOME_DIR, 'OneDrive', 'KokioVault', 'gateway-server'))
+  ? path.join(HOME_DIR, 'OneDrive', 'KokioVault', 'gateway-server')
   : LOCAL_GATEWAY_DIR;
-export const OOYOO_SESSIONS_FILE = path.join(OOYOO_SERVER_DIR, 'sessions.json');
-export const OOYOO_PORT = 8081;
+export const GATEWAY_SESSIONS_FILE = path.join(GATEWAY_SERVER_DIR, 'sessions.json');
+export const GATEWAY_PORT = 8081;
 
-export function loadOoyooSessionState(): {
+export function loadKokioAISessionState(): {
   activeModel: string;
   activeLevel: string;
   activeConversationId: string | null;
@@ -29,13 +29,13 @@ export function loadOoyooSessionState(): {
   peerUrl: string;
 } {
   try {
-    if (fs.existsSync(OOYOO_SESSIONS_FILE)) {
-      const s = JSON.parse(fs.readFileSync(OOYOO_SESSIONS_FILE, 'utf-8'));
+    if (fs.existsSync(GATEWAY_SESSIONS_FILE)) {
+      const s = JSON.parse(fs.readFileSync(GATEWAY_SESSIONS_FILE, 'utf-8'));
       return {
         activeModel: s.activeModel || 'argon',
         activeLevel: s.activeLevel || 'medium',
         activeConversationId: s.activeConversationId || null,
-        peerName: s.peerName || '에아 (Ea 🤖)',
+        peerName: s.peerName || 'Peer AI (🔗)',
         peerUrl: s.peerUrl || ''
       };
     }
@@ -44,7 +44,7 @@ export function loadOoyooSessionState(): {
     activeModel: 'argon',
     activeLevel: 'medium',
     activeConversationId: null,
-    peerName: '에아 (Ea 🤖)',
+    peerName: 'Peer AI (🔗)',
     peerUrl: ''
   };
 }
@@ -69,7 +69,7 @@ export function getActiveAntigravityConvId(): string | null {
     }
     if (bestId) return bestId;
   } catch {}
-  return loadOoyooSessionState().activeConversationId;
+  return loadKokioAISessionState().activeConversationId;
 }
 
 function getTranscriptLineCount(convId: string): number {
@@ -86,7 +86,7 @@ function getTranscriptLineCount(convId: string): number {
 
 function readFullPlannerContent(convId: string, stepObj: any): string {
   const stripMobileQuote = (s: string) =>
-    String(s || '').replace(/^>\s*📱\s*\*\*박사님\s*\(모바일\)\*\*:\s*[^\r\n]+\r?\n*/m, '').trim();
+    String(s || '').replace(/^>\s*📱\s*\*\*사용자님\s*\(모바일\)\*\*:\s*[^\r\n]+\r?\n*/m, '').trim();
 
   const isTruncated =
     Array.isArray(stepObj.truncated_fields) && stepObj.truncated_fields.includes('content');
@@ -116,7 +116,7 @@ function readFullPlannerContent(convId: string, stepObj: any): string {
 
 export function extractStepsFromTranscript(convId: string): Array<{
   stepKey: string;
-  role: 'ryu' | 'ooyoo';
+  role: 'ryu' | 'kokio';
   text: string;
   createdAt: number;
 }> {
@@ -124,7 +124,7 @@ export function extractStepsFromTranscript(convId: string): Array<{
   const logPath = path.join(BRAIN_DIR, convId, '.system_generated', 'logs', 'transcript.jsonl');
   if (!fs.existsSync(logPath)) return [];
 
-  const results: Array<{ stepKey: string; role: 'ryu' | 'ooyoo'; text: string; createdAt: number }> = [];
+  const results: Array<{ stepKey: string; role: 'ryu' | 'kokio'; text: string; createdAt: number }> = [];
   try {
     const lines = fs.readFileSync(logPath, 'utf-8').split(/\r?\n/).filter(Boolean);
     for (let i = 0; i < lines.length; i++) {
@@ -141,7 +141,7 @@ export function extractStepsFromTranscript(convId: string): Array<{
         let raw = String(step.content || '');
         const mReq = raw.match(/<USER_REQUEST>([\s\S]*?)<\/USER_REQUEST>/);
         if (mReq) raw = mReq[1];
-        const mAsk = raw.match(/박사님의 요청:\s*([\s\S]*)$/);
+        const mAsk = raw.match(/사용자님의 요청:\s*([\s\S]*)$/);
         if (mAsk) raw = mAsk[1];
         const clean = raw.trim();
         if (clean) {
@@ -149,7 +149,7 @@ export function extractStepsFromTranscript(convId: string): Array<{
         }
       } else if (step.type === 'SYSTEM_MESSAGE') {
         const raw = String(step.content || '');
-        const mAsk = raw.match(/박사님의 요청:\s*([\s\S]*?)<\/SYSTEM_MESSAGE>/) || raw.match(/박사님의 요청:\s*([\s\S]*)$/);
+        const mAsk = raw.match(/사용자님의 요청:\s*([\s\S]*?)<\/SYSTEM_MESSAGE>/) || raw.match(/사용자님의 요청:\s*([\s\S]*)$/);
         if (mAsk) {
           const clean = mAsk[1].replace(/<\/SYSTEM_MESSAGE>[\s\S]*$/, '').trim();
           if (clean) {
@@ -161,7 +161,7 @@ export function extractStepsFromTranscript(convId: string): Array<{
         if (step.status === 'DONE' && toolCalls.length === 0) {
           const text = readFullPlannerContent(convId, step);
           if (text) {
-            results.push({ stepKey: `${convId}:a:${stepIdx}`, role: 'ooyoo', text, createdAt: ts });
+            results.push({ stepKey: `${convId}:a:${stepIdx}`, role: 'kokio', text, createdAt: ts });
           }
         }
       }
@@ -170,7 +170,7 @@ export function extractStepsFromTranscript(convId: string): Array<{
   return results;
 }
 
-export function callOoyooLocalApi(
+export function callKokioAILocalApi(
   apiPath: string,
   method: 'GET' | 'POST',
   bodyObj: any = null,
@@ -181,7 +181,7 @@ export function callOoyooLocalApi(
     const req = http.request(
       {
         hostname: '127.0.0.1',
-        port: OOYOO_PORT,
+        port: GATEWAY_PORT,
         path: apiPath,
         method,
         headers: {
@@ -207,7 +207,7 @@ export function callOoyooLocalApi(
     req.on('error', reject);
     req.on('timeout', () => {
       req.destroy();
-      reject(new Error('Ooyoo 8081 API timeout'));
+      reject(new Error('KokioAI 8081 API timeout'));
     });
     if (payload) req.write(payload);
     req.end();
@@ -276,7 +276,7 @@ export async function waitForCurrentTurnCompletion(params: {
               lastTool?.args?.query ||
               lastTool?.name ||
               '도구 실행';
-            const statusMsg = `우유가 작업 중이에요 (${toolLabel})...`;
+            const statusMsg = `AI 에이전트가 작업 중이에요 (${toolLabel})...`;
             if (statusMsg !== lastReportedStatus) {
               lastReportedStatus = statusMsg;
               onProgress(statusMsg);
@@ -298,10 +298,10 @@ export async function waitForCurrentTurnCompletion(params: {
 }
 
 /**
- * 지금 이 PC의 안티그래비티(우유)에게 자연어 명령을 전달하고,
- * 중간 안내 메시지 없이 우유의 최종 답변 글이 나올 때까지 기다려 반환합니다.
+ * 지금 이 PC의 안티그래비티(Kokio AI)에게 자연어 명령을 전달하고,
+ * 중간 안내 메시지 없이 AI 에이전트의 최종 답변 글이 나올 때까지 기다려 반환합니다.
  */
-export async function askRealOoyooAndWaitForReply(params: {
+export async function askRealKokioAIAndWaitForReply(params: {
   prompt: string;
   attachments?: any[];
   model?: string;
@@ -309,7 +309,7 @@ export async function askRealOoyooAndWaitForReply(params: {
   timeoutMs?: number;
   onProgress?: (statusText: string) => void;
 }): Promise<{ ok: boolean; reply: string; convId: string | null }> {
-  const sessionState = loadOoyooSessionState();
+  const sessionState = loadKokioAISessionState();
   const targetConvId = getActiveAntigravityConvId() || sessionState.activeConversationId;
   const beforeLines = targetConvId ? getTranscriptLineCount(targetConvId) : 0;
 
@@ -319,7 +319,7 @@ export async function askRealOoyooAndWaitForReply(params: {
     absolutePath: a.localPath || a.url
   }));
 
-  const sendRes = await callOoyooLocalApi(
+  const sendRes = await callKokioAILocalApi(
     '/api/chat',
     'POST',
     {

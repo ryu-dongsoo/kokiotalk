@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="우유" />
-  <meta name="application-name" content="우유" />
+  <meta name="apple-mobile-web-app-title" content="Kokio AI" />
+  <meta name="application-name" content="Kokio AI" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#14100d" />
   <link rel="manifest" href="/manifest.json?v=4" />
@@ -14,7 +14,7 @@
   <link rel="shortcut icon" href="/icon-192.png?v=4" />
   <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png?v=4" />
   <link rel="apple-touch-icon-precomposed" href="/icon-180.png?v=4" />
-  <title>우유 (Ooyoo)</title>
+  <title>Kokio AI</title>
   <style>
     :root {
       --bg: #14100d;
@@ -26,7 +26,7 @@
       --text: #fefcf9;
       --text-sub: #c2b29f;
       --user-msg: linear-gradient(135deg, #d97706, #ea580c);
-      --ooyoo-msg: #241d17;
+      --kokio-msg: #241d17;
       --success: #10b981;
       --danger: #ef4444;
     }
@@ -385,7 +385,7 @@
       max-width: 88%;
     }
     .msg-row.user { align-self: flex-end; align-items: flex-end; }
-    .msg-row.ooyoo, .msg-row.ea { align-self: flex-start; align-items: flex-start; }
+    .msg-row.kokio, .msg-row.ea { align-self: flex-start; align-items: flex-start; }
 
     .msg-sender {
       font-size: 10.5px;
@@ -410,8 +410,8 @@
       border-bottom-right-radius: 4px;
     }
 
-    .msg-row.ooyoo .bubble, .msg-row.ea .bubble {
-      background: var(--ooyoo-msg);
+    .msg-row.kokio .bubble, .msg-row.ea .bubble {
+      background: var(--kokio-msg);
       border: 1px solid var(--panel-border);
       color: var(--text);
       border-bottom-left-radius: 4px;
@@ -520,7 +520,7 @@
     }
 
     /* =====================================================
-       🤖 우유(Ooyoo) ↔ 에아(Ea) 양방향 브릿지 UI
+       🤖 Kokio AI ↔ Peer AI 양방향 브릿지 UI
        ===================================================== */
     .icon-btn.peer-trigger {
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(245, 158, 11, 0.22));
@@ -1136,7 +1136,7 @@
     /* =====================================================
        📋 9번: 마크다운(표·하이라이트) & 코드 블록/답변 원터치 복사
        ===================================================== */
-    .msg-row.ooyoo .bubble, .msg-row.ea .bubble {
+    .msg-row.kokio .bubble, .msg-row.ea .bubble {
       white-space: normal;
       position: relative;
     }
@@ -1304,7 +1304,7 @@
   <div id="drawer-backdrop" onclick="toggleDrawer(false)"></div>
   <aside id="sidebar-drawer">
     <div class="drawer-header">
-      <h2>🥛 우유 대화 기록</h2>
+      <h2>🥛 Kokio AI 대화 기록</h2>
       <button class="icon-btn" onclick="toggleDrawer(false)">✖</button>
     </div>
     <button class="new-chat-btn" onclick="startNewChat()">
@@ -1318,10 +1318,10 @@
     <div class="header-top">
       <div class="brand">
         <button class="menu-btn" onclick="toggleDrawer(true)" title="대화 목록 열기">☰</button>
-        <img src="/icon-192.png?v=4" class="avatar-img" alt="우유 (Ooyoo)" />
+        <img src="/icon-192.png?v=4" class="avatar-img" alt="Kokio AI" />
         <div class="brand-info">
-          <h1>우유 (Ooyoo 🥛) <span class="status-dot"></span></h1>
-          <p id="conn-info">유동수 박사님 전속 수석 비서</p>
+          <h1>Kokio AI (🤖) <span class="status-dot"></span></h1>
+          <p id="conn-info">사용자님 전담 AI 에이전트</p>
         </div>
       </div>
       <div class="header-actions">
@@ -1329,7 +1329,7 @@
           ⏰ 알림 <span class="alarm-badge" id="alarm-count-badge" style="display:none;">0</span>
         </button>
         <button class="icon-btn peer-trigger" id="peer-header-btn" onclick="openPeerModal()">
-          <span class="peer-dot linked" id="peer-dot"></span>🤖 에아
+          <span class="peer-dot linked" id="peer-dot"></span>🤖 Peer AI
         </button>
         <button class="icon-btn remote-trigger" onclick="openRemoteControl()">🖥️ 원격</button>
         <button class="icon-btn" onclick="startNewChat()">➕</button>
@@ -1359,23 +1359,23 @@
     <button class="chip" style="background:#FEE500;color:#191919;border-color:#F59E0B;font-weight:800;" onclick="location.href='/kokio/'">🐓 꼬끼오톡(KokioTalk) 열기</button>
     <button class="chip" onclick="openAlarmModal()">⏰ 일정 알림 맞추기</button>
     <button class="chip" onclick="triggerFilePicker()">📎 사진·파일 보내기</button>
-    <button class="chip" onclick="prefillEaCall()">🤖 "에아야" 부르기</button>
+    <button class="chip" onclick="prefillEaCall()">🤖 "파트너AI야" 부르기</button>
     <button class="chip" onclick="openRemoteControl()">🕹️ 실시간 PC 원격제어 열기</button>
     <button class="chip" onclick="toggleDrawer(true)">📂 이전 대화 기록</button>
-    <button class="chip" onclick="sendQuick('우유야, 오늘과 이번 주 강의·연구·개인 일정을 4대 카테고리로 정리해서 다정하게 브리핑해줘!')">📅 일정 브리핑</button>
+    <button class="chip" onclick="sendQuick('AI야, 오늘과 이번 주 강의·연구·개인 일정을 4대 카테고리로 정리해서 다정하게 브리핑해줘!')">📅 일정 브리핑</button>
   </div>
 
-  <!-- 🤖 에아(Ea) 직접 대화 모드 배너 -->
+  <!-- 🤖 Peer AI 직접 대화 모드 배너 -->
   <div id="peer-mode-banner">
-    <span>🤖 현재 <b>에아(도준님 AI 비서)</b>와 실시간 연동 대화 중입니다</span>
-    <button class="peer-switch-back-btn" onclick="switchAgentMode('ooyoo')">🥛 우유(Ooyoo)로 복귀</button>
+    <span>🤖 현재 <b>Peer AI(파트너님 AI 비서)</b>와 실시간 연동 대화 중입니다</span>
+    <button class="peer-switch-back-btn" onclick="switchAgentMode('kokio')">🥛 Kokio AI로 복귀</button>
   </div>
 
   <!-- 대화 내역 -->
   <main id="chat-container">
     <div class="welcome-card" id="welcome-card">
-      <img src="/icon-192.png?v=4" class="welcome-logo" alt="우유 (Ooyoo)" />
-      <h2>반가워요, 박사님! 전속 비서 우유(Ooyoo)예요 🥛🐱</h2>
+      <img src="/icon-192.png?v=4" class="welcome-logo" alt="Kokio AI" />
+      <h2>반가워요, 사용자님! 전속 비서 Kokio AI예요 🥛🐱</h2>
       <p>
         ⏰ <b>"3시에 교수회의 알려줘"</b>처럼 말씀하시면 자동으로 알림이 울려요!<br/>
         📎 아래 클립 버튼으로 <b>사진·문서 파일</b>을 바로 보내실 수 있고, 📋 <b>코드/답변 원터치 복사</b>도 지원합니다!
@@ -1385,7 +1385,7 @@
 
   <div id="thinking-indicator" style="margin: 0 14px 8px;">
     <div class="spinner"></div>
-    <span id="thinking-text">우유가 박사님의 작업을 수행하고 있어요... 🥛</span>
+    <span id="thinking-text">AI 에이전트가 사용자님의 작업을 수행하고 있어요... 🥛</span>
   </div>
 
   <!-- 📎 첨부파일(사진/문서) 미리보기 바 -->
@@ -1396,7 +1396,7 @@
   <footer>
     <div class="input-wrap">
       <button class="attach-btn" onclick="triggerFilePicker()" title="사진 촬영 또는 파일 첨부">📎</button>
-      <textarea id="msg-input" rows="1" placeholder="우유에게 작업·일정 알림을 말씀하시거나 📎파일을 보내보세요..." oninput="autoResize(this)"></textarea>
+      <textarea id="msg-input" rows="1" placeholder="AI 에이전트에게 작업·일정 알림을 말씀하시거나 📎파일을 보내보세요..." oninput="autoResize(this)"></textarea>
       <button class="mic-btn" id="mic-btn" onclick="toggleSpeech()" title="음성 입력">🎤</button>
     </div>
     <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
@@ -1406,7 +1406,7 @@
   <div id="alarm-modal" onclick="if(event.target===this)closeAlarmModal()">
     <div class="alarm-card">
       <div class="peer-card-header">
-        <h3>⏰ 우유 스마트 일정 알림 · 타이머</h3>
+        <h3>⏰ Kokio AI 스마트 일정 알림 · 타이머</h3>
         <button class="icon-btn" onclick="closeAlarmModal()">✖</button>
       </div>
 
@@ -1458,7 +1458,7 @@
   <div id="alarm-ring-modal">
     <div class="ring-card">
       <div class="ring-icon">⏰🥛</div>
-      <div class="ring-title">박사님! 예약하신 알림 시간이에요!</div>
+      <div class="ring-title">사용자님! 예약하신 알림 시간이에요!</div>
       <div class="ring-desc" id="ring-alarm-title">일정 알림</div>
       <div class="ring-time" id="ring-alarm-time">오늘 오후 3:00</div>
       <div class="peer-btn-row" style="width:100%; margin-top:6px;">
@@ -1468,22 +1468,22 @@
     </div>
   </div>
 
-  <!-- 🤖 우유(Ooyoo) ↔ 에아(Ea) 연동 설정 및 모드 전환 모달 -->
+  <!-- 🤖 Kokio AI ↔ Peer AI 연동 설정 및 모드 전환 모달 -->
   <div id="peer-modal" onclick="if(event.target===this)closePeerModal()">
     <div class="peer-card">
       <div class="peer-card-header">
-        <h3>🤖 우유(Ooyoo) ↔ 에아(Ea) 연동</h3>
+        <h3>🤖 Kokio AI ↔ Peer AI 연동</h3>
         <button class="icon-btn" onclick="closePeerModal()">✖</button>
       </div>
 
       <div class="peer-tip-box">
         💡 <b>연동 사용법 2가지</b><br/>
-        1️⃣ 평소처럼 채팅창에 <b>"에아야 도준이한테 저녁 먹으라고 전해줘"</b>처럼 부르시면 우유가 에아에게 전달하고 답변을 받아옵니다!<br/>
-        2️⃣ 아래 <b>[🤖 에아와 직접 대화]</b> 버튼을 누르면 에아 채팅방으로 바로 전환됩니다.
+        1️⃣ 평소처럼 채팅창에 <b>"파트너AI야 도준이한테 저녁 먹으라고 전해줘"</b>처럼 부르시면 AI 에이전트가 Peer AI에게 전달하고 답변을 받아옵니다!<br/>
+        2️⃣ 아래 <b>[🤖 Peer AI와 직접 대화]</b> 버튼을 누르면 Peer AI 채팅방으로 바로 전환됩니다.
       </div>
 
       <div>
-        <label class="peer-field-label">🔗 에아 (도준님 AI 비서) 서버 주소 (ngrok URL)</label>
+        <label class="peer-field-label">🔗 Peer AI (파트너님 AI 비서) 서버 주소 (ngrok URL)</label>
         <input type="text" id="peer-url-input" class="peer-input" value="" />
       </div>
 
@@ -1491,7 +1491,7 @@
 
       <div class="peer-btn-row">
         <button class="peer-action-btn secondary" onclick="savePeerConfig()">💾 주소 저장/연결</button>
-        <button class="peer-action-btn primary" onclick="switchAgentMode('peer')">🤖 에아와 직접 대화</button>
+        <button class="peer-action-btn primary" onclick="switchAgentMode('peer')">🤖 Peer AI와 직접 대화</button>
       </div>
     </div>
   </div>
@@ -1500,7 +1500,7 @@
   <div id="remote-overlay">
     <div class="remote-topbar">
       <div class="remote-title">
-        <span>🖥️ 박사님 PC 실시간 원격제어 (우유 🥛)</span>
+        <span>🖥️ 사용자님 PC 실시간 원격제어 (Kokio AI 🥛)</span>
       </div>
       <div class="remote-top-actions">
         <button class="kbd-refocus-btn" onclick="focusKeyboardTrap()">⌨️ 키보드</button>
@@ -1808,7 +1808,7 @@
         if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
         try {
           if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('⏰ 우유(Ooyoo 🥛) 일정 알림', {
+            new Notification('⏰ Kokio AI(KokioAI 🥛) 일정 알림', {
               body: `${target.title} (${target.timeLabel})`,
               icon: '/icon-192.png'
             });
@@ -1925,16 +1925,16 @@
       } catch (e) {}
     }
 
-    // 🤖 우유(Ooyoo) ↔ 에아(Ea) 연동 상태 변수
-    let currentAgentMode = 'ooyoo'; // 'ooyoo' | 'peer'
+    // 🤖 Kokio AI ↔ Peer AI 연동 상태 변수
+    let currentAgentMode = 'kokio'; // 'kokio' | 'peer'
     let currentPeerUrl = '';
-    let currentPeerName = '에아 (Ea)';
+    let currentPeerName = 'Peer AI';
     let currentPeerConvId = null;
 
     function prefillEaCall() {
       const input = document.getElementById('msg-input');
-      if (!input.value.startsWith('에아야')) {
-        input.value = '에아야 ' + input.value;
+      if (!input.value.startsWith('파트너AI야')) {
+        input.value = '파트너AI야 ' + input.value;
       }
       input.focus();
       autoResize(input);
@@ -1944,13 +1944,13 @@
       const modal = document.getElementById('peer-modal');
       modal.classList.add('open');
       const statusMsg = document.getElementById('peer-status-msg');
-      statusMsg.textContent = '에아(Ea) 서버 연결 상태를 확인하는 중...';
+      statusMsg.textContent = 'Peer AI 서버 연결 상태를 확인하는 중...';
       try {
         const res = await fetch('/api/peer/config?check=1');
         const data = await res.json();
         if (data.ok) {
           currentPeerUrl = data.peerUrl || '';
-          currentPeerName = data.peerName || '에아 (Ea)';
+          currentPeerName = data.peerName || 'Peer AI';
           document.getElementById('peer-url-input').value = currentPeerUrl;
           updatePeerDot(Boolean(currentPeerUrl));
           statusMsg.textContent = data.peerOnline
@@ -1979,15 +1979,15 @@
         const res = await fetch('/api/peer/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ peerUrl: rawUrl, peerName: '에아 (Ea)' })
+          body: JSON.stringify({ peerUrl: rawUrl, peerName: 'Peer AI' })
         });
         const data = await res.json();
         if (data.ok) {
           currentPeerUrl = data.peerUrl || '';
           updatePeerDot(Boolean(currentPeerUrl));
           statusMsg.textContent = data.syncedBack
-            ? '✅ 저장 완료! 에아 서버와 양방향 자동 페어링에 성공했습니다!'
-            : '✅ 에아 주소가 저장되었습니다!';
+            ? '✅ 저장 완료! Peer AI 서버와 양방향 자동 페어링에 성공했습니다!'
+            : '✅ Peer AI 주소가 저장되었습니다!';
         } else {
           statusMsg.textContent = '❌ 오류: ' + (data.error || '저장 실패');
         }
@@ -2007,12 +2007,12 @@
 
       if (mode === 'peer') {
         banner.classList.add('active');
-        input.placeholder = '🤖 에아(도준님 AI 비서)에게 시킬 작업을 말씀해 주세요...';
-        thinkingText.textContent = '에아(Ea)가 작업을 수행하고 있어요... 🤖';
+        input.placeholder = '🤖 Peer AI(파트너님 AI 비서)에게 시킬 작업을 말씀해 주세요...';
+        thinkingText.textContent = 'Peer AI가 작업을 수행하고 있어요... 🤖';
       } else {
         banner.classList.remove('active');
-        input.placeholder = "우유에게 시키실 작업을 말씀해 주세요... ('에아야 ~' 입력 시 에아 호출)";
-        thinkingText.textContent = '우유가 박사님의 작업을 수행하고 있어요... 🥛';
+        input.placeholder = "AI 에이전트에게 시키실 작업을 말씀해 주세요... ('파트너AI야 ~' 입력 시 Peer AI 호출)";
+        thinkingText.textContent = 'AI 에이전트가 사용자님의 작업을 수행하고 있어요... 🥛';
       }
       await pollStatus(true);
     }
@@ -2083,7 +2083,7 @@
     }
 
     async function selectConversation(convId) {
-      currentAgentMode = 'ooyoo';
+      currentAgentMode = 'kokio';
       document.getElementById('peer-mode-banner').classList.remove('active');
       currentConvId = convId;
       lastRenderedHash = '';
@@ -2177,11 +2177,11 @@
       const welcome = document.getElementById('welcome-card');
       if (welcome) welcome.style.display = 'none';
 
-      const isDirectEaCall = /^(?:에아야|에아님|@에아)\b/i.test(text);
+      const isDirectEaCall = /^(?:파트너AI야|파트너AI님|@Peer AI)\b/i.test(text);
       const userDiv = document.createElement('div');
       userDiv.className = 'msg-row user';
-      const targetBadge = (currentAgentMode === 'peer' || isDirectEaCall) ? ' ➔ 🤖 에아 호출' : '';
-      userDiv.innerHTML = `<div class="msg-sender">박사님 (${currentModel.toUpperCase()} · ${currentLevel.toUpperCase()})${targetBadge}</div><div class="bubble"></div>`;
+      const targetBadge = (currentAgentMode === 'peer' || isDirectEaCall) ? ' ➔ 🤖 Peer AI 호출' : '';
+      userDiv.innerHTML = `<div class="msg-sender">사용자님 (${currentModel.toUpperCase()} · ${currentLevel.toUpperCase()})${targetBadge}</div><div class="bubble"></div>`;
       const bubbleEl = userDiv.querySelector('.bubble');
 
       if (attachmentsToSend.length > 0) {
@@ -2219,7 +2219,7 @@
       const thinkingText = document.getElementById('thinking-text');
       indicator.style.display = 'flex';
       if (isDirectEaCall && currentAgentMode !== 'peer') {
-        thinkingText.textContent = '우유가 에아(Ea)에게 말씀을 전달하고 답변을 받아오고 있어요... 🤖';
+        thinkingText.textContent = 'AI 에이전트가 Peer AI에게 말씀을 전달하고 답변을 받아오고 있어요... 🤖';
       }
 
       try {
@@ -2235,7 +2235,7 @@
           });
           const data = await res.json();
           if (!data.ok) {
-            alert(data.error || '에아 호출 실패');
+            alert(data.error || 'Peer AI 호출 실패');
           } else if (data.peerConvId) {
             currentPeerConvId = data.peerConvId;
           }
@@ -2254,7 +2254,7 @@
           const data = await res.json();
           if (!data.ok) {
             indicator.style.display = 'none';
-            alert(data.error || '우유 호출 실패');
+            alert(data.error || 'Kokio AI 호출 실패');
           } else if (data.conversationId) {
             currentConvId = data.conversationId;
           }
@@ -2276,16 +2276,16 @@
 
       const container = document.getElementById('chat-container');
 
-      const assistantLabel = currentAgentMode === 'peer' ? '🤖 에아 (Ea · 원격 연동)' : '우유 (Ooyoo 🥛)';
+      const assistantLabel = currentAgentMode === 'peer' ? '🤖 Peer AI (Ea · 원격 연동)' : 'Kokio AI (🤖)';
 
       if (!messages || messages.length === 0) {
         container.innerHTML = `
           <div class="welcome-card" id="welcome-card">
-            <img src="/icon-192.png?v=4" class="welcome-logo" alt="우유 (Ooyoo)" />
-            <h2>${currentAgentMode === 'peer' ? '🤖 에아(Ea) 원격 대화방입니다!' : '반가워요, 박사님! 전속 비서 우유(Ooyoo)예요 🥛🐱'}</h2>
+            <img src="/icon-192.png?v=4" class="welcome-logo" alt="Kokio AI" />
+            <h2>${currentAgentMode === 'peer' ? '🤖 Peer AI 원격 대화방입니다!' : '반가워요, 사용자님! 전속 비서 Kokio AI예요 🥛🐱'}</h2>
             <p>
               ${currentAgentMode === 'peer'
-                ? '이곳에 입력하시는 말씀은 도준님 PC의 <b>에아(Ea)</b>에게 직접 전달됩니다!'
+                ? '이곳에 입력하시는 말씀은 파트너님 PC의 <b>Peer AI</b>에게 직접 전달됩니다!'
                 : '⏰ <b>"3시에 교수회의 알려줘"</b>처럼 말씀하시면 자동으로 알림이 울려요!<br/>📎 아래 클립 버튼으로 <b>사진·문서 파일</b>을 바로 보내실 수 있고, 📋 <b>코드/답변 원터치 복사</b>도 지원합니다!'}
             </p>
           </div>
@@ -2297,9 +2297,9 @@
       codeSnippetStore.length = 0;
 
       for (const m of messages) {
-        const isAssistant = (m.role === 'ooyoo' || m.role === 'ea');
+        const isAssistant = (m.role === 'kokio' || m.role === 'ea');
         const row = document.createElement('div');
-        row.className = `msg-row ${isAssistant ? 'ooyoo' : 'user'}`;
+        row.className = `msg-row ${isAssistant ? 'kokio' : 'user'}`;
 
         if (isAssistant) {
           const headerWrap = document.createElement('div');
@@ -2320,7 +2320,7 @@
         } else {
           const sender = document.createElement('div');
           sender.className = 'msg-sender';
-          sender.textContent = '박사님';
+          sender.textContent = '사용자님';
           row.appendChild(sender);
         }
 
@@ -2332,7 +2332,7 @@
             const det = document.createElement('details');
             det.className = 'thinking-box';
             const sum = document.createElement('summary');
-            sum.textContent = currentAgentMode === 'peer' ? '💭 에아의 생각 과정 보기' : '💭 우유의 생각 과정 보기';
+            sum.textContent = currentAgentMode === 'peer' ? '💭 Peer AI의 생각 과정 보기' : '💭 AI 에이전트의 생각 과정 보기';
             const p = document.createElement('p');
             p.textContent = m.thinking;
             det.appendChild(sum);
@@ -2344,7 +2344,7 @@
             for (const t of m.tools) {
               const badge = document.createElement('div');
               badge.className = 'tool-badge';
-              badge.textContent = `⚙️ ${currentAgentMode === 'peer' ? '에아 PC 작업' : 'PC 작업 실행'}: ${t.summary || t.name}`;
+              badge.textContent = `⚙️ ${currentAgentMode === 'peer' ? 'Peer AI PC 작업' : 'PC 작업 실행'}: ${t.summary || t.name}`;
               meta.appendChild(badge);
             }
           }
@@ -2407,7 +2407,7 @@
           const data = await res.json();
           if (data.ok) {
             currentPeerConvId = data.conversationId || currentPeerConvId;
-            document.getElementById('conn-info').textContent = `🤖 에아(Ea) 실시간 연동 중`;
+            document.getElementById('conn-info').textContent = `🤖 Peer AI 실시간 연동 중`;
             renderMessages(data.messages || [], data.isThinking);
           }
         } else {

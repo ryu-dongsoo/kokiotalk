@@ -1,9 +1,9 @@
 > **Author / Rights Holder:** 전북대학교 생물산업기계공학과 유동수 (ryudongsoo@jbnu.ac.kr)
 
-# 🐓 KokioTalk & 🥛 Antigravity 2.0+ Personal AI Secretary (`KokioTalk-Starter-Kit`)
+# 🐓 KokioTalk & 🤖 Antigravity 2.0+ Personal AI Agent (`KokioTalk-Starter-Kit`)
 
 > **🌐 Multi-Language Support**: **English (Default)** | **🇰🇷 한국어** | **🇯🇵 日本語** | **🇨🇳 中文**  
-> **Turnkey Personal AI Chief Secretary & Multi-Language Mobile/PC Messenger for Google Antigravity 2.0+**
+> **Turnkey Personal AI Agent & Multi-Language Mobile/PC Messenger for Google Antigravity 2.0+**
 
 ---
 
@@ -12,8 +12,8 @@
 1. **0) Native Google Antigravity 2.0+ Integration**
    - Automatically connects to your local **Google Antigravity 2.0+ Desktop App** (`Antigravity.exe` & `language_server.exe`) and streams real-time reasoning, tool execution progress, and responses.
    - Includes **Auto-Wakeup** to automatically wake the local Antigravity engine when a message arrives from your smartphone.
-2. **1) Turnkey Personal AI Secretary Client System ("Ooyoo 🥛" Architecture)**
-   - Automatically provisions your AI Secretary's identity & rules (`GEMINI.md`, `AGENTS.md`), continuous long-term memory (`MEMORY.md`, `memory/YYYY-MM-DD.md`), and a native **Antigravity 2.0 Plugin** (`~/.gemini/config/plugins/kokio-assistant/`).
+2. **1) Turnkey Personal AI Agent Client System**
+   - Automatically provisions your AI Agent's identity & rules (`GEMINI.md`, `AGENTS.md`), continuous long-term memory (`MEMORY.md`, `memory/YYYY-MM-DD.md`), and a native **Antigravity 2.0 Plugin** (`~/.gemini/config/plugins/kokio-assistant/`).
 3. **2) KokioTalk Messenger & 3-Layer External Security Gateway**
    - **Multi-Language UI (`🌐 EN` Default / `🇰🇷 한국어` / `🇯🇵 日本語` / `🇨🇳 中文`)**: Instant 1-click language switching across the Lock Screen, QR Dashboard, and Messenger UI.
    - **6-Digit Security PIN Lock & Temporary PC Auto-Wipe**:
@@ -22,7 +22,7 @@
      - **💻 Temp PC Access Mode (Default on External PCs)**: Blocks browser *"Save password?"* prompts and **automatically destroys the session in both browser (`sessionStorage`) and server memory within 2.5 seconds of closing the tab or window**.
    - **Full Productivity Suite**: Continuous Voice STT (`🎤`) & TTS (`🔊`), Live Simultaneous Interpreter (`🌐`), iPhone `.heic` photo auto-conversion, clipboard image/file paste (`Ctrl+V`), Calendar sync (`📅`), and Live Remote PC Screen Control (`🖥️`).
 4. **3) 3-Minute Interactive Setup Wizard**
-   - Run `1_install_wizard.bat` to configure your name, honorific, AI secretary name/emoji, and 6-digit PIN in 3 minutes.
+   - Run `1_install_wizard.bat` to configure your name, title/nickname, AI Agent name/emoji, and 6-digit PIN in 3 minutes.
 
 ---
 
@@ -32,7 +32,7 @@
 | :--- | :--- |
 | [INSTALL_GUIDE.md](./INSTALL_GUIDE.md) | Complete Step-by-Step Installation & Usage Guide (English / 한국어 / 日本語 / 中文) |
 | [setup-wizard.js](./setup-wizard.js) | Interactive Multi-Language CLI Setup Wizard (Step 0 ~ Step 3 automation) |
-| [kokio.config.template.json](./kokio.config.template.json) | Customizable user, AI secretary, security PIN, and network configuration template |
+| [kokio.config.template.json](./kokio.config.template.json) | Customizable user, AI agent, security PIN, and network configuration template |
 | [1_install_wizard.bat](./1_install_wizard.bat) | One-click interactive installer & desktop shortcut generator |
 | [2_start_kokiotalk.bat](./2_start_kokiotalk.bat) | One-click launcher for KokioTalk (`8082`), Security Gateway (`8081`), and Cloudflare Tunnel |
 | [3_mobile_qr_connect.bat](./3_mobile_qr_connect.bat) | Opens the Mobile Connection QR Code Dashboard (`http://localhost:8081/qr`) |
@@ -54,7 +54,7 @@ cd kokiotalk
 1_install_wizard.bat
 ```
 
-1. **Step 1 (`1_install_wizard.bat`)**: Select your language (`1: English`, `2: 한국어`, `3: 日本語`, `4: 中文`), enter your name/honorific, AI Secretary name, and a 6-digit Security PIN.
+1. **Step 1 (`1_install_wizard.bat`)**: Select your language (`1: English`, `2: 한국어`, `3: 日本語`, `4: 中文`), enter your name/title, AI Agent name, and a 6-digit Security PIN.
 2. **Step 2 (`2_start_kokiotalk.bat`)**: Automatically starts the local servers and external tunnel, and opens the PC app.
 3. **Step 3 (`3_mobile_qr_connect.bat`)**: Scan the QR code at `http://localhost:8081/qr` with your smartphone camera to connect and install the mobile app!
 
@@ -64,4 +64,5 @@ For detailed instructions in **English, Korean (한국어), Japanese (日本語)
 
 ## 📝 변경 이력 (Changelog)
 
-- **2026-10-26 11:56:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] feat: initial public release of KokioTalk & Antigravity 2.0+ Personal AI Secretary Starter Kit (multi-language EN/KO/JA/ZH, 6-digit PIN lock, temp PC auto-wipe, QR mobile onboarding)
+- **2026-10-26 12:03:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] refactor: universalize terminology across docs, installer, and codebase (remove personal assistant names and adopt generic Personal AI Agent terminology)
+- **2026-10-26 11:56:00** [[유동수](mailto:ryudongsoo@jbnu.ac.kr)] feat: initial public release of KokioTalk & Antigravity 2.0+ Personal AI Agent Starter Kit (EN/KO/JA/ZH, 6-digit PIN lock, temp PC auto-wipe, QR mobile onboarding)

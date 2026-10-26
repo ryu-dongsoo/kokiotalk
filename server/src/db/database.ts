@@ -2,7 +2,7 @@
  * 🗄️ KokioTalk SQLite Database & Full-Text Search Engine
  * - Built on Node.js v22 native `node:sqlite` (zero native build dependencies)
  * - Persistent storage in `storage/kokiotalk.db` with WAL mode
- * - Supports Users, AI Agents (Ooyoo 🥛, Ea 🤖, Specialists), Rooms, Read Receipts (`1`), Reactions, Attachments & Webhooks
+ * - Supports Users, AI Agents (KokioAI 🥛, Ea 🤖, Specialists), Rooms, Read Receipts (`1`), Reactions, Attachments & Webhooks
  */
 
 import fs from 'node:fs';
@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export interface AgentConfig {
-  bridgeType: 'ooyoo' | 'ea' | 'specialist' | 'webhook' | 'custom';
+  bridgeType: 'kokio' | 'ea' | 'specialist' | 'webhook' | 'custom';
   endpoint?: string;
   mentionKeywords: string[];
   persona: string;
@@ -162,18 +162,18 @@ function seedInitialData(): void {
 
   const cfg = loadKokioConfig();
   const ownerId = cfg?.owner?.id || 'ryu';
-  const ownerName = cfg?.owner?.name || '유동수 박사님';
-  const ownerHonorific = cfg?.owner?.honorific || '박사님';
+  const ownerName = cfg?.owner?.name || '사용자님';
+  const ownerHonorific = cfg?.owner?.honorific || '사용자님';
   const ownerAvatar = cfg?.owner?.avatar || '👨‍🏫';
   const ownerStatus = cfg?.owner?.statusMessage || '전북대 생물산업기계공학과 · 스마트농업 & 디지털트윈 연구실';
 
-  const asstName = cfg?.assistant?.name || '우유 (Ooyoo 🥛)';
-  const asstShort = cfg?.assistant?.shortName || '우유';
+  const asstName = cfg?.assistant?.name || 'Kokio AI (🤖)';
+  const asstShort = cfg?.assistant?.shortName || 'Kokio AI';
   const asstAvatar = cfg?.assistant?.avatar || '🥛';
   const asstKeywords = Array.isArray(cfg?.assistant?.mentionKeywords) && cfg.assistant.mentionKeywords.length > 0
     ? cfg.assistant.mentionKeywords
-    : [`@${asstShort}`, `${asstShort}야`, `${asstShort}님`, '@ooyoo', `${asstShort} 비서`];
-  const asstPersona = cfg?.assistant?.persona || `${ownerName}의 전속 수석 비서 AI (따뜻하고 다정한 서술형 존댓말)`;
+    : [`@${asstShort}`, `${asstShort}야`, `${asstShort}님`, '@kokio', `${asstShort} 비서`];
+  const asstPersona = cfg?.assistant?.persona || `${ownerName}의 전담 AI 에이전트 AI (따뜻하고 다정한 서술형 존댓말)`;
 
   const now = Date.now();
   const insertUser = db.prepare(`
@@ -196,8 +196,8 @@ function seedInitialData(): void {
   );
 
   // 2. 전속 AI 비서 (일급 시민)
-  const ooyooConfig: AgentConfig = {
-    bridgeType: 'ooyoo',
+  const kokioConfig: AgentConfig = {
+    bridgeType: 'kokio',
     endpoint: `http://127.0.0.1:${cfg?.network?.gatewayPort || 8081}`,
     mentionKeywords: asstKeywords,
     persona: asstPersona,
@@ -205,13 +205,13 @@ function seedInitialData(): void {
     autoReplyInDirect: true
   };
   insertUser.run(
-    'ooyoo',
+    'kokio',
     asstName,
     'ai_agent',
     asstAvatar,
-    `${ownerHonorific} 전속 수석 비서 · 언제나 대기 중이에요!`,
+    `${ownerHonorific} 전담 AI 에이전트 · 언제나 대기 중이에요!`,
     'ai_agent',
-    JSON.stringify(ooyooConfig),
+    JSON.stringify(kokioConfig),
     1,
     'online',
     now
@@ -219,11 +219,11 @@ function seedInitialData(): void {
 
   // 3. 외부 동료 비서 (설정된 경우)
   const peerEnabled = cfg?.peerAssistant ? Boolean(cfg.peerAssistant.enabled) : true;
-  const peerName = cfg?.peerAssistant?.name || '에아 (Ea 🤖)';
-  const peerShort = cfg?.peerAssistant?.shortName || '에아';
+  const peerName = cfg?.peerAssistant?.name || 'Peer AI (🔗)';
+  const peerShort = cfg?.peerAssistant?.shortName || 'Peer AI';
   const peerAvatar = cfg?.peerAssistant?.avatar || '🤖';
   const peerEndpoint = cfg?.peerAssistant?.endpoint || '';
-  const peerOwner = cfg?.peerAssistant?.ownerName || '도준님';
+  const peerOwner = cfg?.peerAssistant?.ownerName || '파트너님';
   const peerKeywords = Array.isArray(cfg?.peerAssistant?.mentionKeywords) && cfg.peerAssistant.mentionKeywords.length > 0
     ? cfg.peerAssistant.mentionKeywords
     : [`@${peerShort}`, `${peerShort}야`, `${peerShort}님`, '@ea'];
@@ -270,7 +270,7 @@ function seedInitialData(): void {
       }
     }
   } else {
-    insertUser.run('dojoon', 'Partner / Family', 'human', '👦', '초6 · 에아(Ea)의 주인님', 'family', '{}', 1, 'online', now);
+    insertUser.run('dojoon', 'Partner / Family', 'human', '👦', '초6 · Peer AI의 주인님', 'family', '{}', 1, 'online', now);
     insertUser.run('eunjeong', 'Family Member 1', 'human', '👩', '우리가족 행복하게 💛', 'family', '{}', 1, 'online', now);
     insertUser.run('doheon', 'Family Member 2', 'human', '🧑', '고2 · 열공 중', 'family', '{}', 0, 'busy', now);
     insertUser.run('jiwoo', 'Family Member 3', 'human', '👧', '중2 · 음악 & 일상', 'family', '{}', 0, 'online', now);
@@ -301,7 +301,7 @@ function seedInitialData(): void {
 
   // (2) 전속 비서 1:1 방
   insertRoom.run(
-    'room-ooyoo',
+    'room-kokio',
     asstName,
     'direct',
     asstAvatar,
@@ -310,8 +310,8 @@ function seedInitialData(): void {
     now - 3500000,
     now - 120000
   );
-  insertMember.run('room-ooyoo', ownerId, 0, now - 3500000);
-  insertMember.run('room-ooyoo', 'ooyoo', 999999, now - 3500000);
+  insertMember.run('room-kokio', ownerId, 0, now - 3500000);
+  insertMember.run('room-kokio', 'kokio', 999999, now - 3500000);
 
   if (peerEnabled) {
     // (3) 멀티 AI 단톡방
@@ -326,7 +326,7 @@ function seedInitialData(): void {
       now - 60000
     );
     insertMember.run('room-family-ai', ownerId, 0, now - 3400000);
-    insertMember.run('room-family-ai', 'ooyoo', 999999, now - 3400000);
+    insertMember.run('room-family-ai', 'kokio', 999999, now - 3400000);
     insertMember.run('room-family-ai', 'ea', 999999, now - 3400000);
 
     // (4) 동료 비서 1:1 원격 연동방
@@ -405,7 +405,7 @@ export function formatMessageRow(row: any, roomMembers?: any[]): any {
   let unreadMemberCount = 0;
   for (const m of members) {
     if (m.user_id === row.sender_id) continue;
-    if (m.role_type === 'ai_agent' || m.user_id === 'ooyoo' || m.user_id === 'ea') continue;
+    if (m.role_type === 'ai_agent' || m.user_id === 'kokio' || m.user_id === 'ea') continue;
     if (Number(m.last_read_message_id) < Number(row.id)) {
       unreadMemberCount++;
     }

@@ -1,8 +1,8 @@
-{
+﻿{
   "id": "/",
-  "name": "꼬끼오톡 (우유 & 에아)",
+  "name": "꼬끼오톡 (Kokio AI & Peer AI)",
   "short_name": "꼬끼오톡",
-  "description": "유동수 박사님의 AI 네이티브 메신저 꼬끼오톡 (우유 & 에아)",
+  "description": "사용자님의 AI 네이티브 메신저 꼬끼오톡 (Kokio AI & Peer AI)",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

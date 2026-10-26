@@ -1,8 +1,8 @@
-{
+﻿{
   "name": "kokiotalk",
   "version": "1.0.0",
   "type": "module",
-  "description": "KokioTalk (코끼오톡) - 카카오톡 동일 UX 기반 개방형 API · AI 네이티브(우유/에아) · PC 협업 오픈소스 메신저",
+  "description": "KokioTalk (코끼오톡) - 카카오톡 동일 UX 기반 개방형 API · AI 네이티브(Kokio AI/Peer AI) · PC 협업 오픈소스 메신저",
   "author": "Dongsoo Ryu <ryudongsoo@jbnu.ac.kr>",
   "license": "MIT",
   "scripts": {

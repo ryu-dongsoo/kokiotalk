@@ -1,9 +1,9 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
- * 🐓 KokioTalk & 🥛 Antigravity 2.0+ Personal AI Secretary Setup Wizard
+ * 🐓 KokioTalk & 🤖 Antigravity 2.0+ Personal AI Agent Setup Wizard
  * - Multi-Language Support: English (Default), 한국어 (Korean), 日本語 (Japanese), 中文 (Chinese)
  * - Step 0: Verify Antigravity 2.0+ & Node.js runtime environment
- * - Step 1: Build Personal AI Secretary Workspace (GEMINI.md, AGENTS.md, MEMORY.md, Antigravity 2.0 Plugin)
+ * - Step 1: Build Personal AI Agent Workspace (GEMINI.md, AGENTS.md, MEMORY.md, Antigravity 2.0 Plugin)
  * - Step 2: Configure KokioTalk Messenger (8082) + Security Gateway (8081, 6-Digit PIN & Temp PC Auto-Wipe)
  * - Step 3: Create Desktop App Shortcut & Launch Mobile QR Connection Dashboard
  */
@@ -34,109 +34,109 @@ function ask(question, defaultVal = '') {
 
 const WIZ_I18N = {
   en: {
-    bannerTitle: ' 🐓 KokioTalk & 🥛 Antigravity 2.0+ Personal AI Secretary Setup Wizard',
+    bannerTitle: ' 🐓 KokioTalk & 🤖 Antigravity 2.0+ Personal AI Agent Setup Wizard',
     step0Title: '🔍 [Step 0] Checking Antigravity 2.0+ & System Environment...',
     nodeOk: '  ✅ Node.js Runtime Verified:',
     agyOk: '  ✅ Google Antigravity 2.0+ Verified:',
     agyWarn: '  ⚠️ [Notice] Antigravity.exe not found in default path.\n     Please make sure Google Antigravity 2.0+ is installed and signed in.',
-    qHeader: '📝 [Questions 1–5] Configure your Personal AI Secretary & Security PIN.\n',
-    q1: '1️⃣ Enter your name (or title + name)',
-    q1Def: 'Dr. User',
-    q2: '2️⃣ How should your AI Secretary address you? (e.g., Doctor, Boss, Professor)',
-    q2Def: 'Doctor',
-    q3: '3️⃣ Name your AI Secretary',
-    q3Def: 'Ooyoo',
-    q3Avatar: '   Choose an icon (emoji) for your AI Secretary',
-    q3AvatarDef: '🥛',
+    qHeader: '📝 [Questions 1–5] Configure your Personal AI Agent & Security PIN.\n',
+    q1: '1️⃣ Enter your name or nickname',
+    q1Def: 'Alex',
+    q2: '2️⃣ How should your AI Agent address you? (e.g., Alex, Boss, Captain)',
+    q2Def: 'Alex',
+    q3: '3️⃣ Name your AI Agent',
+    q3Def: 'Kokio AI',
+    q3Avatar: '   Choose an icon (emoji) for your AI Agent',
+    q3AvatarDef: '🤖',
     q4: '4️⃣ Set a 6-digit numeric Security PIN for external (mobile/shared PC) access',
-    q4Err: '   ⚠️ Security PIN must be exactly 6 digits (e.g., 000000, 123456)!',
-    q5: '5️⃣ Confirm the Workspace folder path for your AI Secretary',
-    step1Title: '🛠️ [Step 1] Building Personal AI Secretary Client System...',
+    q4Err: '   ⚠️ Security PIN must be exactly 6 digits (e.g., 123456)!',
+    q5: '5️⃣ Confirm the Workspace folder path for your AI Agent',
+    step1Title: '🛠️ [Step 1] Building Personal AI Agent Client System...',
     step2Title: '⚙️ [Step 2] Configuring KokioTalk Messenger & Security Gateway...',
     npmInstalling: '  📦 Installing Node.js dependencies (takes ~10-20s)...',
     step3Title: '🖥️ [Step 3] Creating [🐓 KokioTalk] Desktop App Shortcut...',
-    doneTitle: ' 🎉 Setup Complete! Your Personal AI Secretary & KokioTalk are ready!',
+    doneTitle: ' 🎉 Setup Complete! Your Personal AI Agent & KokioTalk are ready!',
     localUrl: '  • Local PC App URL        : http://localhost:8081',
     qrUrl: '  • Mobile QR Connect URL   : http://localhost:8081/qr',
     pinInfo: '  • External 6-Digit PIN    :'
   },
   ko: {
-    bannerTitle: ' 🐓 꼬끼오톡(KokioTalk) & 🥛 Antigravity 2.0+ 나만의 AI 비서 설치 마법사',
+    bannerTitle: ' 🐓 꼬끼오톡(KokioTalk) & 🤖 Antigravity 2.0+ 나만의 AI 에이전트 설치 마법사',
     step0Title: '🔍 [0단계] Antigravity 2.0+ 및 시스템 환경을 점검합니다...',
     nodeOk: '  ✅ Node.js 런타임 확인 완료:',
     agyOk: '  ✅ Google Antigravity 2.0+ 설치 확인 완료:',
     agyWarn: '  ⚠️ [안내] 기본 경로에서 Antigravity.exe를 찾지 못했습니다.\n     Google Antigravity 2.0 이상 버전을 설치하고 로그인해 주세요.',
-    qHeader: '📝 [질문 1~5] 나만의 AI 비서와 꼬끼오톡 보안 설정을 입력해 주세요.\n',
-    q1: '1️⃣ 사용하시는 분의 성함(또는 직함 포함 이름)을 입력해 주세요',
-    q1Def: '유동수 박사님',
-    q2: '2️⃣ AI 비서가 당신을 부를 호칭을 입력해 주세요 (예: 박사님, 대표님, 선생님)',
-    q2Def: '박사님',
-    q3: '3️⃣ 나만의 AI 비서 이름을 지어주세요',
-    q3Def: '우유',
-    q3Avatar: '   AI 비서 아이콘(이모지)을 선택해 주세요',
-    q3AvatarDef: '🥛',
+    qHeader: '📝 [질문 1~5] 나만의 AI 에이전트와 꼬끼오톡 보안 설정을 입력해 주세요.\n',
+    q1: '1️⃣ 사용자님의 이름(또는 닉네임)을 입력해 주세요',
+    q1Def: '홍길동',
+    q2: '2️⃣ AI 에이전트가 당신을 부를 호칭을 입력해 주세요 (예: 길동님, 대표님, 선생님)',
+    q2Def: '사용자님',
+    q3: '3️⃣ 나만의 AI 에이전트 이름을 지어주세요',
+    q3Def: '코끼오 AI',
+    q3Avatar: '   AI 에이전트 아이콘(이모지)을 선택해 주세요',
+    q3AvatarDef: '🤖',
     q4: '4️⃣ 외부(스마트폰/다른 PC) 접속용 6자리 숫자 암호(PIN)를 설정해 주세요',
-    q4Err: '   ⚠️ 보안 암호는 반드시 숫자 6자리(예: 000000, 123456)로 입력해 주세요!',
-    q5: '5️⃣ AI 비서가 사용할 홈 폴더(워크스페이스) 경로를 확인해 주세요',
-    step1Title: '🛠️ [1단계] 나만의 AI 비서 클라이언트 시스템을 구축합니다...',
+    q4Err: '   ⚠️ 보안 암호는 반드시 숫자 6자리(예: 123456)로 입력해 주세요!',
+    q5: '5️⃣ AI 에이전트가 사용할 홈 폴더(워크스페이스) 경로를 확인해 주세요',
+    step1Title: '🛠️ [1단계] 나만의 AI 에이전트 클라이언트 시스템을 구축합니다...',
     step2Title: '⚙️ [2단계] 꼬끼오톡 메신저 및 외부 접속 보안 게이트웨이를 구성합니다...',
     npmInstalling: '  📦 필요한 Node.js 패키지를 설치하고 있습니다 (약 10~20초 소요)...',
     step3Title: '🖥️ [3단계] PC 바탕화면에 [🐓 KokioTalk] 전용 앱 아이콘을 생성합니다...',
-    doneTitle: ' 🎉 축하합니다! 나만의 AI 비서 & 꼬끼오톡 구축이 완료되었습니다!',
+    doneTitle: ' 🎉 축하합니다! 나만의 AI 에이전트 & 꼬끼오톡 구축이 완료되었습니다!',
     localUrl: '  • PC 로컬 접속 주소      : http://localhost:8081',
     qrUrl: '  • 내 폰 연결 QR코드 주소 : http://localhost:8081/qr',
     pinInfo: '  • 외부 접속 6자리 PIN    :'
   },
   ja: {
-    bannerTitle: ' 🐓 KokioTalk & 🥛 Antigravity 2.0+ パーソナルAI秘書セットアップウィザード',
+    bannerTitle: ' 🐓 KokioTalk & 🤖 Antigravity 2.0+ パーソナルAIエージェント セットアップ',
     step0Title: '🔍 [Step 0] Antigravity 2.0+ およびシステム環境を確認しています...',
     nodeOk: '  ✅ Node.js ランタイム確認完了:',
     agyOk: '  ✅ Google Antigravity 2.0+ 確認完了:',
     agyWarn: '  ⚠️ [案内] デフォルトパスに Antigravity.exe が見つかりませんでした。',
-    qHeader: '📝 [質問 1〜5] AI秘書とセキュリティPINを設定してください。\n',
-    q1: '1️⃣ お名前（または肩書き＋お名前）を入力してください',
-    q1Def: 'User 博士',
-    q2: '2️⃣ AI秘書からの呼び方を入力してください（例: 博士、先生、オーナー）',
-    q2Def: '博士',
-    q3: '3️⃣ AI秘書の名前を入力してください',
-    q3Def: 'Ooyoo',
-    q3Avatar: '   AI秘書のアイコン（絵文字）を選択してください',
-    q3AvatarDef: '🥛',
+    qHeader: '📝 [質問 1〜5] AIエージェントとセキュリティPINを設定してください。\n',
+    q1: '1️⃣ お名前（またはニックネーム）を入力してください',
+    q1Def: 'User',
+    q2: '2️⃣ AIエージェントからの呼び方を入力してください（例: さん、先生、オーナー）',
+    q2Def: 'オーナー',
+    q3: '3️⃣ AIエージェントの名前を入力してください',
+    q3Def: 'Kokio AI',
+    q3Avatar: '   AIエージェントのアイコン（絵文字）を選択してください',
+    q3AvatarDef: '🤖',
     q4: '4️⃣ 外部（スマホ・共有PC）アクセス用の6桁数字PINを設定してください',
-    q4Err: '   ⚠️ PINコードは必ず6桁の数字（例: 000000, 123456）で入力してください！',
-    q5: '5️⃣ AI秘書のワークスペースフォルダパスを確認してください',
-    step1Title: '🛠️ [Step 1] AI秘書クライアントシステムを構築しています...',
+    q4Err: '   ⚠️ PINコードは必ず6桁の数字（例: 123456）で入力してください！',
+    q5: '5️⃣ AIエージェントのワークスペースフォルダパスを確認してください',
+    step1Title: '🛠️ [Step 1] AIエージェント クライアントシステムを構築しています...',
     step2Title: '⚙️ [Step 2] KokioTalkメッセンジャーとセキュリティゲートウェイを構成しています...',
     npmInstalling: '  📦 Node.js パッケージをインストールしています...',
     step3Title: '🖥️ [Step 3] デスクトップに [🐓 KokioTalk] ショートカットを作成しています...',
-    doneTitle: ' 🎉 セットアップ完了！AI秘書とKokioTalkの準備が整いました！',
+    doneTitle: ' 🎉 セットアップ完了！AIエージェントとKokioTalkの準備が整いました！',
     localUrl: '  • PCローカルURL          : http://localhost:8081',
     qrUrl: '  • スマホ接続QRコードURL  : http://localhost:8081/qr',
     pinInfo: '  • 外部アクセス6桁PIN     :'
   },
   zh: {
-    bannerTitle: ' 🐓 KokioTalk & 🥛 Antigravity 2.0+ 专属 AI 秘书安装向导',
+    bannerTitle: ' 🐓 KokioTalk & 🤖 Antigravity 2.0+ 个人 AI 智能体安装向导',
     step0Title: '🔍 [步骤 0] 正在检查 Antigravity 2.0+ 与系统环境...',
     nodeOk: '  ✅ Node.js 运行环境已确认:',
     agyOk: '  ✅ Google Antigravity 2.0+ 已确认:',
     agyWarn: '  ⚠️ [提示] 默认路径下未找到 Antigravity.exe，请确保已安装并登录 Antigravity 2.0+。',
-    qHeader: '📝 [问题 1~5] 请配置您的专属 AI 秘书与安全 PIN 码。\n',
-    q1: '1️⃣ 请输入您的姓名或称谓',
-    q1Def: 'User 博士',
-    q2: '2️⃣ AI 秘书该如何称呼您？（例如：博士、老师、老板）',
-    q2Def: '博士',
-    q3: '3️⃣ 请为您的 AI 秘书起个名字',
-    q3Def: 'Ooyoo',
-    q3Avatar: '   请选择 AI 秘书的图标（Emoji）',
-    q3AvatarDef: '🥛',
+    qHeader: '📝 [问题 1~5] 请配置您的个人 AI 智能体与安全 PIN 码。\n',
+    q1: '1️⃣ 请输入您的姓名或昵称',
+    q1Def: 'User',
+    q2: '2️⃣ AI 智能体该如何称呼您？（例如：先生、女士、老板）',
+    q2Def: '主人',
+    q3: '3️⃣ 请为您的 AI 智能体起个名字',
+    q3Def: 'Kokio AI',
+    q3Avatar: '   请选择 AI 智能体的图标（Emoji）',
+    q3AvatarDef: '🤖',
     q4: '4️⃣ 请设置用于外部（手机/其他电脑）访问的6位数字安全 PIN 码',
-    q4Err: '   ⚠️ 安全 PIN 码必须是6位数字（例如：000000、123456）！',
-    q5: '5️⃣ 请确认 AI 秘书的工作区文件夹路径',
-    step1Title: '🛠️ [步骤 1] 正在构建专属 AI 秘书客户端系统...',
+    q4Err: '   ⚠️ 安全 PIN 码必须是6位数字（例如：123456）！',
+    q5: '5️⃣ 请确认 AI 智能体的工作区文件夹路径',
+    step1Title: '🛠️ [步骤 1] 正在构建个人 AI 智能体客户端系统...',
     step2Title: '⚙️ [步骤 2] 正在配置 KokioTalk 与外部安全网关...',
     npmInstalling: '  📦 正在安装 Node.js 依赖包...',
     step3Title: '🖥️ [步骤 3] 正在桌面创建 [🐓 KokioTalk] 快捷方式...',
-    doneTitle: ' 🎉 安装完成！您的专属 AI 秘书与 KokioTalk 已准备就绪！',
+    doneTitle: ' 🎉 安装完成！您的个人 AI 智能体与 KokioTalk 已准备就绪！',
     localUrl: '  • 本地电脑访问地址       : http://localhost:8081',
     qrUrl: '  • 手机扫码连接地址       : http://localhost:8081/qr',
     pinInfo: '  • 外部访问6位安全 PIN    :'
@@ -156,29 +156,29 @@ function buildWorkspaceFiles({ lang, workspaceDir, ownerName, honorific, asstSho
 
   const todayStr = new Date().toISOString().slice(0, 10);
 
-  const geminiMd = `# ${asstAvatar} Personal AI Secretary Configuration & Memory (${asstFullName})
+  const geminiMd = `# ${asstAvatar} Personal AI Agent Configuration & Memory (${asstFullName})
 
 ## 1. Identity & Role
-- **AI Secretary Name**: **${asstFullName}**
-- **Role**: Chief Personal AI Secretary & Research/Work Coordinator for **${ownerName}**
+- **AI Agent Name**: **${asstFullName}**
+- **Role**: Dedicated Personal AI Assistant & Work/Research Partner for **${ownerName}**
 - **Home Workspace**: \`${workspaceDir}\`
 - **Runtime Environment**: ${ownerName}'s PC (Gateway Port \`8081\`, KokioTalk Port \`8082\`)
 - **Communication Style**:
-  - Always address the user respectfully as **"${honorific}"**.
+  - Address the user respectfully as **"${honorific}"**.
   - Support multiple languages (English, 한국어, 日本語, 中文) naturally according to ${honorific}'s preference.
 - **Core Integrity Rule**:
-  - Never fabricate or report mock/simulated data as real facts, schedules, papers, or experiments.
+  - Never fabricate or report mock/simulated data as real facts, schedules, or documents.
 
 ## 2. 🗣️ Speaker Identification & Peer Relay Protocol
 1. **Standard Messages**:
-   - The speaker is **${ownerName}** ("${honorific}"). Assist warmly and accurately.
+   - The speaker is **${ownerName}** ("${honorific}"). Assist accurately and helpfully.
 2. **Incoming Remote Peer Messages (starting with \`[🔗 ...]\`)**:
-   - Sent by a family member's or colleague's peer AI assistant. Distinguish the sender clearly and reply directly in text without triggering a reverse peer call loop.
+   - Sent by an external peer AI agent. Distinguish the sender clearly and reply directly in text without triggering a reverse peer call loop.
 `;
 
   const agentsMd = `# AGENTS.md - ${asstFullName} Workspace Rules
 
-This folder is the official home workspace for **${ownerName}** and Personal AI Secretary **${asstFullName}**.
+This folder is the home workspace for **${ownerName}** and Personal AI Agent **${asstFullName}**.
 
 ## Session Startup & Continuity
 - **Long-Term Memory**: \`MEMORY.md\` — Curated long-term decisions, preferences, and project context.
@@ -186,16 +186,16 @@ This folder is the official home workspace for **${ownerName}** and Personal AI 
 
 ## Red Lines
 - **Zero-Tolerance for Fake Data**: Report only verified facts; explicitly label any sample data as \`[Sample]\`.
-- **Domain Separation**: Keep work/research files in \`${workspaceDir}\` separate from private personal documents unless explicitly requested by ${honorific}.
+- **Domain Separation**: Keep work files in \`${workspaceDir}\` separate from private personal documents unless explicitly requested by ${honorific}.
 `;
 
   const memoryFile = path.join(workspaceDir, 'MEMORY.md');
   if (!fs.existsSync(memoryFile)) {
     const memoryMd = `# 🧠 MEMORY.md - ${asstFullName} Long-Term Memory
 
-## ${asstAvatar} ${ownerName}'s Personal AI Secretary: ${asstFullName}
+## ${asstAvatar} ${ownerName}'s Personal AI Agent: ${asstFullName}
 - **Owner Name & Honorific**: ${ownerName} (Address as: **"${honorific}"**)
-- **Secretary Name**: ${asstFullName}
+- **AI Agent Name**: ${asstFullName}
 - **Default UI Language**: \`${lang}\` (Multi-language enabled: English, 한국어, 日本語, 中文)
 - **KokioTalk Gateway**: Port \`8081\` (Messenger Server \`8082\`)
 - **External 6-Digit Security PIN**: \`${accessPin}\` (Localhost auto-bypass / External PIN required / Temp PC mode auto-wipes on tab close)
@@ -207,7 +207,7 @@ This folder is the official home workspace for **${ownerName}** and Personal AI 
   if (!fs.existsSync(dailyFile)) {
     fs.writeFileSync(
       dailyFile,
-      `# 📅 ${todayStr} Daily Memory Log\n\n- Initialized **${asstFullName}** & **KokioTalk 🐓** Personal AI Secretary System.\n`,
+      `# 📅 ${todayStr} Daily Memory Log\n\n- Initialized **${asstFullName}** & **KokioTalk 🐓** Personal AI Agent System.\n`,
       'utf-8'
     );
   }
@@ -218,15 +218,15 @@ This folder is the official home workspace for **${ownerName}** and Personal AI 
   // Install Antigravity 2.0+ Global Plugin (~/.gemini/config/plugins/kokio-assistant)
   const pluginDir = path.join(HOME_DIR, '.gemini', 'config', 'plugins', 'kokio-assistant');
   const pluginRulesDir = path.join(pluginDir, 'rules');
-  const pluginSkillDir = path.join(pluginDir, 'skills', 'kokio-secretary');
+  const pluginSkillDir = path.join(pluginDir, 'skills', 'kokio-agent');
   fs.mkdirSync(pluginRulesDir, { recursive: true });
   fs.mkdirSync(pluginSkillDir, { recursive: true });
 
   const pluginJson = {
     name: 'kokio-assistant',
-    displayName: `${asstAvatar} ${asstShortName} & KokioTalk AI Secretary`,
+    displayName: `${asstAvatar} ${asstShortName} & KokioTalk AI Agent`,
     version: '2.0.0',
-    description: `Personal AI Secretary (${asstFullName}) & KokioTalk Mobile/PC Messenger Integration Plugin for ${ownerName}`,
+    description: `Personal AI Agent (${asstFullName}) & KokioTalk Mobile/PC Messenger Integration Plugin for ${ownerName}`,
     suggestedPrompts: [
       `Summarize my schedule and key tasks for today`,
       `Analyze the photos and documents I just sent via KokioTalk`,
@@ -237,7 +237,7 @@ This folder is the official home workspace for **${ownerName}** and Personal AI 
   fs.writeFileSync(path.join(pluginRulesDir, 'AGENTS.md'), geminiMd, 'utf-8');
   fs.writeFileSync(
     path.join(pluginSkillDir, 'SKILL.md'),
-    `---\nname: kokio-secretary\ndescription: Core skill managing ${ownerName}'s personal AI secretary (${asstFullName}), long-term memory (MEMORY.md), and KokioTalk messenger integration.\n---\n\n# ${asstFullName} Secretary Skill\n\n1. Always address the user as **"${honorific}"**.\n2. Persist important user preferences and records in \`${workspaceDir}\\MEMORY.md\`.\n`,
+    `---\nname: kokio-agent\ndescription: Core skill managing ${ownerName}'s personal AI agent (${asstFullName}), long-term memory (MEMORY.md), and KokioTalk messenger integration.\n---\n\n# ${asstFullName} AI Agent Skill\n\n1. Address the user as **"${honorific}"**.\n2. Persist important user preferences and records in \`${workspaceDir}\\MEMORY.md\`.\n`,
     'utf-8'
   );
 
@@ -282,15 +282,13 @@ async function main() {
 
   let accessPin = '';
   while (!/^\d{6}$/.test(accessPin)) {
-    accessPin = await ask(L.q4, '000000');
+    accessPin = await ask(L.q4, '123456');
     if (!/^\d{6}$/.test(accessPin)) {
       console.log(L.q4Err);
     }
   }
 
-  const defaultWorkspace = fs.existsSync(path.join(HOME_DIR, 'OneDrive', 'RyuVault'))
-    ? path.join(HOME_DIR, 'OneDrive', 'RyuVault')
-    : path.join(HOME_DIR, 'AI-Secretary-Vault');
+  const defaultWorkspace = path.join(HOME_DIR, 'KokioVault');
   const workspaceDir = await ask(L.q5, defaultWorkspace);
 
   const asstFullName = `${asstShortName} (${asstAvatar})`;
@@ -313,28 +311,28 @@ async function main() {
       id: 'owner',
       name: ownerName,
       honorific,
-      avatar: '👨‍🏫',
-      statusMessage: `${ownerName}'s Antigravity 2.0 AI Workspace`
+      avatar: '🙂',
+      statusMessage: `${ownerName}'s Antigravity 2.0+ AI Workspace`
     },
     assistant: {
-      id: 'ooyoo',
+      id: 'kokio_ai',
       name: asstFullName,
       shortName: asstShortName,
       avatar: asstAvatar,
-      persona: `Personal AI Secretary for ${ownerName}`,
+      persona: `Personal AI Agent for ${ownerName}`,
       defaultModel: 'argon',
       defaultLevel: 'medium',
-      mentionKeywords: [`@${asstShortName}`, `${asstShortName}`, '@ooyoo', '우유야', '비서야']
+      mentionKeywords: [`@${asstShortName}`, `${asstShortName}`, '@ai', 'AI야', '비서야']
     },
     peerAssistant: {
       enabled: false,
-      id: 'ea',
-      name: 'Peer AI Assistant (🤖)',
+      id: 'peer_ai',
+      name: 'Peer AI (🔗)',
       shortName: 'PeerAI',
-      avatar: '🤖',
+      avatar: '🔗',
       ownerName: 'Partner',
       endpoint: '',
-      mentionKeywords: ['@peer', '@ea', '에아야']
+      mentionKeywords: ['@peer', 'peer']
     },
     security: {
       accessPin,
@@ -342,7 +340,7 @@ async function main() {
       tempSessionTimeoutSec: 18
     },
     profiles: [
-      { id: 'owner', label: `👨‍🏫 ${honorific}`, name: ownerName, avatar: '👨‍🏫', category: 'me' }
+      { id: 'owner', label: `🙂 ${honorific}`, name: ownerName, avatar: '🙂', category: 'me' }
     ],
     network: {
       gatewayPort: 8081,

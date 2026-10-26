@@ -1,8 +1,8 @@
-{
+﻿{
   "id": "/kokio/",
   "name": "꼬끼오톡 (KokioTalk)",
   "short_name": "꼬끼오톡",
-  "description": "우유(Ooyoo) & 에아(Ea) 실시간 연동 카카오톡",
+  "description": "Kokio AI & Peer AI 실시간 연동 카카오톡",
   "start_url": "/kokio/?source=pwa",
   "scope": "/kokio/",
   "display": "standalone",

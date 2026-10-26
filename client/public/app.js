@@ -1,7 +1,7 @@
 ﻿/**
  * 🐓 KokioTalk (코끼오톡) Frontend Engine — 순수 자연어 방식 (명령어 및 중간 안내 문구 완전 제거)
- * - "우유야 ~해줘" (또는 우유 1:1 방에서 아무 말이나) 입력 시:
- *   중간 안내 말풍선 없이 지금 이 PC의 안티그래비티(우유)가 작성한 실제 최종 답변 글만 기다렸다가 띄움
+ * - "AI야 ~해줘" (또는 Kokio AI 1:1 방에서 아무 말이나) 입력 시:
+ *   중간 안내 말풍선 없이 지금 이 PC의 안티그래비티(Kokio AI)가 작성한 실제 최종 답변 글만 기다렸다가 띄움
  */
 
 (function () {
@@ -42,7 +42,7 @@
       pane_chats: '채팅',
       pane_aihub: 'AI · 외부 접속 허브',
       pane_drawer: '코끼오 무제한 톡서랍',
-      search_global: '우유 작업방, 단톡방, 대화내용 검색...',
+      search_global: 'Kokio AI 작업방, 단톡방, 대화내용 검색...',
       search_room: '이 대화방에서 메시지나 도구 실행 내역 검색...',
       btn_close: '닫기',
       btn_calendar: '📅 달력',
@@ -53,7 +53,7 @@
       btn_remote: '🖥️ PC화면',
       btn_lock: '🔒 잠금',
       btn_lock_temp: '⏱️ 임시접속 (🔒 잠금)',
-      input_placeholder: '메시지를 입력하세요 (우유야 ~해줘 / 에아야 ~해줘 처럼 자연어로 말씀해 주세요)',
+      input_placeholder: '메시지를 입력하세요 (AI야 ~해줘 / 파트너AI야 ~해줘 처럼 자연어로 말씀해 주세요)',
       btn_send: '전송'
     },
     ja: {
@@ -109,7 +109,7 @@
   const state = {
     uiLang: localStorage.getItem('kokio_ui_lang') || 'en',
     activeTab: 'chats',
-    activeRoomId: 'room-ooyoo',
+    activeRoomId: 'room-kokio',
     activeSenderId: localStorage.getItem('kokio_sender_id') || 'ryu',
     activeModel: 'argon',
     activeLevel: 'medium',
@@ -180,7 +180,7 @@
     if (remoteBtn) remoteBtn.textContent = t('btn_remote');
 
     const lockBtn = document.getElementById('btn-lock-logout');
-    const isTempCookie = document.cookie.split(';').some(c => c.trim() === 'ooyoo_auth_mode=temp');
+    const isTempCookie = document.cookie.split(';').some(c => c.trim() === 'kokio_auth_mode=temp');
     if (lockBtn) {
       lockBtn.textContent = isTempCookie ? t('btn_lock_temp') : t('btn_lock');
     }
@@ -251,8 +251,8 @@
     activeRoomCount: document.getElementById('active-room-count'),
     activeRoomMembersPreview: document.getElementById('active-room-members-preview'),
     btnTogglePin: document.getElementById('btn-toggle-pin'),
-    modelSelect: document.getElementById('ooyoo-model-select'),
-    levelSelect: document.getElementById('ooyoo-level-select'),
+    modelSelect: document.getElementById('kokio-model-select'),
+    levelSelect: document.getElementById('kokio-level-select'),
     roomNoticeBar: document.getElementById('room-notice-bar'),
     roomNoticeText: document.getElementById('room-notice-text'),
     btnEditNotice: document.getElementById('btn-edit-notice'),
@@ -274,15 +274,15 @@
 
   function apiFetch(urlPath, options = {}) {
     let tempToken = '';
-    try { tempToken = sessionStorage.getItem('ooyoo_temp_token') || ''; } catch {}
+    try { tempToken = sessionStorage.getItem('kokio_temp_token') || ''; } catch {}
     const headers = {
       'ngrok-skip-browser-warning': 'true',
-      ...(tempToken ? { 'X-Ooyoo-Temp-Token': tempToken } : {}),
+      ...(tempToken ? { 'X-KokioAI-Temp-Token': tempToken } : {}),
       ...(options.headers || {})
     };
     return fetch(`${API_PREFIX}${urlPath}`, { ...options, headers }).then((res) => {
       if (res.status === 401 && !urlPath.startsWith('/api/auth/')) {
-        try { sessionStorage.removeItem('ooyoo_temp_token'); } catch {}
+        try { sessionStorage.removeItem('kokio_temp_token'); } catch {}
         window.location.reload();
       }
       return res;
@@ -292,8 +292,8 @@
   async function lockAndLogoutNow() {
     let tempToken = '';
     try {
-      tempToken = sessionStorage.getItem('ooyoo_temp_token') || '';
-      sessionStorage.removeItem('ooyoo_temp_token');
+      tempToken = sessionStorage.getItem('kokio_temp_token') || '';
+      sessionStorage.removeItem('kokio_temp_token');
     } catch {}
     try {
       await fetch('/api/auth/logout', {
@@ -309,11 +309,11 @@
     document.getElementById('btn-lock-logout')?.addEventListener('click', lockAndLogoutNow);
     document.getElementById('btn-nav-lock')?.addEventListener('click', lockAndLogoutNow);
 
-    const isTempCookie = document.cookie.split(';').some(c => c.trim() === 'ooyoo_auth_mode=temp');
+    const isTempCookie = document.cookie.split(';').some(c => c.trim() === 'kokio_auth_mode=temp');
     if (!isTempCookie) return true;
 
     let tempToken = '';
-    try { tempToken = sessionStorage.getItem('ooyoo_temp_token') || ''; } catch {}
+    try { tempToken = sessionStorage.getItem('kokio_temp_token') || ''; } catch {}
 
     // 브라우저를 닫았다가 다시 열었거나 새 탭에서 열었을 경우(sessionStorage 소멸) -> 즉시 로그아웃 및 암호 화면 강제!
     if (!tempToken) {
@@ -335,7 +335,7 @@
     // 창이나 탭을 닫을 때 서버 메모리의 임시 토큰을 즉시 파기 예약 (새로고침 F5는 2.5초 내 복귀하므로 유지됨)
     const notifyTabClose = () => {
       try {
-        const curToken = sessionStorage.getItem('ooyoo_temp_token') || tempToken;
+        const curToken = sessionStorage.getItem('kokio_temp_token') || tempToken;
         if (navigator.sendBeacon && curToken) {
           const blob = new Blob([JSON.stringify({ tempToken: curToken })], { type: 'application/json' });
           navigator.sendBeacon('/api/auth/tab-close', blob);
@@ -352,12 +352,12 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Ooyoo-Temp-Token': tempToken
+            'X-KokioAI-Temp-Token': tempToken
           },
           body: JSON.stringify({ tempToken })
         });
         if (!res.ok) {
-          try { sessionStorage.removeItem('ooyoo_temp_token'); } catch {}
+          try { sessionStorage.removeItem('kokio_temp_token'); } catch {}
           window.location.reload();
         }
       } catch {}
@@ -400,7 +400,7 @@
     bindEvents();
     await fetchBootstrap();
     const initialRoom =
-      state.rooms.find(r => r.id === 'room-ooyoo') ||
+      state.rooms.find(r => r.id === 'room-kokio') ||
       state.rooms[0];
     if (initialRoom) {
       await selectRoom(initialRoom.id);
@@ -418,12 +418,12 @@
         state.rooms = data.rooms || [];
         state.drawer = data.drawer || { files: [], links: [] };
         state.bridges = data.bridges || {};
-        if (state.bridges.ooyooModel && el.modelSelect) {
-          state.activeModel = state.bridges.ooyooModel;
+        if (state.bridges.kokioModel && el.modelSelect) {
+          state.activeModel = state.bridges.kokioModel;
           el.modelSelect.value = state.activeModel;
         }
-        if (state.bridges.ooyooLevel && el.levelSelect) {
-          state.activeLevel = state.bridges.ooyooLevel;
+        if (state.bridges.kokioLevel && el.levelSelect) {
+          state.activeLevel = state.bridges.kokioLevel;
           el.levelSelect.value = state.activeLevel;
         }
         renderAllLeftPanes();
@@ -446,7 +446,7 @@
   function showTypingIndicator(text) {
     if (!el.typingIndicator) return;
     if (el.typingText) {
-      el.typingText.textContent = text || '우유 (Ooyoo 🥛)님이 글을 작성하고 있어요...';
+      el.typingText.textContent = text || 'Kokio AI (🤖)님이 글을 작성하고 있어요...';
     }
     el.typingIndicator.classList.remove('hidden');
     if (typingWatchdogTimer) clearTimeout(typingWatchdogTimer);
@@ -551,7 +551,7 @@
       const { roomId, agentName, isTyping, statusText } = event.payload;
       if (roomId === state.activeRoomId) {
         if (isTyping) {
-          showTypingIndicator(statusText || `${agentName || '우유 (Ooyoo 🥛)'}님이 글을 작성하고 있어요...`);
+          showTypingIndicator(statusText || `${agentName || 'Kokio AI (🤖)'}님이 글을 작성하고 있어요...`);
           scrollToBottom();
         } else {
           hideTypingIndicator();
@@ -710,7 +710,7 @@
 
   function renderAiHubTab() {
     const b = state.bridges || {};
-    const portalUrl = 'https://ryu-dongsoo.github.io/ooyoo/';
+    const portalUrl = 'https://github.com/ryu-dongsoo/kokiotalk';
     const tailscaleUrl = '/';
     const fullKokioUrl = portalUrl;
     const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(fullKokioUrl)}`;
@@ -727,8 +727,8 @@
       <div class="hub-card">
         <h3>🥛 자연어 대화 방식 안내</h3>
         <p>
-          • <strong>우유(Ooyoo 🥛) 1:1 대화방</strong>: 그냥 자연어로 무엇이든 말씀하시면 지금 이 컴퓨터의 안티그래비티 우유에게 바로 도착하여 우유가 작성한 글이 그대로 뜹니다.<br/>
-          • <strong>단톡방에서 부를 때</strong>: <code>우유야 ~해줘</code> 또는 <code>에아야 ~해줘</code>라고 자연어로 말씀하시면 해당 AI 비서의 답변 글이 도착합니다.
+          • <strong>Kokio AI(KokioAI 🥛) 1:1 대화방</strong>: 그냥 자연어로 무엇이든 말씀하시면 지금 이 컴퓨터의 안티그래비티 AI 에이전트에게 바로 도착하여 AI 에이전트가 작성한 글이 그대로 뜹니다.<br/>
+          • <strong>단톡방에서 부를 때</strong>: <code>AI야 ~해줘</code> 또는 <code>파트너AI야 ~해줘</code>라고 자연어로 말씀하시면 해당 AI 비서의 답변 글이 도착합니다.
         </p>
       </div>
     `;
@@ -791,7 +791,7 @@
   async function openDirectChatWith(targetUserId) {
     if (targetUserId === 'ryu') return selectRoom('room-self');
     if (targetUserId === 'ea') return selectRoom('room-ea');
-    if (targetUserId === 'ooyoo') return selectRoom('room-ooyoo');
+    if (targetUserId === 'kokio') return selectRoom('room-kokio');
     const res = await apiFetch('/api/rooms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -912,7 +912,7 @@
           <div class="msg-body-col">
             ${!isMine ? `
               <div class="msg-sender-line">
-                <span>${escapeHtml(m.senderName || '우유 (Ooyoo 🥛)')}</span>
+                <span>${escapeHtml(m.senderName || 'Kokio AI (🤖)')}</span>
                 ${isAi ? '<span class="ai-pill">AI</span>' : ''}
               </div>
             ` : ''}
@@ -1131,7 +1131,7 @@
     document.getElementById('btn-install-pwa-left')?.addEventListener('click', triggerPwaInstall);
     document.getElementById('btn-install-pwa-header')?.addEventListener('click', triggerPwaInstall);
     document.getElementById('btn-copy-kokio-url')?.addEventListener('click', () => {
-      const targetUrl = 'https://ryu-dongsoo.github.io/ooyoo/';
+      const targetUrl = 'https://github.com/ryu-dongsoo/kokiotalk';
       navigator.clipboard.writeText(targetUrl);
       alert('꼬끼오톡 고정 포털 주소가 복사되었습니다! 크롬이나 사파리 주소창에 붙여넣어 주세요.');
     });
@@ -1532,7 +1532,7 @@
         .filter(u => u.id !== 'ryu')
         .map(u => `
           <label class="checkbox-member-row">
-            <input type="checkbox" value="${escapeHtml(u.id)}" ${u.id === 'ooyoo' || u.id === 'ea' ? 'checked' : ''} />
+            <input type="checkbox" value="${escapeHtml(u.id)}" ${u.id === 'kokio' || u.id === 'ea' ? 'checked' : ''} />
             <span>${escapeHtml(u.avatar)} <strong>${escapeHtml(u.name)}</strong> ${u.role_type === 'ai_agent' ? '<span class="ai-pill">AI</span>' : ''}</span>
           </label>
         `)
@@ -2245,7 +2245,7 @@
 
   async function loadVaultFiles(query) {
     const listEl = document.getElementById('vault-results-list');
-    listEl.innerHTML = '<div style="padding:12px;">로컬 RyuVault 탐색 중...</div>';
+    listEl.innerHTML = '<div style="padding:12px;">로컬 KokioVault 탐색 중...</div>';
     try {
       const res = await apiFetch(`/api/vault?q=${encodeURIComponent(query)}`);
       const data = await res.json();

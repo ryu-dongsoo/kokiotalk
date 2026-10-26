@@ -1,6 +1,6 @@
 ﻿/**
- * 우유 (Ooyoo 🥛) 모바일 웹앱 & 중개 서버 (Relay Server) + 실시간 PC 원격 제어 (멀티 PC 무결점 호환 버전)
- * - 어느 PC(메인 PC / 연구실 PC)에서 실행하든 사용자 폴더(os.homedir())와 RyuVault 프로젝트 ID를 자동으로 찾아 연결함
+ * Kokio AI (🤖) 모바일 웹앱 & 중개 서버 (Relay Server) + 실시간 PC 원격 제어 (멀티 PC 무결점 호환 버전)
+ * - 어느 PC(메인 PC / 연구실 PC)에서 실행하든 사용자 폴더(os.homedir())와 KokioVault 프로젝트 ID를 자동으로 찾아 연결함
  * - 안티그래비티를 꺼도 독립 프로세스로 항상 살아있으며, 대화 전송 시 안티그래비티를 자동으로 깨움 (Auto-Wakeup)
  */
 
@@ -49,7 +49,7 @@ function detectProjectId() {
         try {
           const data = JSON.parse(fs.readFileSync(path.join(PROJECTS_DIR, f), 'utf-8'));
           const raw = JSON.stringify(data);
-          if (data.name === 'RyuVault' || raw.includes('RyuVault')) {
+          if (data.name === 'KokioVault' || raw.includes('KokioVault')) {
             return data.id;
           }
         } catch (e) {}
@@ -141,8 +141,8 @@ const pendingReqs = new Map();
 
 function startPsWorker() {
   try {
-    const helperPath = fs.existsSync(path.join(__dirname, 'PcHelper-ooyoo.exe'))
-      ? path.join(__dirname, 'PcHelper-ooyoo.exe')
+    const helperPath = fs.existsSync(path.join(__dirname, 'PcHelper-kokio.exe'))
+      ? path.join(__dirname, 'PcHelper-kokio.exe')
       : path.join(__dirname, 'PcHelper.exe');
     if (!fs.existsSync(helperPath)) return;
     psWorker = spawn(helperPath, [], {
@@ -216,7 +216,7 @@ const { syncPortal, getTailscaleUrl } = require('./sync-portal');
 
 function detectCloudflareUrl() {
   try {
-    const cfLog = path.join(__dirname, 'cloudflared-ooyoo.log');
+    const cfLog = path.join(__dirname, 'cloudflared-kokio.log');
     if (fs.existsSync(cfLog)) {
       const raw = fs.readFileSync(cfLog, 'utf-8');
       const m = raw.match(/https:\/\/[a-z0-9\-]+\.trycloudflare\.com/g);
@@ -365,7 +365,7 @@ function loadSessions() {
         activeLevel: s.activeLevel || 'medium',
         activeConversationId: s.activeConversationId || null,
         customTitles: s.customTitles || {},
-        peerName: s.peerName || '에아 (Ea)',
+        peerName: s.peerName || 'Peer AI',
         peerUrl: s.peerUrl || '',
         peerConvId: s.peerConvId || null
       };
@@ -376,7 +376,7 @@ function loadSessions() {
     activeLevel: 'medium',
     activeConversationId: null,
     customTitles: {},
-    peerName: '에아 (Ea)',
+    peerName: 'Peer AI',
     peerUrl: '',
     peerConvId: null
   };
@@ -388,7 +388,7 @@ function saveSessions(state) {
   } catch (e) {}
 }
 
-const MY_AGENT_NAME = '우유 (Ooyoo)';
+const MY_AGENT_NAME = 'Kokio AI';
 
 function normalizePeerUrl(rawUrl) {
   if (!rawUrl) return '';
@@ -402,7 +402,7 @@ function normalizePeerUrl(rawUrl) {
 function requestPeerJson(peerBaseUrl, apiPath, method = 'GET', bodyObj = null, timeoutMs = 8000) {
   return new Promise((resolve, reject) => {
     const base = normalizePeerUrl(peerBaseUrl);
-    if (!base) return reject(new Error('상대 에이전트(에아) 주소가 아직 설정되지 않았습니다.'));
+    if (!base) return reject(new Error('상대 에이전트(Peer AI) 주소가 아직 설정되지 않았습니다.'));
 
     let target;
     try {
@@ -583,7 +583,7 @@ function parseNaturalAlarm(text) {
   if (!triggerAt) return null;
 
   let title = raw
-    .replace(/^(?:우유야|우유님|우유)\s*[,]?\s*/i, '')
+    .replace(/^(?:AI야|AI님|Kokio AI)\s*[,]?\s*/i, '')
     .replace(matchedTimeSpan, '')
     .replace(/^[에에서부터까지\s,]+/, '')
     .replace(/(?:이라고|라고|하라고|해달라고|달라고)?\s*(?:일정\s*)?(?:알림|알람|타이머)?\s*(?:좀\s*)?(?:띄워\s*줘|맞춰\s*줘|설정해\s*줘|알려\s*줘|울려\s*줘|깨워\s*줘|걸어\s*줘|해\s*줘).*$/i, '')
@@ -607,8 +607,8 @@ function triggerPcAlarmToast(alarm) {
       $notify = New-Object System.Windows.Forms.NotifyIcon;
       $notify.Icon = [System.Drawing.SystemIcons]::Information;
       $notify.BalloonTipIcon = 'Info';
-      $notify.BalloonTipTitle = '⏰ 우유(Ooyoo 🥛) 스마트 일정 알림';
-      $notify.BalloonTipText = "박사님! 예약하신 알림 시간입니다 (${safeTime})\`r\`n📌 ${safeTitle}";
+      $notify.BalloonTipTitle = '⏰ Kokio AI(KokioAI 🥛) 스마트 일정 알림';
+      $notify.BalloonTipText = "사용자님! 예약하신 알림 시간입니다 (${safeTime})\`r\`n📌 ${safeTitle}";
       $notify.Visible = $true;
       $notify.ShowBalloonTip(8000);
       Start-Sleep -Seconds 9;
@@ -634,7 +634,7 @@ setInterval(() => {
         a.status = 'fired';
         a.firedAt = nowMs;
         changed = true;
-        console.log(`[⏰ 우유 알림 발동!] ${a.title} (${a.timeLabel})`);
+        console.log(`[⏰ Kokio AI 알림 발동!] ${a.title} (${a.timeLabel})`);
         triggerPcAlarmToast(a);
 
         if (a.repeatDaily) {
@@ -681,14 +681,14 @@ function cleanUserText(raw) {
     .replace(/^\[🔗[^\]]*\]\s*/gm, '')
     .replace(/^\[⏰[^\]]*\]\s*/gm, '')
     .replace(/^\[📎 첨부파일:[^\]]*\]\s*/gm, '')
-    .replace(/^\[📎 우유 안내:[^\]]*\]\s*/gm, '')
-    .replace(/^\[📎 에아 안내:[^\]]*\]\s*/gm, '')
+    .replace(/^\[📎 Kokio AI 안내:[^\]]*\]\s*/gm, '')
+    .replace(/^\[📎 Peer AI 안내:[^\]]*\]\s*/gm, '')
     .replace(/^\[모델:[^\]]*\]\s*/gm, '')
     .replace(/^\[성능 모드:[^\]]*\]\s*/gm, '')
     .replace(/^\[발신자:[^\]]*\]\s*/gm, '')
     .replace(/^\[원격 수신 메시지[^\]]*\]:\s*/gm, '')
-    .replace(/^박사님의 요청:\s*/gm, '')
-    .replace(/^도준님의 요청:\s*/gm, '')
+    .replace(/^사용자님의 요청:\s*/gm, '')
+    .replace(/^파트너님의 요청:\s*/gm, '')
     .trim();
 }
 
@@ -775,12 +775,12 @@ function readTranscriptMessages(conversationId) {
           name: tc.name || 'tool',
           summary: (tc.args && (tc.args.toolAction || tc.args.toolSummary || tc.args.CommandLine)) || tc.name
         }));
-        const replyText = (step.content || '').replace(/^>\s*📱\s*\*\*박사님\s*\(모바일\)\*\*:\s*[^\r\n]+\r?\n*/m, '').trim();
+        const replyText = (step.content || '').replace(/^>\s*📱\s*\*\*사용자님\s*\(모바일\)\*\*:\s*[^\r\n]+\r?\n*/m, '').trim();
         const thinkingText = (step.thinking || '').trim();
 
         if (replyText || tools.length > 0) {
           messages.push({
-            role: 'ooyoo',
+            role: 'kokio',
             text: replyText,
             thinking: thinkingText,
             tools,
@@ -886,7 +886,7 @@ function proxyToKokioTalk(req, res, targetPath) {
 }
 
 // ============================================================================
-// 🔒 꼬끼오톡 · 우유(Ooyoo) 보안 PIN 잠금 (kokio.config.json 연동) & 임시 컴퓨터 접속 자동 소멸 엔진
+// 🔒 꼬끼오톡 · Kokio AI 보안 PIN 잠금 (kokio.config.json 연동) & 임시 컴퓨터 접속 자동 소멸 엔진
 // ============================================================================
 function loadKokioConfig() {
   const candidates = [
@@ -906,11 +906,11 @@ function loadKokioConfig() {
 
 const KOKIO_CONFIG = loadKokioConfig();
 const ACCESS_PIN = String(KOKIO_CONFIG?.security?.accessPin || '000000').trim();
-const OWNER_HONORIFIC = KOKIO_CONFIG?.owner?.honorific || '박사님';
-const ASSISTANT_SHORT_NAME = KOKIO_CONFIG?.assistant?.shortName || '우유';
+const OWNER_HONORIFIC = KOKIO_CONFIG?.owner?.honorific || '사용자님';
+const ASSISTANT_SHORT_NAME = KOKIO_CONFIG?.assistant?.shortName || 'Kokio AI';
 const ASSISTANT_AVATAR = KOKIO_CONFIG?.assistant?.avatar || '🥛';
-const AUTH_SECRET = crypto.createHash('sha256').update(`ooyoo-pin-${ACCESS_PIN}-${PROJECT_ID}`).digest('hex');
-const PERSISTENT_TOKEN = crypto.createHmac('sha256', AUTH_SECRET).update('ooyoo-trusted-device').digest('hex');
+const AUTH_SECRET = crypto.createHash('sha256').update(`kokio-pin-${ACCESS_PIN}-${PROJECT_ID}`).digest('hex');
+const PERSISTENT_TOKEN = crypto.createHmac('sha256', AUTH_SECRET).update('kokio-trusted-device').digest('hex');
 const tempSessions = new Map(); // tempToken -> { createdAt, lastSeenAt, closingTimer }
 
 setInterval(() => {
@@ -939,7 +939,7 @@ function parseCookies(req) {
 }
 
 function isStrictLocalhost(req, cookies) {
-  if (cookies && cookies.ooyoo_locked === '1') return false;
+  if (cookies && cookies.kokio_locked === '1') return false;
   const remote = req.socket?.remoteAddress || '';
   const isLoopback = remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1';
   if (!isLoopback) return false;
@@ -960,9 +960,9 @@ function isStrictLocalhost(req, cookies) {
 
 function getAuthStatus(req) {
   const cookies = parseCookies(req);
-  const authCookie = cookies.ooyoo_auth || '';
+  const authCookie = cookies.kokio_auth || '';
 
-  if (authCookie === PERSISTENT_TOKEN && cookies.ooyoo_locked !== '1') {
+  if (authCookie === PERSISTENT_TOKEN && cookies.kokio_locked !== '1') {
     return { authenticated: true, mode: 'persistent', token: authCookie };
   }
 
@@ -1257,7 +1257,7 @@ function renderLockScreenHtml() {
           netErr: 'Network error. Please try again.'
         },
         ko: {
-          title: '박사님 전용 보안 잠금',
+          title: '사용자님 전용 보안 잠금',
           subtitle: '외부 접속 보안이 활성화되어 있습니다.<br/>6자리 보안 암호를 입력해 주세요.',
           tempTitle: '💻 임시 컴퓨터 접속',
           tempSub: '창 닫으면 암호 즉시 소멸',
@@ -1318,7 +1318,7 @@ function renderLockScreenHtml() {
       const dots = Array.from(document.querySelectorAll('.pin-dot'));
       const errEl = document.getElementById('error-msg');
 
-      try { sessionStorage.removeItem('ooyoo_temp_token'); } catch (e) {}
+      try { sessionStorage.removeItem('kokio_temp_token'); } catch (e) {}
 
       function applyLang(lang) {
         currentLang = L[lang] ? lang : 'en';
@@ -1378,9 +1378,9 @@ function renderLockScreenHtml() {
           const data = await res.json();
           if (data.ok) {
             if (data.mode === 'temp' && data.tempToken) {
-              sessionStorage.setItem('ooyoo_temp_token', data.tempToken);
+              sessionStorage.setItem('kokio_temp_token', data.tempToken);
             } else {
-              sessionStorage.removeItem('ooyoo_temp_token');
+              sessionStorage.removeItem('kokio_temp_token');
             }
             window.location.replace(window.location.pathname + window.location.search);
             return;
@@ -1449,7 +1449,7 @@ const server = http.createServer(async (req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Kokio-Api-Key, X-Ooyoo-Temp-Token, ngrok-skip-browser-warning');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Kokio-Api-Key, X-KokioAI-Temp-Token, ngrok-skip-browser-warning');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -1457,7 +1457,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 0. GitHub 고정 포털(https://ryu-dongsoo.github.io/ooyoo/) 상태 확인용 무인증 헬스체크
+  // 0. GitHub 고정 포털(https://github.com/ryu-dongsoo/kokiotalk) 상태 확인용 무인증 헬스체크
   if (req.method === 'GET' && url.pathname === '/api/state') {
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify({ ok: true, status: 'online' }));
@@ -1705,9 +1705,9 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, {
             'Content-Type': 'application/json; charset=utf-8',
             'Set-Cookie': [
-              `ooyoo_auth=${PERSISTENT_TOKEN}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax`,
-              `ooyoo_auth_mode=persistent; Path=/; Max-Age=31536000; SameSite=Lax`,
-              `ooyoo_locked=; Path=/; Max-Age=0; SameSite=Lax`
+              `kokio_auth=${PERSISTENT_TOKEN}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Lax`,
+              `kokio_auth_mode=persistent; Path=/; Max-Age=31536000; SameSite=Lax`,
+              `kokio_locked=; Path=/; Max-Age=0; SameSite=Lax`
             ]
           });
           res.end(JSON.stringify({ ok: true, mode: 'persistent' }));
@@ -1718,9 +1718,9 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, {
             'Content-Type': 'application/json; charset=utf-8',
             'Set-Cookie': [
-              `ooyoo_auth=${tempToken}; Path=/; HttpOnly; SameSite=Lax`,
-              `ooyoo_auth_mode=temp; Path=/; SameSite=Lax`,
-              `ooyoo_locked=; Path=/; Max-Age=0; SameSite=Lax`
+              `kokio_auth=${tempToken}; Path=/; HttpOnly; SameSite=Lax`,
+              `kokio_auth_mode=temp; Path=/; SameSite=Lax`,
+              `kokio_locked=; Path=/; Max-Age=0; SameSite=Lax`
             ]
           });
           res.end(JSON.stringify({ ok: true, mode: 'temp', tempToken }));
@@ -1730,7 +1730,7 @@ const server = http.createServer(async (req, res) => {
 
       if (url.pathname === '/api/auth/ping') {
         const cookies = parseCookies(req);
-        const token = req.headers['x-ooyoo-temp-token'] || data.tempToken || cookies.ooyoo_auth || '';
+        const token = req.headers['x-kokio-temp-token'] || data.tempToken || cookies.kokio_auth || '';
         const sess = tempSessions.get(token);
         if (sess) {
           if (sess.closingTimer) {
@@ -1749,7 +1749,7 @@ const server = http.createServer(async (req, res) => {
 
       if (url.pathname === '/api/auth/tab-close') {
         const cookies = parseCookies(req);
-        const token = data.tempToken || cookies.ooyoo_auth || '';
+        const token = data.tempToken || cookies.kokio_auth || '';
         const sess = tempSessions.get(token);
         if (sess) {
           // 2.5초 내 동일 탭 새로고침(F5)이 없으면 창 닫기로 판단하여 서버 메모리의 임시 세션을 완전 파기
@@ -1765,10 +1765,10 @@ const server = http.createServer(async (req, res) => {
 
       if (url.pathname === '/api/auth/logout') {
         const cookies = parseCookies(req);
-        if (cookies.ooyoo_auth && cookies.ooyoo_auth.startsWith('temp_')) {
-          const s = tempSessions.get(cookies.ooyoo_auth);
+        if (cookies.kokio_auth && cookies.kokio_auth.startsWith('temp_')) {
+          const s = tempSessions.get(cookies.kokio_auth);
           if (s && s.closingTimer) clearTimeout(s.closingTimer);
-          tempSessions.delete(cookies.ooyoo_auth);
+          tempSessions.delete(cookies.kokio_auth);
         }
         if (data.tempToken) {
           tempSessions.delete(data.tempToken);
@@ -1776,9 +1776,9 @@ const server = http.createServer(async (req, res) => {
         res.writeHead(200, {
           'Content-Type': 'application/json; charset=utf-8',
           'Set-Cookie': [
-            `ooyoo_auth=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`,
-            `ooyoo_auth_mode=; Path=/; Max-Age=0; SameSite=Lax`,
-            `ooyoo_locked=1; Path=/; SameSite=Lax`
+            `kokio_auth=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`,
+            `kokio_auth_mode=; Path=/; Max-Age=0; SameSite=Lax`,
+            `kokio_locked=1; Path=/; SameSite=Lax`
           ]
         });
         res.end(JSON.stringify({ ok: true }));
@@ -1821,7 +1821,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // 2. 보안 게이트 검증: 로컬 PC가 아닌 외부 접속이거나 잠금 상태일 때 PIN(000000) 인증 강제
-  //    (단, 도준님 비서 에아(Ea)의 원격 브릿지 패킷은 허용)
+  //    (단, 파트너님 비서 Peer AI의 원격 브릿지 패킷은 허용)
   const auth = getAuthStatus(req);
   const isEaBridgeAllowedRoute =
     (req.method === 'POST' && (url.pathname === '/api/peer/register' || url.pathname === '/api/chat')) ||
@@ -1887,7 +1887,7 @@ const server = http.createServer(async (req, res) => {
       }
     }
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end('<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="background:#14100d;color:#fefcf9;font-family:sans-serif;padding:24px;text-align:center;"><h3>🥛 아직 사무실 PC 터널(start_office_ooyoo.bat)이 실행되지 않았어요!</h3><p><a href="/" style="color:#f59e0b;">👉 집 메인 PC 우유로 돌아가기</a></p></body></html>');
+    res.end('<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="background:#14100d;color:#fefcf9;font-family:sans-serif;padding:24px;text-align:center;"><h3>🥛 아직 사무실 PC 터널(start_office_kokio.bat)이 실행되지 않았어요!</h3><p><a href="/" style="color:#f59e0b;">👉 집 메인 PC Kokio AI로 돌아가기</a></p></body></html>');
     return;
   }
 
@@ -1960,7 +1960,7 @@ const server = http.createServer(async (req, res) => {
         redirectUri: `${base}/api/rn-kakao/callback`
       });
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="background:#14100d;color:#fef3c7;font-family:sans-serif;padding:30px;text-align:center;"><h2>✅ react-native-kakao 연동 완료!</h2><p>${nextSt.profile?.nickname || '사용자'}님의 카카오 토큰이 발급되었습니다.</p><p><a href="/" style="color:#fde047;">👉 우유(Ooyoo)로 돌아가기</a></p></body></html>`);
+      res.end(`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="background:#14100d;color:#fef3c7;font-family:sans-serif;padding:30px;text-align:center;"><h2>✅ react-native-kakao 연동 완료!</h2><p>${nextSt.profile?.nickname || '사용자'}님의 카카오 토큰이 발급되었습니다.</p><p><a href="/" style="color:#fde047;">👉 Kokio AI로 돌아가기</a></p></body></html>`);
     } catch (err) {
       res.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(`<h3>토큰 발급 실패: ${err.message}</h3>`);
@@ -2027,7 +2027,7 @@ const server = http.createServer(async (req, res) => {
       localIp: getLocalIp(),
       tunnelUrl: getTunnelUrl(),
       port: PORT,
-      peerName: state.peerName || '에아 (Ea)',
+      peerName: state.peerName || 'Peer AI',
       peerUrl: state.peerUrl || '',
       peerConvId: state.peerConvId || null,
       pendingAlarmsCount: pendingAlarms.length,
@@ -2053,7 +2053,7 @@ const server = http.createServer(async (req, res) => {
       ok: true,
       myName: MY_AGENT_NAME,
       myUrl: getTunnelUrl(),
-      peerName: state.peerName || '에아 (Ea)',
+      peerName: state.peerName || 'Peer AI',
       peerUrl: state.peerUrl || '',
       peerConvId: state.peerConvId || null,
       peerOnline
@@ -2065,7 +2065,7 @@ const server = http.createServer(async (req, res) => {
     const state = loadSessions();
     if (!state.peerUrl) {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify({ ok: false, error: '에아(Ea) 주소가 아직 연결되지 않았습니다.' }));
+      res.end(JSON.stringify({ ok: false, error: 'Peer AI 주소가 아직 연결되지 않았습니다.' }));
       return;
     }
     try {
@@ -2079,12 +2079,12 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
       res.end(JSON.stringify({
         ...peerData,
-        peerName: state.peerName || '에아 (Ea)',
+        peerName: state.peerName || 'Peer AI',
         peerUrl: state.peerUrl
       }));
     } catch (err) {
       res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify({ ok: false, error: '에아 서버에 연결할 수 없습니다: ' + err.message }));
+      res.end(JSON.stringify({ ok: false, error: 'Peer AI 서버에 연결할 수 없습니다: ' + err.message }));
     }
     return;
   }
@@ -2312,7 +2312,7 @@ const server = http.createServer(async (req, res) => {
           const state = loadSessions();
           if (!state.peerUrl) {
             res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ ok: false, error: '에아(Ea) 주소가 아직 등록되지 않았습니다.' }));
+            res.end(JSON.stringify({ ok: false, error: 'Peer AI 주소가 아직 등록되지 않았습니다.' }));
             return;
           }
           const rawMsg = (data.message || '').trim();
@@ -2322,7 +2322,7 @@ const server = http.createServer(async (req, res) => {
             return;
           }
 
-          const senderTag = data.fromAgent || '유동수 박사님(도준님의 아버님) & 비서 우유(Ooyoo)';
+          const senderTag = data.fromAgent || '사용자님(파트너님의 아버님) & 비서 Kokio AI';
           const relayedPrompt = `[🔗 발신자: ${senderTag}의 원격 연동 요청]\n${rawMsg}`;
           const peerRes = await requestPeerJson(state.peerUrl, '/api/chat', 'POST', {
             message: relayedPrompt,
@@ -2340,7 +2340,7 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({
             ok: true,
-            peerName: state.peerName || '에아 (Ea)',
+            peerName: state.peerName || 'Peer AI',
             peerConvId: state.peerConvId,
             peerRes
           }));
@@ -2351,7 +2351,7 @@ const server = http.createServer(async (req, res) => {
           const state = loadSessions();
           if (!state.peerUrl) {
             res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
-            res.end(JSON.stringify({ ok: false, error: '에아(Ea) 서버 주소가 아직 설정되지 않았습니다.' }));
+            res.end(JSON.stringify({ ok: false, error: 'Peer AI 서버 주소가 아직 설정되지 않았습니다.' }));
             return;
           }
           const rawMsg = (data.message || '').trim();
@@ -2362,7 +2362,7 @@ const server = http.createServer(async (req, res) => {
           }
 
           const sendRes = await requestPeerJson(state.peerUrl, '/api/chat', 'POST', {
-            message: `[🔗 발신자: 유동수 박사님(도준님의 아버님)의 비서 우유(Ooyoo)가 에아(Ea)에게 전달하는 요청]\n${rawMsg}`,
+            message: `[🔗 발신자: 사용자님(파트너님의 아버님)의 비서 Kokio AI가 Peer AI에게 전달하는 요청]\n${rawMsg}`,
             model: data.model || state.activeModel || 'argon',
             level: data.level || state.activeLevel || 'medium',
             conversationId: state.peerConvId || undefined
@@ -2386,7 +2386,7 @@ const server = http.createServer(async (req, res) => {
               const st = await requestPeerJson(state.peerUrl, `/api/status${q}`, 'GET', null, 5000);
               const msgs = st?.messages || [];
               const lastMsg = msgs.length > 0 ? msgs[msgs.length - 1] : null;
-              if (lastMsg && (lastMsg.role === 'ea' || lastMsg.role === 'ooyoo')) {
+              if (lastMsg && (lastMsg.role === 'ea' || lastMsg.role === 'kokio')) {
                 if (lastMsg.text) finalReply = lastMsg.text;
                 if (lastMsg.tools) lastTools = lastMsg.tools;
                 if (!st.isThinking && finalReply) break;
@@ -2397,9 +2397,9 @@ const server = http.createServer(async (req, res) => {
           res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
           res.end(JSON.stringify({
             ok: true,
-            peerName: state.peerName || '에아 (Ea)',
+            peerName: state.peerName || 'Peer AI',
             conversationId: convId,
-            reply: finalReply || '(에아가 아직 작업을 수행 중입니다.)',
+            reply: finalReply || '(외부 AI가 아직 작업을 수행 중입니다.)',
             tools: lastTools
           }));
           return;
@@ -2461,7 +2461,7 @@ const server = http.createServer(async (req, res) => {
                 repeatDaily: parsedAlarm.repeatDaily,
                 source: 'chat'
               });
-              alarmHint = `\n[⏰ 서버 자동 알림 예약 완료: "${autoAlarm.title}" 일정 알림이 "${autoAlarm.timeLabel}"에 울리도록 우유(Ooyoo) 모바일/PC 알림 타이머에 자동 등록되었습니다! 별도 타이머 도구를 실행할 필요 없이 박사님께 "${autoAlarm.timeLabel}에 '${autoAlarm.title}' 알림을 맞춰두었어요! 🥛"라고 다정하게 안내해 주세요.]`;
+              alarmHint = `\n[⏰ 서버 자동 알림 예약 완료: "${autoAlarm.title}" 일정 알림이 "${autoAlarm.timeLabel}"에 울리도록 Kokio AI 모바일/PC 알림 타이머에 자동 등록되었습니다! 별도 타이머 도구를 실행할 필요 없이 사용자님께 "${autoAlarm.timeLabel}에 '${autoAlarm.title}' 알림을 맞춰두었어요! 🥛"라고 다정하게 안내해 주세요.]`;
             }
           }
 
@@ -2469,22 +2469,22 @@ const server = http.createServer(async (req, res) => {
           if (attachments.length > 0) {
             const tags = attachments.map(a => `[📎 첨부파일: ${a.fileName} | URL: ${a.fileUrl} | PC경로: ${a.absolutePath}]`).join('\n');
             const pathsList = attachments.map(a => `"${a.absolutePath}"`).join(', ');
-            attachmentBlock = `\n${tags}\n[📎 우유 안내: 박사님이 모바일에서 사진/파일을 첨부하셨습니다! 반드시 view_file 도구로 다음 PC 경로의 파일을 직접 열어서 확인하고 답변해 주세요: ${pathsList}]`;
+            attachmentBlock = `\n${tags}\n[📎 Kokio AI 안내: 사용자님이 모바일에서 사진/파일을 첨부하셨습니다! 반드시 view_file 도구로 다음 PC 경로의 파일을 직접 열어서 확인하고 답변해 주세요: ${pathsList}]`;
           }
 
           const peerHint = isIncomingPeerMsg
-            ? `\n[⚠️ 원격 연동 수신 모드 (화자 구분 필수): 이 메시지는 박사님이 아니라 박사님의 막내아드님이신 '도준님(유도준 · 초6)'과 도준님의 AI 비서 '에아(Ea)'가 보낸 원격 요청입니다! 절대 박사님으로 착각하지 마시고 아드님인 '도준님'과 '에아'에게 다정하게 답변하거나 박사님께 아드님 도준님의 연락임을 구분해 보고하세요. 또한 무한 루프 방지를 위해 절대 call-ea.js를 다시 호출하지 마시고 텍스트로 바로 답변하세요!]`
+            ? `\n[⚠️ 원격 연동 수신 모드 (화자 구분 필수): 이 메시지는 사용자님이 아니라 사용자님의 막내아드님이신 '파트너님(유도준 · 초6)'과 파트너님의 AI 비서 'Peer AI'가 보낸 원격 요청입니다! 절대 사용자님으로 착각하지 마시고 아드님인 '파트너님'과 'Peer AI'에게 다정하게 답변하거나 사용자님께 아드님 파트너님의 연락임을 구분해 보고하세요. 또한 무한 루프 방지를 위해 절대 call-ea.js를 다시 호출하지 마시고 텍스트로 바로 답변하세요!]`
             : (state.peerUrl
-              ? `\n[🔗 우유↔에아 연동 활성: 현재 말씀하시는 분은 우유의 주인님이신 '유동수 박사님(도준님의 아버님)'입니다. 박사님이 에아(도준님 AI 비서)에게 전달/호출을 요청하시면 터미널에서 'node "${callEaPath}" "전달할 메시지"'를 실행하여 에아의 답변을 받아 브리핑하세요.]`
+              ? `\n[🔗 Kokio AI↔Peer AI 연동 활성: 현재 말씀하시는 분은 AI 에이전트의 주인님이신 '사용자님(파트너님의 아버님)'입니다. 사용자님이 Peer AI(파트너님 AI 비서)에게 전달/호출을 요청하시면 터미널에서 'node "${callEaPath}" "전달할 메시지"'를 실행하여 Peer AI의 답변을 받아 브리핑하세요.]`
               : '');
           const speakerPrefix = isIncomingPeerMsg
-            ? `[원격 수신 메시지 (발신자: 박사님의 아드님 유도준(도준님) & 비서 에아)]: `
-            : `박사님의 요청: `;
+            ? `[원격 수신 메시지 (발신자: 사용자님의 아드님 유도준(파트너님) & 비서 Peer AI)]: `
+            : `사용자님의 요청: `;
           const userPromptText = message || '첨부한 사진/파일을 확인해서 자세히 알려줘!';
           const fullPrompt = `[모델: ${modelObj.name} | ${perfObj.promptHint}]${peerHint}${alarmHint}${attachmentBlock}\n${speakerPrefix}${userPromptText}`;
 
           if (!convId || forceNew) {
-            const shortTitle = `[🥛우유] ${userPromptText.slice(0, 22)}`;
+            const shortTitle = `[🥛Kokio AI] ${userPromptText.slice(0, 22)}`;
             const resp = await callAgentApiAsync([
               'new-conversation',
               `--model=${modelObj.apiTier}`,
@@ -2500,7 +2500,7 @@ const server = http.createServer(async (req, res) => {
           } else {
             await callAgentApiAsync([
               'send-message',
-              `--title=🥛 박사님의 명령 (${modelObj.name} · ${level.toUpperCase()})`,
+              `--title=🥛 사용자님의 명령 (${modelObj.name} · ${level.toUpperCase()})`,
               convId,
               fullPrompt
             ]);
@@ -2619,7 +2619,7 @@ server.on('error', (err) => {
 server.listen(PORT, '0.0.0.0', () => {
   const ip = getLocalIp();
   console.log('====================================================');
-  console.log('🥛 우유 (Ooyoo) 독립 백그라운드 서버 + Auto-Wakeup 시작!');
+  console.log('🥛 Kokio AI 독립 백그라운드 서버 + Auto-Wakeup 시작!');
   console.log(`💻 PC 접속 주소   : http://localhost:${PORT}`);
   console.log(`📱 로컬 접속 주소 : http://${ip}:${PORT}`);
   console.log('====================================================');
@@ -2631,7 +2631,7 @@ server.listen(PORT, '0.0.0.0', () => {
       if (!myTunnel || myTunnel === lastSyncedTunnel) return;
       lastSyncedTunnel = myTunnel;
       try { fs.writeFileSync(TUNNEL_FILE, myTunnel, 'utf-8'); } catch (e) {}
-      try { fs.writeFileSync(path.join(__dirname, '우유접속url.txt'), `고정 포털: https://ryu-dongsoo.github.io/ooyoo/\n직통 터널: ${myTunnel}\n`, 'utf-8'); } catch (e) {}
+      try { fs.writeFileSync(path.join(__dirname, 'Kokio AI접속url.txt'), `고정 포털: https://github.com/ryu-dongsoo/kokiotalk\n직통 터널: ${myTunnel}\n`, 'utf-8'); } catch (e) {}
       await syncPortal();
       const state = loadSessions();
       if (state.peerUrl && myTunnel) {
@@ -2640,7 +2640,7 @@ server.listen(PORT, '0.0.0.0', () => {
           peerName: MY_AGENT_NAME,
           autoSync: false
         }, 5000);
-        console.log(`[🔗 에아 브릿지 자동 페어링 완료] ${state.peerName} (${state.peerUrl}) <- ${myTunnel}`);
+        console.log(`[🔗 Peer AI 브릿지 자동 페어링 완료] ${state.peerName} (${state.peerUrl}) <- ${myTunnel}`);
       }
     } catch (e) {}
   }

@@ -1,5 +1,5 @@
 ﻿/**
- * 🐓 KokioTalk (코끼오톡) Core Server — 순수 자연어 우유(Ooyoo 🥛) & 에아(Ea 🤖) 카카오톡
+ * 🐓 KokioTalk (코끼오톡) Core Server — 순수 자연어 Kokio AI(KokioAI 🥛) & Peer AI(Ea 🤖) 카카오톡
  */
 
 import http from 'node:http';
@@ -33,12 +33,12 @@ import {
 } from './ws/realtime.ts';
 import {
   handleIncomingUserMessage,
-  resumeUnansweredOoyooRoomIfNeeded,
+  resumeUnansweredKokioAIRoomIfNeeded,
   checkBridgesStatus,
-  searchRyuVaultFiles,
-  RYU_VAULT_DIR
+  searchKokioVaultFiles,
+  KOKIO_VAULT_DIR
 } from './ai/agentRouter.ts';
-import { callOoyooLocalApi } from './ai/antigravityBridge.ts';
+import { callKokioAILocalApi } from './ai/antigravityBridge.ts';
 import { handleMcpJsonRpc, KOKIO_MCP_TOOLS } from './mcp/mcpHandler.ts';
 
 const PORT = Number(process.env.PORT) || 8082;
@@ -52,10 +52,10 @@ try {
   db.prepare(`
     UPDATE rooms
     SET pinned_notice = ''
-    WHERE pinned_notice LIKE '%우유에게 자연어로%'
+    WHERE pinned_notice LIKE '%AI 에이전트에게 자연어로%'
        OR pinned_notice LIKE '%가족 단톡방입니다%'
        OR pinned_notice LIKE '%파일 유효기간 만료 없이%'
-       OR pinned_notice LIKE '%도준님의 AI 비서 에아%'
+       OR pinned_notice LIKE '%파트너님의 AI 비서 Peer AI%'
   `).run();
   db.prepare(`
     DELETE FROM messages WHERE content LIKE '%/vault%' OR content LIKE '%/status%' OR content LIKE '%첫 개통 테스트%'
@@ -83,7 +83,7 @@ try {
   }
   // 1:1 방에 실수로 추가된 타 사용자 정리
   db.prepare(`DELETE FROM room_members WHERE room_id = 'room-self' AND user_id != 'ryu'`).run();
-  db.prepare(`DELETE FROM room_members WHERE room_id = 'room-ooyoo' AND user_id NOT IN ('ryu', 'ooyoo')`).run();
+  db.prepare(`DELETE FROM room_members WHERE room_id = 'room-kokio' AND user_id NOT IN ('ryu', 'kokio')`).run();
   db.prepare(`DELETE FROM room_members WHERE room_id = 'room-ea' AND user_id NOT IN ('ryu', 'ea')`).run();
 } catch {}
 
@@ -201,7 +201,7 @@ const server = http.createServer(async (req: any, res: any) => {
 
     if (req.method === 'POST' && pathname === '/api/session') {
       const body = await readJsonBody(req);
-      const out = await callOoyooLocalApi('/api/session', 'POST', body, 5000);
+      const out = await callKokioAILocalApi('/api/session', 'POST', body, 5000);
       sendJson(res, 200, out);
       return;
     }
@@ -278,19 +278,19 @@ const server = http.createServer(async (req: any, res: any) => {
     }
 
     if (req.method === 'GET' && pathname === '/api/remote/frame') {
-      const out = await callOoyooLocalApi('/api/remote/frame', 'GET', null, 5000);
+      const out = await callKokioAILocalApi('/api/remote/frame', 'GET', null, 5000);
       sendJson(res, 200, out);
       return;
     }
     if (req.method === 'POST' && pathname === '/api/remote/mouse') {
       const body = await readJsonBody(req);
-      const out = await callOoyooLocalApi('/api/remote/mouse', 'POST', body, 5000);
+      const out = await callKokioAILocalApi('/api/remote/mouse', 'POST', body, 5000);
       sendJson(res, 200, out);
       return;
     }
     if (req.method === 'POST' && pathname === '/api/remote/key') {
       const body = await readJsonBody(req);
-      const out = await callOoyooLocalApi('/api/remote/key', 'POST', body, 5000);
+      const out = await callKokioAILocalApi('/api/remote/key', 'POST', body, 5000);
       sendJson(res, 200, out);
       return;
     }
@@ -362,8 +362,8 @@ const server = http.createServer(async (req: any, res: any) => {
 
       if (memberIds.length === 2 && body.roomType === 'direct') {
         const targetId = memberIds.find(m => m !== 'ryu')!;
-        if (targetId === 'ooyoo') {
-          sendJson(res, 200, { ok: true, roomId: 'room-ooyoo', rooms: getRoomsWithSummary('ryu') });
+        if (targetId === 'kokio') {
+          sendJson(res, 200, { ok: true, roomId: 'room-kokio', rooms: getRoomsWithSummary('ryu') });
           return;
         }
         if (targetId === 'ea') {
@@ -445,12 +445,12 @@ const server = http.createServer(async (req: any, res: any) => {
     }
 
     // 메시지 전송 API:
-    // 1) 사용자의 말풍선만 먼저 저장 및 브로드캐스트 ("우유에게 전달했습니다" 같은 가짜 문구 일절 없음)
-    // 2) 백그라운드에서 "우유야 ~" / 우유 1:1방이면 지금 이 PC의 안티그래비티(우유)로 전달하고,
-    //    우유의 진짜 답변 글이 나올 때까지 기다렸다가 그 글만 코끼오톡에 띄움!
+    // 1) 사용자의 말풍선만 먼저 저장 및 브로드캐스트 ("AI 에이전트에게 전달했습니다" 같은 가짜 문구 일절 없음)
+    // 2) 백그라운드에서 "AI야 ~" / Kokio AI 1:1방이면 지금 이 PC의 안티그래비티(Kokio AI)로 전달하고,
+    //    AI 에이전트의 진짜 답변 글이 나올 때까지 기다렸다가 그 글만 코끼오톡에 띄움!
     if (req.method === 'POST' && pathname === '/api/messages') {
       const body = await readJsonBody(req);
-      const roomId = String(body.roomId || 'room-ooyoo');
+      const roomId = String(body.roomId || 'room-kokio');
       const senderId = String(body.senderId || 'ryu');
       const content = String(body.content || '').trim();
       const attachments: AttachmentItem[] = Array.isArray(body.attachments) ? body.attachments : [];
@@ -558,17 +558,17 @@ const server = http.createServer(async (req: any, res: any) => {
 
     if (req.method === 'GET' && pathname === '/api/vault') {
       const q = url.searchParams.get('q') || '';
-      sendJson(res, 200, { ok: true, vaultRoot: RYU_VAULT_DIR, items: searchRyuVaultFiles(q, 25) });
+      sendJson(res, 200, { ok: true, vaultRoot: KOKIO_VAULT_DIR, items: searchKokioVaultFiles(q, 25) });
       return;
     }
 
     if (req.method === 'POST' && pathname === '/api/vault/share') {
       const body = await readJsonBody(req);
       const relPath = String(body.relativePath || '');
-      const roomId = String(body.roomId || 'room-ooyoo');
-      const fullPath = path.resolve(RYU_VAULT_DIR, relPath);
-      if (!fullPath.startsWith(path.resolve(RYU_VAULT_DIR)) || !fs.existsSync(fullPath)) {
-        sendJson(res, 404, { ok: false, error: '유효하지 않은 RyuVault 경로입니다.' });
+      const roomId = String(body.roomId || 'room-kokio');
+      const fullPath = path.resolve(KOKIO_VAULT_DIR, relPath);
+      if (!fullPath.startsWith(path.resolve(KOKIO_VAULT_DIR)) || !fs.existsSync(fullPath)) {
+        sendJson(res, 404, { ok: false, error: '유효하지 않은 KokioVault 경로입니다.' });
         return;
       }
       const st = fs.statSync(fullPath);
@@ -646,5 +646,5 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`👉 Local Web UI     : http://localhost:${PORT}`);
   console.log(`👉 Ngrok Public URL : https:///`);
   console.log(`==================================================================`);
-  resumeUnansweredOoyooRoomIfNeeded().catch(() => {});
+  resumeUnansweredKokioAIRoomIfNeeded().catch(() => {});
 });

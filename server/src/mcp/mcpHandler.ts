@@ -1,7 +1,7 @@
-/**
+﻿/**
  * 🔌 KokioTalk Built-in MCP (Model Context Protocol) Server Engine
  * - Solves KakaoTalk's closed message silo by exposing standard JSON-RPC 2.0 MCP tools
- * - Allows Claude, Gemini, Antigravity (Ooyoo/Ea), and custom scripts to read, search, and send KokioTalk messages
+ * - Allows Claude, Gemini, Antigravity (KokioAI/Ea), and custom scripts to read, search, and send KokioTalk messages
  */
 
 import {
@@ -30,7 +30,7 @@ export const KOKIO_MCP_TOOLS = [
     inputSchema: {
       type: 'object',
       properties: {
-        roomId: { type: 'string', description: '채팅방 ID (예: room-ooyoo, room-family-ai, room-lab-ai, room-self)' },
+        roomId: { type: 'string', description: '채팅방 ID (예: room-kokio, room-family-ai, room-lab-ai, room-self)' },
         limit: { type: 'number', description: '조회할 최대 메시지 수 (기본값: 30)' }
       },
       required: ['roomId']
@@ -43,7 +43,7 @@ export const KOKIO_MCP_TOOLS = [
       type: 'object',
       properties: {
         roomId: { type: 'string', description: '전송할 채팅방 ID' },
-        senderId: { type: 'string', description: '발신자 ID (예: ooyoo, ea, ryu, ag-iot-architect)' },
+        senderId: { type: 'string', description: '발신자 ID (예: kokio, ea, ryu, ag-iot-architect)' },
         content: { type: 'string', description: '전송할 메시지 본문 (마크다운 및 LaTeX 수식 지원)' },
         replyToId: { type: 'number', description: '답장할 원본 메시지 ID (선택)' }
       },
@@ -117,7 +117,7 @@ export function handleMcpJsonRpc(rpcReq: any): any {
       } else if (toolName === 'kokio_send_message') {
         const msg = createMessage({
           roomId: args.roomId,
-          senderId: args.senderId || 'ooyoo',
+          senderId: args.senderId || 'kokio',
           content: args.content,
           replyToId: args.replyToId || null,
           messageType: 'markdown',
