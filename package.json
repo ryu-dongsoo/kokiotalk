@@ -17,8 +17,8 @@
     "mcp": "node --experimental-strip-types --no-warnings server/src/mcp/stdio.ts",
     "setup": "node setup-wizard.js",
     "electron": "node scripts/build-server.cjs && electron .",
-    "dist:win": "node scripts/build-server.cjs && electron-builder --win --x64",
-    "dist:mac": "node scripts/build-server.cjs && electron-builder --mac"
+    "dist:win": "node scripts/build-server.cjs && electron-builder --win --x64 --publish never",
+    "dist:mac": "node scripts/build-server.cjs && electron-builder --mac --publish never"
   },
   "devDependencies": {
     "electron": "^35.1.2",
